@@ -1,0 +1,40 @@
+{
+  "name": "base-methods",
+  "description": "Starter for creating a node.js application with a handful of common methods, like `set`, `get`, and `del`.",
+  "version": "0.2.14",
+  "homepage": "https://github.com/jonschlinkert/base-methods",
+  "repository": "jonschlinkert/base-methods",
+  "authors": [
+    {
+      "author": "Jon Schlinkert (https://github.com/jonschlinkert)"
+    }
+  ],
+  "license": "MIT",
+  "dependencies": {},
+  "targets": {
+    "specs": {
+      "files": [
+        {
+          "src": [
+            "test.js"
+          ],
+          "dest": "test/specs",
+          "options": {
+            "cwd": "",
+            "expand": false,
+            "flatten": false
+          },
+          "name": "scaffold"
+        }
+      ],
+      "options": {
+        "cwd": "",
+        "expand": false,
+        "flatten": false
+      },
+      "key": "specs"
+    }
+  },
+  "config": {},
+  "isMetadata": true
+}
