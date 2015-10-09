@@ -10,7 +10,6 @@
     }
   ],
   "license": "MIT",
-  "dependencies": {},
   "targets": {
     "specs": {
       "files": [
@@ -18,7 +17,7 @@
           "src": [
             "test.js"
           ],
-          "dest": "test/specs",
+          "dest": "test/_imported/base-methods",
           "options": {
             "cwd": "",
             "expand": false,
@@ -34,7 +33,5 @@
       },
       "key": "specs"
     }
-  },
-  "config": {},
-  "isMetadata": true
+  }
 }
