@@ -4,37 +4,18 @@
   "version": "0.2.14",
   "homepage": "https://github.com/jonschlinkert/base-methods",
   "repository": "jonschlinkert/base-methods",
-  "authors": [
-    {
-      "author": "Jon Schlinkert (https://github.com/jonschlinkert)"
-    }
-  ],
+  "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
   "license": "MIT",
-  "dependencies": {},
   "targets": {
-    "specs": {
+    "docs": {
+      "options": {},
       "files": [
         {
-          "src": [
-            "test.js"
-          ],
-          "dest": "test/specs",
-          "options": {
-            "cwd": "",
-            "expand": false,
-            "flatten": false
-          },
-          "name": "scaffold"
+          "options": {},
+          "src": ["README.md"],
+          "dest": "docs"
         }
-      ],
-      "options": {
-        "cwd": "",
-        "expand": false,
-        "flatten": false
-      },
-      "key": "specs"
+      ]
     }
-  },
-  "config": {},
-  "isMetadata": true
+  }
 }
