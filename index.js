@@ -1,7 +1,16 @@
 'use strict';
 
 function namespace(name) {
+  var Emitter = require('component-emitter');
   var utils = require('./utils');
+  var fns = [];
+
+  function useAll(app) {
+    var len = fns.length, i = 0;
+    while (len--) {
+      app.use(fns[i++]);
+    }
+  }
 
   /**
    * Create an instance of `Base` with `options`.
@@ -17,20 +26,35 @@ function namespace(name) {
    * @api public
    */
 
-  function Base(options) {
+  function Base(config) {
     if (!(this instanceof Base)) {
-      return new Base(options);
+      return new Base(config);
     }
 
     this.define('_callbacks', this._callbacks);
+    this.options = this.options || {};
+    this.cache = this.cache || {};
+
     if (name) this[name] = {};
-    if (typeof options === 'object') {
-      this.visit('set', options);
+    if (typeof config === 'object') {
+      this.visit('set', config);
     }
+    useAll(this);
   }
 
-  Base.prototype = utils.Emitter({
+  Base.prototype = Emitter({
     constructor: Base,
+
+    /**
+     * Convenience method for assigning a `name` on the instance
+     * for doing lookups in plugins.
+     */
+
+    is: function(name) {
+      this.define('is' + name, true);
+      this.define('_name', name);
+      return this;
+    },
 
     /**
      * Define a plugin function to be called immediately upon init.
@@ -51,6 +75,7 @@ function namespace(name) {
 
     use: function(fn) {
       fn.call(this, this);
+      this.emit('use');
       return this;
     },
 
@@ -74,20 +99,19 @@ function namespace(name) {
      *
      * @name .set
      * @param {String} `key`
-     * @param {*} `value`
+     * @param {any} `value`
      * @return {Object} Returns the instance for chaining.
      * @api public
      */
 
     set: function(key, val) {
+      if (Array.isArray(key) && arguments.length === 2) {
+        key = utils.toPath(key);
+      }
       if (typeof key === 'object') {
         this.visit('set', key);
       } else {
-        if (name) {
-          utils.set(this[name], key, val);
-        } else {
-          utils.set(this, key, val);
-        }
+        utils.set(name ? this[name] : this, key, val);
         this.emit('set', key, val);
       }
       return this;
@@ -98,23 +122,55 @@ function namespace(name) {
      * to get [nested property values][get-value].
      *
      * ```js
-     * app.set('foo', 'bar');
-     * app.get('foo');
-     * // => "bar"
+     * app.set('a.b.c', 'd');
+     * app.get('a.b');
+     * //=> {c: 'd'}
+     *
+     * app.get(['a', 'b']);
+     * //=> {c: 'd'}
      * ```
      *
      * @name .get
-     * @param {*} `key`
-     * @param {Boolean} `escape`
-     * @return {*}
+     * @param {any} `key`
+     * @return {any}
      * @api public
      */
 
     get: function(key) {
-      if (name) {
-        return utils.get(this[name], key);
-      }
-      return utils.get(this, key);
+      key = utils.toPath(arguments);
+      var val = name
+        ? utils.get(this[name], key)
+        : utils.get(this, key);
+
+      this.emit('get', key, val);
+      return val;
+    },
+
+    /**
+     * Return true if app has a stored value for `key`,
+     * false only if `typeof` value is `undefined`.
+     *
+     * ```js
+     * app.set('foo', 'bar');
+     * app.has('foo');
+     * //=> true
+     * ```
+     *
+     * @name .has
+     * @param {any} `key`
+     * @return {any}
+     * @api public
+     */
+
+    has: function(key) {
+      key = utils.toPath(arguments);
+      var val = name
+        ? utils.get(this[name], key)
+        : utils.get(this, key);
+
+      var has = typeof val !== 'undefined';
+      this.emit('has', key, has);
+      return has;
     },
 
     /**
@@ -138,23 +194,9 @@ function namespace(name) {
       if (Array.isArray(key)) {
         this.visit('del', key);
       } else {
-        if (name) {
-          utils.del(this[name], key);
-        } else {
-          utils.del(this, key);
-        }
+        utils.del(name ? this[name] : this, key);
         this.emit('del', key);
       }
-      return this;
-    },
-
-    /**
-     * Convenience method for assigning a `name` on the instance
-     * for doing lookups in plugins.
-     */
-
-    is: function(name) {
-      this.define('is' + name, true);
       return this;
     },
 
@@ -213,6 +255,27 @@ function namespace(name) {
       return this;
     }
   });
+
+  /**
+   * Static method for adding global plugin functions that will
+   * be added to an instance when created.
+   *
+   * ```js
+   * Base.use(function(app) {
+   *   app.foo = 'bar';
+   * });
+   * var app = new Base();
+   * console.log(app.foo);
+   * //=> 'bar'
+   * ```
+   *
+   * @param  {Function} `fn` Plugin function to use on each instance.
+   * @api public
+   */
+
+  Base.use = function(fn) {
+    fns.push(fn);
+  };
 
   /**
    * Static method for inheriting both the prototype and

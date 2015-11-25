@@ -1,7 +1,7 @@
 {
   "name": "base-methods",
   "description": "Starter for creating a node.js application with a handful of common methods, like `set`, `get`, and `del`.",
-  "version": "0.2.14",
+  "version": "0.5.0",
   "homepage": "https://github.com/jonschlinkert/base-methods",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
   "repository": "jonschlinkert/base-methods",
@@ -21,21 +21,22 @@
     "test": "mocha"
   },
   "dependencies": {
-    "class-utils": "^0.2.1",
+    "class-utils": "^0.2.2",
     "collection-visit": "^0.2.1",
     "component-emitter": "^1.2.0",
     "define-property": "^0.2.5",
-    "get-value": "^1.2.1",
-    "lazy-cache": "^0.2.3",
-    "set-value": "^0.2.0",
-    "unset-value": "^0.1.0"
+    "get-value": "^2.0.0",
+    "lazy-cache": "^0.2.4",
+    "set-value": "^0.3.0",
+    "to-object-path": "^0.2.0",
+    "unset-value": "^0.1.1"
   },
   "devDependencies": {
+    "eslint-friendly-formatter": "^1.2.2",
     "gulp": "^3.9.0",
+    "gulp-eslint": "^1.0.0",
     "gulp-istanbul": "^0.10.0",
-    "gulp-jshint": "^1.11.2",
     "gulp-mocha": "^2.1.3",
-    "jshint-stylish": "^2.0.1",
     "mocha": "*",
     "should": "*"
   },
@@ -53,15 +54,24 @@
   ],
   "verb": {
     "related": {
+      "description": "There are a number of different plugins available for extending base-methods. Let us know if you create your own!",
       "list": [
+        "base-cli",
         "base-data",
+        "base-fs",
+        "base-config",
         "base-options",
-        "define-property",
-        "set-value",
-        "get-value",
-        "unset-value",
-        "class-utils"
+        "base-pipeline",
+        "base-plugins",
+        "base-store"
       ]
     }
-  }
+  },
+  "contributors": [
+    {
+      "name": "Jon Schlinkert",
+      "email": "github@sellside.com",
+      "url": "https://github.com/jonschlinkert"
+    }
+  ]
 }
