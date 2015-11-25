@@ -3,7 +3,10 @@
 require('mocha');
 require('should');
 var assert = require('assert');
-var Base = require('./');
+
+// if we export tests, this makes sure they work
+var cwd = require('cwd');
+var Base = require(cwd());
 var base;
 
 describe('constructor', function() {
