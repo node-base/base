@@ -280,29 +280,47 @@ describe('prototype methods', function() {
       assert(typeof base.use === 'function');
     });
 
-    it('should call the function passed to `use`:', function(done) {
+    it('should call the function passed to `use`:', function(cb) {
       base.use(function(app) {
         assert(app);
-        done();
+        cb();
       });
     });
 
-    it('should expose the app instance:', function(done) {
+    it('should expose the app instance:', function(cb) {
       base.foo = 'bar';
       base.use(function(app) {
         assert(app.foo === 'bar');
-        done();
+        cb();
       });
     });
 
-    it('should expose the app instance as "this":', function(done) {
+    it('should expose the app instance as "this":', function(cb) {
       base.foo = 'bar';
       base.use(function(app) {
         assert(this.foo === 'bar');
-        done();
+        cb();
       });
     });
   });
+
+  describe('when `isRegistered` is used', function() {
+    it('should not call a plugin more than once on the same instance', function() {
+      base.i = 0;
+      function plugin(app) {
+        if (app.isRegistered('foo')) return;
+        base.i++;
+      }
+
+      base.use(plugin);
+      base.use(plugin);
+      base.use(plugin);
+      base.use(plugin);
+
+      assert.equal(base.i, 1);
+    });
+  });
+
   describe('set', function() {
     it('should set a key-value pair on the instance:', function() {
       base.set('foo', 'bar');
@@ -645,10 +663,10 @@ describe('is', function() {
 });
 
 describe('events', function() {
-  it('should emit and listen for events:', function(done) {
+  it('should emit and listen for events:', function(cb) {
     base.on('foo', function(val) {
       assert(val === 'bar');
-      done();
+      cb();
     });
     base.emit('foo', 'bar');
   });

@@ -23,20 +23,33 @@ function namespace(name) {
     if (!(this instanceof Base)) {
       return new Base(config);
     }
-
-    this.define('_callbacks', this._callbacks);
-    this.options = this.options || {};
-    this.cache = this.cache || {};
-
-    if (name) this[name] = {};
-    if (typeof config === 'object') {
-      this.visit('set', config);
-    }
-    utils.run(this, 'use', fns);
+    this.initBase(config);
   }
+
+  /**
+   * Prototype methods
+   */
 
   Base.prototype = Emitter({
     constructor: Base,
+
+    /**
+     * Initialize `Base` defaults with the given `config` object
+     */
+
+    initBase: function(config) {
+      this.define('_callbacks', this._callbacks);
+      this.define('_isRegistered', {});
+
+      this.options = this.options || {};
+      this.cache = this.cache || {};
+
+      if (name) this[name] = {};
+      if (typeof config === 'object') {
+        this.visit('set', config);
+      }
+      utils.run(this, 'use', fns);
+    },
 
     /**
      * Convenience method for assigning a `name` on the instance
@@ -47,6 +60,34 @@ function namespace(name) {
       this.define('is' + name, true);
       this.define('_name', name);
       return this;
+    },
+
+    /**
+     * Returns true if a plugin has already been registered on an instance.
+     * This is optionally used by plugin implementors to prevent plugins
+     * from being called on an instanced more than once.
+     *
+     * ```js
+     * var base = new Base();
+     * base.use(function(app) {
+     *   if (app.isRegistered('myPlugin')) {
+     *     return;
+     *   }
+     *   // do stuff
+     * });
+     * ```
+     * @name .isRegistered
+     * @param {String} `name` The plugin name.
+     * @return {Boolean} Returns true when a plugin is already registered.
+     * @api public
+     */
+
+    isRegistered: function(name) {
+      if (this._isRegistered.hasOwnProperty(name)) {
+        return true;
+      }
+      this._isRegistered[name] = true;
+      return false;
     },
 
     /**
