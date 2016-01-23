@@ -39,7 +39,7 @@ function namespace(name) {
 
     initBase: function(config) {
       this.define('_callbacks', this._callbacks);
-      this.define('_isRegistered', {});
+      this.define('registered', {});
 
       this.options = this.options || {};
       this.cache = this.cache || {};
@@ -52,12 +52,31 @@ function namespace(name) {
     },
 
     /**
-     * Convenience method for assigning a `name` on the instance
-     * for doing lookups in plugins.
+     * Set the given `name` on the `app._name` and `app.is*` properties. Useful for doing
+     * lookups in plugins.
+     *
+     * ```js
+     * app.is('foo');
+     * console.log(app._name);
+     * //=> 'foo'
+     * console.log(app.isFoo);
+     * //=> true
+     * app.is('bar');
+     * console.log(app.isFoo);
+     * //=> true
+     * console.log(app.isBar);
+     * //=> true
+     * console.log(app._name);
+     * //=> 'bar'
+     * ```
+     * @param {String} `name`
+     * @return {Boolean}
+     * @api public
      */
 
     is: function(name) {
       this.define('is' + name, true);
+      this.define('_appname', name);
       this.define('_name', name);
       return this;
     },
@@ -77,16 +96,18 @@ function namespace(name) {
      * });
      * ```
      * @name .isRegistered
+     * @emits `plugin` with `registered` and the name of the plugin as arguments.
      * @param {String} `name` The plugin name.
      * @return {Boolean} Returns true when a plugin is already registered.
      * @api public
      */
 
     isRegistered: function(name) {
-      if (this._isRegistered.hasOwnProperty(name)) {
+      if (this.registered.hasOwnProperty(name)) {
         return true;
       }
-      this._isRegistered[name] = true;
+      this.emit('plugin', 'registered', name);
+      this.registered[name] = true;
       return false;
     },
 
@@ -102,6 +123,7 @@ function namespace(name) {
      *   .use(baz)
      * ```
      * @name .use
+     * @emits `use` with no arguments.
      * @param {Function} `fn` plugin function to call
      * @return {Object} Returns the item instance for chaining.
      * @api public
@@ -132,6 +154,7 @@ function namespace(name) {
      * ```
      *
      * @name .set
+     * @emits `set` with `key` and `value` as arguments.
      * @param {String} `key`
      * @param {any} `value`
      * @return {Object} Returns the instance for chaining.
@@ -165,16 +188,17 @@ function namespace(name) {
      * ```
      *
      * @name .get
-     * @param {any} `key`
-     * @return {any}
+     * @emits `get` with `key` and `value` as arguments.
+     * @param {String} `key` The name of the property to get. Dot-notation may be used.
+     * @return {any} Returns the value of `key`
      * @api public
      */
 
     get: function(key) {
       key = utils.toPath(arguments);
-      var val = name
-        ? utils.get(this[name], key)
-        : utils.get(this, key);
+
+      var ctx = name ? this[name] : this;
+      var val = utils.get(ctx, key);
 
       this.emit('get', key, val);
       return val;
@@ -191,16 +215,17 @@ function namespace(name) {
      * ```
      *
      * @name .has
-     * @param {any} `key`
-     * @return {any}
+     * @emits `has` with `key` and true or false as arguments.
+     * @param {String} `key`
+     * @return {Boolean}
      * @api public
      */
 
     has: function(key) {
       key = utils.toPath(arguments);
-      var val = name
-        ? utils.get(this[name], key)
-        : utils.get(this, key);
+
+      var ctx = name ? this[name] : this;
+      var val = utils.get(ctx, key);
 
       var has = typeof val !== 'undefined';
       this.emit('has', key, has);
@@ -219,6 +244,7 @@ function namespace(name) {
      * app.del(['foo', 'bar']);
      * ```
      * @name .del
+     * @emits `del` with the `key` as the only argument.
      * @param {String} `key`
      * @return {Object} Returns the instance for chaining.
      * @api public
@@ -235,7 +261,8 @@ function namespace(name) {
     },
 
     /**
-     * Define a non-enumerable property on the instance.
+     * Define a non-enumerable property on the instance. Dot-notation
+     * is **not supported** with `define`.
      *
      * ```js
      * // arbitrary `render` function using lodash `template`
@@ -244,14 +271,16 @@ function namespace(name) {
      * });
      * ```
      * @name .define
-     * @param {String} `key`
+     * @emits `define` with `key` and `value` as arguments.
+     * @param {String} `key` The name of the property to define.
      * @param {any} `value`
      * @return {Object} Returns the instance for chaining.
      * @api public
      */
 
-    define: function(key, value) {
-      utils.define(this, key, value);
+    define: function(key, val) {
+      this.emit('define', key, val);
+      utils.define(this, key, val);
       return this;
     },
 
