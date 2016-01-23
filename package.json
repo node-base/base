@@ -28,9 +28,9 @@
     "collection-visit": "^0.2.1",
     "component-emitter": "^1.2.0",
     "define-property": "^0.2.5",
-    "get-value": "^2.0.2",
+    "get-value": "^2.0.3",
     "lazy-cache": "^1.0.3",
-    "set-value": "^0.3.2",
+    "set-value": "^0.3.3",
     "to-object-path": "^0.2.0",
     "unset-value": "^0.1.1"
   },
@@ -59,12 +59,14 @@
     "plugins": [
       "gulp-format-md"
     ],
+    "layout": "default",
     "related": {
       "description": "There are a number of different plugins available for extending base. Let us know if you create your own!",
       "list": [
         "base-argv",
         "base-cli",
         "base-config",
+        "base-cwd",
         "base-data",
         "base-fs",
         "base-list",
@@ -73,9 +75,10 @@
         "base-plugins",
         "base-questions",
         "base-runner",
-        "base-store"
+        "base-store",
+        "base-tasks",
+        "base-tree"
       ]
-    },
-    "layout": "default"
+    }
   }
 }

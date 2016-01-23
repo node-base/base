@@ -52,7 +52,7 @@ function namespace(name) {
     },
 
     /**
-     * Set the given `name` on the `app._name` and `app.is*` properties. Useful for doing
+     * Set the given `name` on `app._name` and `app.is*` properties. Used for doing
      * lookups in plugins.
      *
      * ```js
@@ -69,6 +69,7 @@ function namespace(name) {
      * console.log(app._name);
      * //=> 'bar'
      * ```
+     * @name .is
      * @param {String} `name`
      * @return {Boolean}
      * @api public
@@ -83,16 +84,16 @@ function namespace(name) {
 
     /**
      * Returns true if a plugin has already been registered on an instance.
-     * This is optionally used by plugin implementors to prevent plugins
-     * from being called on an instanced more than once.
+     *
+     * Plugin implementors are encouraged to use this first thing in a plugin
+     * to prevent the plugin from being called more than once on the same
+     * instance.
      *
      * ```js
      * var base = new Base();
      * base.use(function(app) {
-     *   if (app.isRegistered('myPlugin')) {
-     *     return;
-     *   }
-     *   // do stuff
+     *   if (app.isRegistered('myPlugin')) return;
+     *   // do stuff to `app`
      * });
      * ```
      * @name .isRegistered
