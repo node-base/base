@@ -19,34 +19,38 @@ describe('constructor', function() {
 
   it('should "visit" over an object to extend the instance', function() {
     base = new Base({foo: 'bar'});
-    assert(base.foo === 'bar');
+    assert.equal(base.foo, 'bar');
     var app = new Base({options: {a: true, b: false}});
     assert(app.options);
-    assert(app.options.a === true);
-    assert(app.options.b === false);
+    assert.equal(app.options.a, true);
+    assert.equal(app.options.b, false);
   });
 
   it('should map "visit" over an array to extend the instance', function() {
     base = new Base([{foo: 'bar'}, {baz: 'qux'}]);
-    assert(base.foo === 'bar');
-    assert(base.baz === 'qux');
+    assert.equal(base.foo, 'bar');
+    assert.equal(base.baz, 'qux');
   });
 
   it('should add foo', function() {
     base = new Base({
       foo: 'bar'
     });
-    assert(base.foo === 'bar');
+    assert.equal(base.foo, 'bar');
   });
 });
 
 describe('static properties', function() {
+  beforeEach(function() {
+    base = new Base();
+  });
+
   it('should expose `.use` method', function() {
-    assert(typeof Base.use === 'function');
+    assert.equal(typeof Base.use, 'function');
   });
 
   it('should expose `.extend` method', function() {
-    assert(typeof Base.extend === 'function');
+    assert.equal(typeof Base.extend, 'function');
   });
 
   it('should extend the given Ctor with static methods:', function() {
@@ -54,18 +58,18 @@ describe('static properties', function() {
       Base.call(this);
     }
     Base.extend(Ctor);
-    assert(typeof Ctor.extend === 'function');
+    assert.equal(typeof Ctor.extend, 'function');
 
     function foo() {}
     Ctor.extend(foo);
-    assert(typeof foo.extend === 'function');
+    assert.equal(typeof foo.extend, 'function');
   });
 
   describe('extend', function() {
     it('should set the extend method on the given object:', function() {
       function Ctor() {}
       Base.extend(Ctor);
-      assert(typeof Ctor.extend === 'function');
+      assert.equal(typeof Ctor.extend, 'function');
     });
   });
 
@@ -73,7 +77,7 @@ describe('static properties', function() {
     it('should set the use method on the given object:', function() {
       function Ctor() {}
       Base.extend(Ctor);
-      assert(typeof Ctor.use === 'function');
+      assert.equal(typeof Ctor.use, 'function');
     });
 
     it('should use a globally loaded plugin through the static use method:', function() {
@@ -85,7 +89,7 @@ describe('static properties', function() {
         app.foo = 'bar';
       });
       var inst = new Ctor();
-      assert(inst.foo === 'bar');
+      assert.equal(inst.foo, 'bar');
     });
 
     it('should use a globally loaded plugin through the static use method with namespace:', function() {
@@ -94,8 +98,8 @@ describe('static properties', function() {
         app.set('bar', 'baz');
       });
       var inst = new Foo();
-      assert(inst.get('bar') === 'baz');
-      assert(inst.foo.bar === 'baz');
+      assert.equal(inst.get('bar'), 'baz');
+      assert.equal(inst.foo.bar, 'baz');
     });
 
     it('should use different globally installed plugins when using different namespaces:', function() {
@@ -112,15 +116,15 @@ describe('static properties', function() {
       var foo = new Foo();
       var bar = new Bar();
 
-      assert(foo.get('bar') === 'baz');
-      assert(foo.foo.bar === 'baz');
-      assert(typeof foo.get('beep') === 'undefined');
-      assert(typeof foo.foo.beep === 'undefined');
+      assert.equal(foo.get('bar'), 'baz');
+      assert.equal(foo.foo.bar, 'baz');
+      assert.equal(typeof foo.get('beep'), 'undefined');
+      assert.equal(typeof foo.foo.beep, 'undefined');
 
-      assert(bar.get('beep') === 'boop');
-      assert(bar.bar.beep === 'boop');
-      assert(typeof bar.get('bar') === 'undefined');
-      assert(typeof bar.bar.bar === 'undefined');
+      assert.equal(bar.get('beep'), 'boop');
+      assert.equal(bar.bar.beep, 'boop');
+      assert.equal(typeof bar.get('bar'), 'undefined');
+      assert.equal(typeof bar.bar.bar, 'undefined');
     });
   });
 
@@ -128,8 +132,8 @@ describe('static properties', function() {
     it('should set the mixin method on the given object:', function() {
       function Ctor() {}
       Base.extend(Ctor);
-      assert(typeof Base.mixin === 'function');
-      assert(typeof Ctor.mixin === 'function');
+      assert.equal(typeof Base.mixin, 'function');
+      assert.equal(typeof Ctor.mixin, 'function');
     });
 
     it('should use a globally loaded mixin through the static mixin method:', function() {
@@ -146,10 +150,10 @@ describe('static properties', function() {
         proto.bar = 'baz';
       });
 
-      assert(Base.prototype.foo === 'bar');
-      assert(Ctor.prototype.bar === 'baz');
-      assert(inst.foo === 'bar');
-      assert(inst.bar === 'baz');
+      assert.equal(Base.prototype.foo, 'bar');
+      assert.equal(Ctor.prototype.bar, 'baz');
+      assert.equal(inst.foo, 'bar');
+      assert.equal(inst.bar, 'baz');
     });
   });
 
@@ -157,7 +161,7 @@ describe('static properties', function() {
     it('should set the mixins method on the given object:', function() {
       function Ctor() {}
       Base.extend(Ctor);
-      assert(typeof Ctor.mixins === 'function');
+      assert.equal(typeof Ctor.mixins, 'function');
     });
 
     it('should use a globally loaded mixin through the static mixins method:', function() {
@@ -179,8 +183,8 @@ describe('static properties', function() {
       Ctor.mixins(Child);
 
       var inst = new Child();
-      assert(Child.prototype.bar === 'bar');
-      assert(inst.bar === 'bar');
+      assert.equal(Child.prototype.bar, 'bar');
+      assert.equal(inst.bar, 'bar');
     });
   });
 });
@@ -196,35 +200,35 @@ describe('extend prototype methods', function() {
       Base.call(this);
     }
     Base.extend(Ctor);
-    assert(typeof Ctor.extend === 'function');
+    assert.equal(typeof Ctor.extend, 'function');
 
     var ctor = new Ctor();
-    assert(typeof ctor.set === 'function');
-    assert(typeof ctor.get === 'function');
+    assert.equal(typeof ctor.set, 'function');
+    assert.equal(typeof ctor.get, 'function');
   });
 
   it('should expose `prototype.set` method', function() {
-    assert(typeof Base.prototype.set === 'function');
+    assert.equal(typeof Base.prototype.set, 'function');
   });
 
   it('should expose `prototype.get` method', function() {
-    assert(typeof Base.prototype.get === 'function');
+    assert.equal(typeof Base.prototype.get, 'function');
   });
 
   it('should expose `prototype.del` method', function() {
-    assert(typeof Base.prototype.del === 'function');
+    assert.equal(typeof Base.prototype.del, 'function');
   });
 
   it('should expose `prototype.visit` method', function() {
-    assert(typeof Base.prototype.visit === 'function');
+    assert.equal(typeof Base.prototype.visit, 'function');
   });
 
   it('should expose `prototype.define` method', function() {
-    assert(typeof Base.prototype.define === 'function');
+    assert.equal(typeof Base.prototype.define, 'function');
   });
 
   it('should expose `prototype.mixin` method', function() {
-    assert(typeof Base.prototype.mixin === 'function');
+    assert.equal(typeof Base.prototype.mixin, 'function');
   });
 
   it('should add prototype methods to the given Ctor:', function() {
@@ -232,16 +236,16 @@ describe('extend prototype methods', function() {
       Base.call(this);
     }
     Base.extend(Ctor);
-    assert(typeof Ctor.prototype.set === 'function');
-    assert(typeof Ctor.prototype.get === 'function');
-    assert(typeof Ctor.prototype.del === 'function');
-    assert(typeof Ctor.prototype.visit === 'function');
-    assert(typeof Ctor.prototype.define === 'function');
-    assert(typeof Ctor.prototype.mixin === 'function');
+    assert.equal(typeof Ctor.prototype.set, 'function');
+    assert.equal(typeof Ctor.prototype.get, 'function');
+    assert.equal(typeof Ctor.prototype.del, 'function');
+    assert.equal(typeof Ctor.prototype.visit, 'function');
+    assert.equal(typeof Ctor.prototype.define, 'function');
+    assert.equal(typeof Ctor.prototype.mixin, 'function');
 
     function foo() {}
     Ctor.extend(foo);
-    assert(typeof foo.prototype.set === 'function');
+    assert.equal(typeof foo.prototype.set, 'function');
   });
 });
 
@@ -254,12 +258,12 @@ describe('instance properties', function() {
 
   it('should expose the options property:', function() {
     assert(base.options);
-    assert(typeof base.options === 'object');
+    assert.equal(typeof base.options, 'object');
   });
 
   it('should expose the cache property:', function() {
     assert(base.cache);
-    assert(typeof base.cache === 'object');
+    assert.equal(typeof base.cache, 'object');
   });
 });
 
@@ -277,7 +281,7 @@ describe('prototype methods', function() {
 
     it('should expose the use method:', function() {
       assert(base.use);
-      assert(typeof base.use === 'function');
+      assert.equal(typeof base.use, 'function');
     });
 
     it('should call the function passed to `use`:', function(cb) {
@@ -290,7 +294,7 @@ describe('prototype methods', function() {
     it('should expose the app instance:', function(cb) {
       base.foo = 'bar';
       base.use(function(app) {
-        assert(app.foo === 'bar');
+        assert.equal(app.foo, 'bar');
         cb();
       });
     });
@@ -298,7 +302,7 @@ describe('prototype methods', function() {
     it('should expose the app instance as "this":', function(cb) {
       base.foo = 'bar';
       base.use(function(app) {
-        assert(this.foo === 'bar');
+        assert.equal(this.foo, 'bar');
         cb();
       });
     });
@@ -324,47 +328,47 @@ describe('prototype methods', function() {
   describe('set', function() {
     it('should set a key-value pair on the instance:', function() {
       base.set('foo', 'bar');
-      assert(base.foo === 'bar');
+      assert.equal(base.foo, 'bar');
     });
 
     it('should set nested property:', function() {
       base.set('a.b.c', 'd');
-      assert(base.a.b.c === 'd');
+      assert.equal(base.a.b.c, 'd');
     });
 
     it('should set a nested property with the key as an array:', function() {
       base.set(['a', 'b', 'c'], 'd');
-      assert(base.a.b.c === 'd');
+      assert.equal(base.a.b.c, 'd');
     });
 
     it('should set an object on the instance:', function() {
       base.set({a: 'b'});
-      assert(base.a === 'b');
+      assert.equal(base.a, 'b');
     });
   });
 
   describe('get', function() {
     it('should get a property from the instance:', function() {
       base.set({a: 'b'});
-      assert(base.get('a') === 'b');
+      assert.equal(base.get('a'), 'b');
     });
 
     it('should get a nested property from the instance:', function() {
       base.set({a: {b: {c: 'd'}}});
-      assert(base.get('a.b.c') === 'd');
+      assert.equal(base.get('a.b.c'), 'd');
     });
 
     it('should get a property using an array:', function() {
       base.set({a: {b: {c: 'd'}}});
-      assert(base.get(['a', 'b', 'c']) === 'd');
+      assert.equal(base.get(['a', 'b', 'c']), 'd');
     });
 
     it('should get a property using a list of arguments', function() {
       base.set({a: {b: {c: 'd'}}});
-      assert(base.get('a', 'b', 'c') === 'd');
-      assert(base.get(['a', 'b'], 'c') === 'd');
-      assert(base.get('a', ['b', 'c']) === 'd');
-      assert(base.get('a', 'b.c') === 'd');
+      assert.equal(base.get('a', 'b', 'c'), 'd');
+      assert.equal(base.get(['a', 'b'], 'c'), 'd');
+      assert.equal(base.get('a', ['b', 'c']), 'd');
+      assert.equal(base.get('a', 'b.c'), 'd');
     });
   });
 
@@ -375,52 +379,52 @@ describe('prototype methods', function() {
       var foo = new Base();
 
       foo.set({a: 'b'});
-      assert(foo.has('a') === true);
+      assert.equal(foo.has('a'), true);
     });
 
     it('should check for a property from the instance:', function() {
       base.set({a: 'b'});
-      assert(base.has('a') === true);
+      assert.equal(base.has('a'), true);
     });
 
     it('should check for a nested property from the instance:', function() {
       base.set({a: {b: {c: 'd'}}});
-      assert(base.has('a.b.c') === true);
+      assert.equal(base.has('a.b.c'), true);
     });
 
     it('should check for a property using an array:', function() {
       base.set({a: {b: {c: 'd'}}});
-      assert(base.has(['a', 'b', 'c']) === true);
+      assert.equal(base.has(['a', 'b', 'c']), true);
     });
 
     it('should check for a property using a list of arguments', function() {
       base.set({a: {b: {c: 'd'}}});
-      assert(base.has('a', 'b', 'c') === true);
-      assert(base.has(['a', 'b'], 'c') === true);
-      assert(base.has('a', ['b', 'c']) === true);
-      assert(base.has('a', 'b.c') === true);
+      assert.equal(base.has('a', 'b', 'c'), true);
+      assert.equal(base.has(['a', 'b'], 'c'), true);
+      assert.equal(base.has('a', ['b', 'c']), true);
+      assert.equal(base.has('a', 'b.c'), true);
     });
   });
 
   describe('visit', function() {
     it('should visit an object with the given method:', function() {
       base.visit('set', {a: 'b', c: 'd'});
-      assert(base.get('a') === 'b');
-      assert(base.get('c') === 'd');
+      assert.equal(base.get('a'), 'b');
+      assert.equal(base.get('c'), 'd');
     });
     it('should visit an array with the given method:', function() {
       base.visit('set', [{a: 'b', c: 'd'}]);
-      assert(base.get('a') === 'b');
-      assert(base.get('c') === 'd');
+      assert.equal(base.get('a'), 'b');
+      assert.equal(base.get('c'), 'd');
     });
   });
 
   describe('del', function() {
     it('should remove a property:', function() {
       base.set({a: 'b'});
-      assert(base.a === 'b');
+      assert.equal(base.a, 'b');
       base.del('a');
-      assert(typeof base.a === 'undefined');
+      assert.equal(typeof base.a, 'undefined');
     });
 
     it('should remove an array of properties:', function() {
@@ -430,11 +434,11 @@ describe('prototype methods', function() {
       base.set({
         b: 'b'
       });
-      assert(base.a === 'a');
-      assert(base.b === 'b');
+      assert.equal(base.a, 'a');
+      assert.equal(base.b, 'b');
       base.del(['a', 'b']);
-      assert(typeof base.a === 'undefined');
-      assert(typeof base.b === 'undefined');
+      assert.equal(typeof base.a, 'undefined');
+      assert.equal(typeof base.b, 'undefined');
     });
   });
 });
@@ -448,8 +452,8 @@ describe('mixin', function() {
 
   it('should add a property to the base prototype:', function() {
     base.mixin('a', function() {});
-    assert(typeof base.a === 'function');
-    assert(typeof Base.prototype.a === 'function');
+    assert.equal(typeof base.a, 'function');
+    assert.equal(typeof Base.prototype.a, 'function');
   });
 
   it('should add to the prototype of an inheriting app:', function() {
@@ -459,8 +463,8 @@ describe('mixin', function() {
     Base.extend(Foo);
     var foo = new Foo();
     foo.mixin('a', function() {});
-    assert(typeof Foo.prototype.a === 'function');
-    assert(typeof foo.a === 'function');
+    assert.equal(typeof Foo.prototype.a, 'function');
+    assert.equal(typeof foo.a, 'function');
   });
 
   it('should add to inheriting app prototype:', function() {
@@ -475,14 +479,14 @@ describe('mixin', function() {
     base.mixin('abc', function() {});
     foo.mixin('xyz', function() {});
 
-    assert(typeof Base.prototype.abc === 'function');
-    assert(typeof Foo.prototype.abc === 'function');
-    assert(typeof base.abc === 'function');
-    assert(typeof foo.abc === 'function');
+    assert.equal(typeof Base.prototype.abc, 'function');
+    assert.equal(typeof Foo.prototype.abc, 'function');
+    assert.equal(typeof base.abc, 'function');
+    assert.equal(typeof foo.abc, 'function');
 
     assert(typeof Base.prototype.xyz !== 'function');
-    assert(typeof Foo.prototype.xyz === 'function');
-    assert(typeof foo.xyz === 'function');
+    assert.equal(typeof Foo.prototype.xyz, 'function');
+    assert.equal(typeof foo.xyz, 'function');
     assert(typeof base.xyz !== 'function');
   });
 
@@ -498,8 +502,8 @@ describe('mixin', function() {
     foo.mixin('a', function() {});
 
     // yes
-    assert(typeof Foo.prototype.a === 'function');
-    assert(typeof foo.a === 'function');
+    assert.equal(typeof Foo.prototype.a, 'function');
+    assert.equal(typeof foo.a, 'function');
 
     // no
     assert(typeof Base.prototype.a !== 'function');
@@ -519,8 +523,8 @@ describe('mixin', function() {
     foo.mixin('a', function() {});
 
     // yes
-    assert(typeof Foo.prototype.a === 'function');
-    assert(typeof foo.a === 'function');
+    assert.equal(typeof Foo.prototype.a, 'function');
+    assert.equal(typeof foo.a, 'function');
 
     // no
     assert(typeof Bar.prototype.a !== 'function');
@@ -540,13 +544,13 @@ describe('mixin', function() {
 
     base.mixin('xyz', function() {});
 
-    assert(typeof Base.prototype.xyz === 'function');
-    assert(typeof Foo.prototype.xyz === 'function');
-    assert(typeof Bar.prototype.xyz === 'function');
+    assert.equal(typeof Base.prototype.xyz, 'function');
+    assert.equal(typeof Foo.prototype.xyz, 'function');
+    assert.equal(typeof Bar.prototype.xyz, 'function');
 
-    assert(typeof base.xyz === 'function');
-    assert(typeof foo.xyz === 'function');
-    assert(typeof bar.xyz === 'function');
+    assert.equal(typeof base.xyz, 'function');
+    assert.equal(typeof foo.xyz, 'function');
+    assert.equal(typeof bar.xyz, 'function');
   });
 });
 
@@ -557,7 +561,7 @@ describe('namespaces', function() {
 
   describe('constructor', function() {
     it('should expose `namespace`', function() {
-      assert(typeof Base.namespace === 'function');
+      assert.equal(typeof Base.namespace, 'function');
     });
 
     it('should extend the given Ctor with static methods:', function() {
@@ -567,11 +571,11 @@ describe('namespaces', function() {
         Foo.call(this);
       }
       Foo.extend(Ctor);
-      assert(typeof Ctor.extend === 'function');
+      assert.equal(typeof Ctor.extend, 'function');
 
       function foo() {}
       Ctor.extend(foo);
-      assert(typeof foo.extend === 'function');
+      assert.equal(typeof foo.extend, 'function');
     });
   });
 
@@ -584,14 +588,14 @@ describe('namespaces', function() {
     describe('set', function() {
       it('should set a key-value pair on the instance:', function() {
         base.set('foo', 'bar');
-        assert(base.cache.foo === 'bar');
+        assert.equal(base.cache.foo, 'bar');
       });
 
       it('should set an object on the instance:', function() {
         base.set({
           a: 'b'
         });
-        assert(base.cache.a === 'b');
+        assert.equal(base.cache.a, 'b');
       });
     });
 
@@ -600,7 +604,7 @@ describe('namespaces', function() {
         base.set({
           a: 'b'
         });
-        assert(base.get('a') === 'b');
+        assert.equal(base.get('a'), 'b');
       });
 
       it('should visit an object with the given method:', function() {
@@ -608,16 +612,16 @@ describe('namespaces', function() {
           a: 'b',
           c: 'd'
         });
-        assert(base.get('a') === 'b');
-        assert(base.get('c') === 'd');
+        assert.equal(base.get('a'), 'b');
+        assert.equal(base.get('c'), 'd');
       });
       it('should visit an array with the given method:', function() {
         base.visit('set', [{
           a: 'b',
           c: 'd'
         }]);
-        assert(base.get('a') === 'b');
-        assert(base.get('c') === 'd');
+        assert.equal(base.get('a'), 'b');
+        assert.equal(base.get('c'), 'd');
       });
     });
 
@@ -626,9 +630,9 @@ describe('namespaces', function() {
         base.set({
           a: 'b'
         });
-        assert(base.cache.a === 'b');
+        assert.equal(base.cache.a, 'b');
         base.del('a');
-        assert(typeof base.cache.a === 'undefined');
+        assert.equal(typeof base.cache.a, 'undefined');
       });
 
       it('should remove an array of properties:', function() {
@@ -638,11 +642,11 @@ describe('namespaces', function() {
         base.set({
           b: 'b'
         });
-        assert(base.cache.a === 'a');
-        assert(base.cache.b === 'b');
+        assert.equal(base.cache.a, 'a');
+        assert.equal(base.cache.b, 'b');
         base.del(['a', 'b']);
-        assert(typeof base.cache.a === 'undefined');
-        assert(typeof base.cache.b === 'undefined');
+        assert.equal(typeof base.cache.a, 'undefined');
+        assert.equal(typeof base.cache.b, 'undefined');
       });
     });
   });
@@ -658,16 +662,85 @@ describe('is', function() {
   it('should set a name prefixed with `is` on the instance:', function() {
     base.is('Foo');
     assert(base.isFoo);
-    assert(base.isFoo === true);
+    assert.equal(base.isFoo, true);
   });
 });
 
 describe('events', function() {
+  beforeEach(function() {
+    base = new Base();
+  });
+
   it('should emit and listen for events:', function(cb) {
     base.on('foo', function(val) {
-      assert(val === 'bar');
+      assert.equal(val, 'bar');
       cb();
     });
     base.emit('foo', 'bar');
+  });
+
+  it('should emit use', function(cb) {
+    base.on('use', function(key, val) {
+      cb();
+    });
+    base.use(function() {});
+  });
+
+  it('should emit plugin', function(cb) {
+    base.on('plugin', function(key, val) {
+      assert.equal(key, 'registered');
+      assert.equal(val, 'foo');
+      cb();
+    });
+    base.use(function() {
+      this.isRegistered('foo');
+    });
+  });
+
+  it('should emit set', function(cb) {
+    base.on('set', function(key, val) {
+      assert.equal(key, 'foo');
+      assert.equal(val, 'bar');
+      cb();
+    });
+    base.set('foo', 'bar');
+  });
+
+  it('should emit define', function(cb) {
+    base.on('define', function(key, val) {
+      assert.equal(key, 'foo');
+      assert.equal(val, 'bar');
+      cb();
+    });
+    base.define('foo', 'bar');
+  });
+
+  it('should emit get', function(cb) {
+    base.on('get', function(key, val) {
+      assert.equal(key, 'foo');
+      assert.equal(val, 'bar');
+      cb();
+    });
+    base.set('foo', 'bar');
+    base.get('foo');
+  });
+
+  it('should emit has', function(cb) {
+    base.on('has', function(key, has) {
+      assert.equal(key, 'foo');
+      assert.equal(has, true);
+      cb();
+    });
+    base.set('foo', 'bar');
+    base.has('foo');
+  });
+
+  it('should emit del', function(cb) {
+    base.on('del', function(key, val) {
+      assert.equal(key, 'foo');
+      cb();
+    });
+    base.set('foo', 'bar');
+    base.del('foo');
   });
 });
