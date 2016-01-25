@@ -137,6 +137,37 @@ function namespace(name) {
     },
 
     /**
+     * Lazily invoke a registered plugin. This can only be used
+     * with:
+     *
+     * 1. plugins that add a single method or property to `app`
+     * 2. plugins that do not return a function
+     *
+     * ```js
+     * app.lazy('store', require('base-store'));
+     * ```
+     * @param {String} `prop` The name of the property or method added by the plugin.
+     * @param {Function} `fn` The plugin function
+     * @param {Object} `options` Options to use when the plugin is invoked.
+     * @return {Object} Returns the instance for chaining
+     * @api public
+     */
+
+    lazy: function(prop, fn, opts) {
+      this.define(prop, {
+        configurable: true,
+        set: function(val) {
+          this.define(prop, val);
+        },
+        get: function() {
+          this.use(fn(opts));
+          return this[prop];
+        }
+      });
+      return this;
+    },
+
+    /**
      * Assign `value` to `key`. Also emits `set` with
      * the key and value.
      *

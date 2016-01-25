@@ -666,6 +666,45 @@ describe('is', function() {
   });
 });
 
+describe('lazy', function() {
+  beforeEach(function() {
+    base = new Base();
+  });
+
+  it('should lazily invoke a plugin the first time its called', function() {
+    var idx = 0;
+    function plugin() {
+      return function() {
+        this.foo = 'bar';
+        idx++;
+      }
+    }
+
+    assert.equal(idx, 0);
+    base.lazy('foo', plugin);
+    assert.equal(idx, 0);
+    assert.equal(base.foo, 'bar');
+    assert.equal(idx, 1);
+  });
+
+  it('should lazily invoke a nested property the first time its parent is called', function() {
+    var idx = 0;
+    function plugin() {
+      return function() {
+        this.foo = {};
+        this.foo.bar = 'baz';
+        idx++;
+      }
+    }
+
+    assert.equal(idx, 0);
+    base.lazy('foo', plugin);
+    assert.equal(idx, 0);
+    assert.equal(base.foo.bar, 'baz');
+    assert.equal(idx, 1);
+  });
+});
+
 describe('events', function() {
   beforeEach(function() {
     base = new Base();
