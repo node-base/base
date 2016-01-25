@@ -159,8 +159,13 @@ var app = new Base()
   .use(baz)
 ```
 
+### [.lazy](index.js#L158)
+
+Lazily invoke a registered plugin. This can only be used with:
+
 1. plugins that add a single method or property to `app`
-2. plugins that do not return a function
+2. plugins that do not add a getter/setter property
+3. plugins that do not return a function
 
 **Params**
 
@@ -175,7 +180,7 @@ var app = new Base()
 app.lazy('store', require('base-store'));
 ```
 
-### [.set](index.js#L196)
+### [.set](index.js#L198)
 
 Assign `value` to `key`. Also emits `set` with the key and value.
 
@@ -205,7 +210,7 @@ console.log(app);
 //=> {name: 'Halle', foo: 'bar', baz: 'quux'}
 ```
 
-### [.get](index.js#L229)
+### [.get](index.js#L231)
 
 Return the stored value of `key`. Dot notation may be used to get [nested property values][get-value].
 
@@ -229,7 +234,7 @@ app.get(['a', 'b']);
 //=> {c: 'd'}
 ```
 
-### [.has](index.js#L256)
+### [.has](index.js#L258)
 
 Return true if app has a stored value for `key`, false only if `typeof` value is `undefined`.
 
@@ -250,7 +255,7 @@ app.has('foo');
 //=> true
 ```
 
-### [.del](index.js#L285)
+### [.del](index.js#L287)
 
 Delete `key` from the instance. Also emits `del` with the key of the deleted item.
 
@@ -273,7 +278,7 @@ app.del('foo');
 app.del(['foo', 'bar']);
 ```
 
-### [.define](index.js#L313)
+### [.define](index.js#L315)
 
 Define a non-enumerable property on the instance. Dot-notation is **not supported** with `define`.
 
@@ -296,7 +301,7 @@ define('render', function(str, locals) {
 });
 ```
 
-### [.visit](index.js#L330)
+### [.visit](index.js#L332)
 
 Visit `method` over the items in the given object, or map
 visit over the objects in an array.
@@ -307,7 +312,7 @@ visit over the objects in an array.
 * `val` **{Object|Array}**
 * `returns` **{Object}**: Returns the instance for chaining.
 
-### [.mixin](index.js#L348)
+### [.mixin](index.js#L350)
 
 Mix property `key` onto the Base prototype. If base-methods
 is inherited using `Base.extend` this method will be overridden
@@ -320,7 +325,7 @@ prototype of the inheriting application.
 * `val` **{Object|Array}**
 * `returns` **{Object}**: Returns the instance for chaining.
 
-### [.use](index.js#L371)
+### [.use](index.js#L373)
 
 Static method for adding global plugin functions that will be added to an instance when created.
 
@@ -339,13 +344,13 @@ console.log(app.foo);
 //=> 'bar'
 ```
 
-### [.extend](index.js#L383)
+### [.extend](index.js#L385)
 
 Static method for inheriting both the prototype and
 static methods of the `Base` class. See [class-utils][]
 for more details.
 
-### [.Base.mixin](index.js#L420)
+### [.Base.mixin](index.js#L422)
 
 Static method for adding mixins to the prototype. When a function is returned from the mixin plugin, it will be added to an array so it can be used on inheriting classes via `Base.mixins(Child)`.
 
@@ -364,7 +369,7 @@ Base.mixin(function fn(proto) {
 });
 ```
 
-### [.Base.mixins](index.js#L441)
+### [.Base.mixins](index.js#L443)
 
 Static method for running currently saved global mixin functions against a child constructor.
 
@@ -379,7 +384,7 @@ Base.extend(Child);
 Base.mixins(Child);
 ```
 
-### [.inherit](index.js#L453)
+### [.inherit](index.js#L455)
 
 Similar to `util.inherit`, but copies all static properties,
 prototype properties, and descriptors from `Provider` to `Receiver`.

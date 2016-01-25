@@ -141,11 +141,13 @@ function namespace(name) {
      * with:
      *
      * 1. plugins that add a single method or property to `app`
-     * 2. plugins that do not return a function
+     * 2. plugins that do not themselves add a getter/setter property (they're already lazy)
+     * 3. plugins that do not return a function
      *
      * ```js
      * app.lazy('store', require('base-store'));
      * ```
+     * @name .lazy
      * @param {String} `prop` The name of the property or method added by the plugin.
      * @param {Function} `fn` The plugin function
      * @param {Object} `options` Options to use when the plugin is invoked.
