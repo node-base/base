@@ -312,7 +312,7 @@ describe('prototype methods', function() {
     it('should not call a plugin more than once on the same instance', function() {
       base.i = 0;
       function plugin(app) {
-        if (app.isRegistered('foo')) return;
+        if (app.isRegistered('foo', true)) return;
         base.i++;
       }
 
@@ -726,13 +726,12 @@ describe('events', function() {
   });
 
   it('should emit plugin', function(cb) {
-    base.on('plugin', function(key, val) {
-      assert.equal(key, 'registered');
-      assert.equal(val, 'foo');
+    base.on('plugin', function(key) {
+      assert.equal(key, 'foo');
       cb();
     });
     base.use(function() {
-      this.isRegistered('foo');
+      this.isRegistered('foo', true);
     });
   });
 

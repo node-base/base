@@ -1,9 +1,15 @@
 'use strict';
 
+var util = require('util');
+
 function namespace(name) {
-  var Emitter = require('component-emitter');
   var utils = require('./utils');
   var fns = [];
+
+  var Cache = utils.Cache;
+  if (name) {
+    Cache = Cache.namespace(name);
+  }
 
   /**
    * Create an instance of `Base` with `options`.
@@ -23,6 +29,7 @@ function namespace(name) {
     if (!(this instanceof Base)) {
       return new Base(config);
     }
+    Cache.call(this, config);
     this.initBase(config);
   }
 
@@ -30,7 +37,7 @@ function namespace(name) {
    * Prototype methods
    */
 
-  Base.prototype = Emitter({
+  Base.prototype = {
     constructor: Base,
 
     /**
@@ -76,9 +83,11 @@ function namespace(name) {
      */
 
     is: function(name) {
-      this.define('is' + name, true);
-      this.define('_appname', name);
+      name = name.toLowerCase();
+      var ctor = name.charAt(0).toUpperCase() + name.slice(1);
+      this.define('is' + ctor, true);
       this.define('_name', name);
+      this.define('_appname', name);
       return this;
     },
 
@@ -95,20 +104,29 @@ function namespace(name) {
      *   if (app.isRegistered('myPlugin')) return;
      *   // do stuff to `app`
      * });
+     *
+     * // to also record the plugin as being registered
+     * base.use(function(app) {
+     *   if (app.isRegistered('myPlugin', true)) return;
+     *   // do stuff to `app`
+     * });
      * ```
      * @name .isRegistered
-     * @emits `plugin` with `registered` and the name of the plugin as arguments.
+     * @emits `plugin` Emits the name of the plugin.
      * @param {String} `name` The plugin name.
-     * @return {Boolean} Returns true when a plugin is already registered.
+     * @param {Boolean} `register` If the plugin if not already registered, to record it as being registered pass `true` as the second argument.
+     * @return {Boolean} Returns true if a plugin is already registered.
      * @api public
      */
 
-    isRegistered: function(name) {
+    isRegistered: function(name, register) {
       if (this.registered.hasOwnProperty(name)) {
         return true;
       }
-      this.emit('plugin', 'registered', name);
-      this.registered[name] = true;
+      if (register === true) {
+        this.registered[name] = true;
+        this.emit('plugin', name);
+      }
       return false;
     },
 
@@ -137,11 +155,11 @@ function namespace(name) {
     },
 
     /**
-     * Lazily invoke a registered plugin. This can only be used
-     * with:
+     * Lazily invoke a registered plugin. **Note** that this method can only
+     * be used with:
      *
-     * 1. plugins that add a single method or property to `app`
-     * 2. plugins that do not themselves add a getter/setter property (they're already lazy)
+     * 1. plugins that _add a single method or property_ to `app`
+     * 2. plugins that do not (themselves) add a getter/setter property (they're already lazy)
      * 3. plugins that do not return a function
      *
      * ```js
@@ -170,131 +188,6 @@ function namespace(name) {
     },
 
     /**
-     * Assign `value` to `key`. Also emits `set` with
-     * the key and value.
-     *
-     * ```js
-     * app.on('set', function(key, val) {
-     *   // do something when `set` is emitted
-     * });
-     *
-     * app.set(key, value);
-     *
-     * // also takes an object or array
-     * app.set({name: 'Halle'});
-     * app.set([{foo: 'bar'}, {baz: 'quux'}]);
-     * console.log(app);
-     * //=> {name: 'Halle', foo: 'bar', baz: 'quux'}
-     * ```
-     *
-     * @name .set
-     * @emits `set` with `key` and `value` as arguments.
-     * @param {String} `key`
-     * @param {any} `value`
-     * @return {Object} Returns the instance for chaining.
-     * @api public
-     */
-
-    set: function(key, val) {
-      if (Array.isArray(key) && arguments.length === 2) {
-        key = utils.toPath(key);
-      }
-      if (typeof key === 'object') {
-        this.visit('set', key);
-      } else {
-        utils.set(name ? this[name] : this, key, val);
-        this.emit('set', key, val);
-      }
-      return this;
-    },
-
-    /**
-     * Return the stored value of `key`. Dot notation may be used
-     * to get [nested property values][get-value].
-     *
-     * ```js
-     * app.set('a.b.c', 'd');
-     * app.get('a.b');
-     * //=> {c: 'd'}
-     *
-     * app.get(['a', 'b']);
-     * //=> {c: 'd'}
-     * ```
-     *
-     * @name .get
-     * @emits `get` with `key` and `value` as arguments.
-     * @param {String} `key` The name of the property to get. Dot-notation may be used.
-     * @return {any} Returns the value of `key`
-     * @api public
-     */
-
-    get: function(key) {
-      key = utils.toPath(arguments);
-
-      var ctx = name ? this[name] : this;
-      var val = utils.get(ctx, key);
-
-      this.emit('get', key, val);
-      return val;
-    },
-
-    /**
-     * Return true if app has a stored value for `key`,
-     * false only if `typeof` value is `undefined`.
-     *
-     * ```js
-     * app.set('foo', 'bar');
-     * app.has('foo');
-     * //=> true
-     * ```
-     *
-     * @name .has
-     * @emits `has` with `key` and true or false as arguments.
-     * @param {String} `key`
-     * @return {Boolean}
-     * @api public
-     */
-
-    has: function(key) {
-      key = utils.toPath(arguments);
-
-      var ctx = name ? this[name] : this;
-      var val = utils.get(ctx, key);
-
-      var has = typeof val !== 'undefined';
-      this.emit('has', key, has);
-      return has;
-    },
-
-    /**
-     * Delete `key` from the instance. Also emits `del` with
-     * the key of the deleted item.
-     *
-     * ```js
-     * app.del(); // delete all
-     * // or
-     * app.del('foo');
-     * // or
-     * app.del(['foo', 'bar']);
-     * ```
-     * @name .del
-     * @emits `del` with the `key` as the only argument.
-     * @param {String} `key`
-     * @return {Object} Returns the instance for chaining.
-     * @api public
-     */
-
-    del: function(key) {
-      if (Array.isArray(key)) {
-        this.visit('del', key);
-      } else {
-        utils.del(name ? this[name] : this, key);
-        this.emit('del', key);
-      }
-      return this;
-    },
-
-    /**
      * Define a non-enumerable property on the instance. Dot-notation
      * is **not supported** with `define`.
      *
@@ -319,22 +212,6 @@ function namespace(name) {
     },
 
     /**
-     * Visit `method` over the items in the given object, or map
-     * visit over the objects in an array.
-     *
-     * @name .visit
-     * @param {String} `method`
-     * @param {Object|Array} `val`
-     * @return {Object} Returns the instance for chaining.
-     * @api public
-     */
-
-    visit: function(method, val) {
-      utils.visit(this, method, val);
-      return this;
-    },
-
-    /**
      * Mix property `key` onto the Base prototype. If base-methods
      * is inherited using `Base.extend` this method will be overridden
      * by a new `mixin` method that will only add properties to the
@@ -351,7 +228,13 @@ function namespace(name) {
       Base.prototype[key] = val;
       return this;
     }
-  });
+  };
+
+  /**
+   * Inherit cache-base
+   */
+
+  util.inherits(Base, Cache);
 
   /**
    * Static method for adding global plugin functions that will
@@ -447,7 +330,7 @@ function namespace(name) {
   /**
    * Similar to `util.inherit`, but copies all static properties,
    * prototype properties, and descriptors from `Provider` to `Receiver`.
-   * [class-utils][] for more details.
+   * [class-utils] for more details.
    *
    * @api public
    */

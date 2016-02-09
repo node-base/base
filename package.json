@@ -24,15 +24,10 @@
     "test": "mocha"
   },
   "dependencies": {
+    "cache-base": "^0.7.2",
     "class-utils": "^0.3.0",
-    "collection-visit": "^0.2.1",
-    "component-emitter": "^1.2.0",
     "define-property": "^0.2.5",
-    "get-value": "^2.0.3",
-    "lazy-cache": "^1.0.3",
-    "set-value": "^0.3.3",
-    "to-object-path": "^0.2.0",
-    "unset-value": "^0.1.1"
+    "lazy-cache": "^1.0.3"
   },
   "devDependencies": {
     "gulp": "^3.9.0",
