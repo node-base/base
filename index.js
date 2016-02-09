@@ -47,6 +47,7 @@ function namespace(name) {
     initBase: function(config) {
       this.define('_callbacks', this._callbacks);
       this.define('registered', {});
+      this.is('base');
 
       this.options = this.options || {};
       this.cache = this.cache || {};

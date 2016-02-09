@@ -38,6 +38,11 @@ describe('constructor', function() {
     });
     assert.equal(base.foo, 'bar');
   });
+
+  it('should set isBase on the instance', function() {
+    base = new Base();
+    assert.equal(base.isBase, true);
+  });
 });
 
 describe('static properties', function() {
