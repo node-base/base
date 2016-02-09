@@ -24,8 +24,8 @@
     "test": "mocha"
   },
   "dependencies": {
-    "cache-base": "^0.7.2",
-    "class-utils": "^0.3.0",
+    "cache-base": "^0.8.0",
+    "class-utils": "^0.3.1",
     "define-property": "^0.2.5",
     "lazy-cache": "^1.0.3"
   },
@@ -51,12 +51,17 @@
     "visit"
   ],
   "verb": {
+    "toc": true,
+    "layout": "default",
+    "tasks": [
+      "readme"
+    ],
     "plugins": [
       "gulp-format-md"
     ],
-    "layout": "default",
     "related": {
       "description": "There are a number of different plugins available for extending base. Let us know if you create your own!",
+      "hightlight": "generate",
       "list": [
         "base-argv",
         "base-cli",
@@ -64,16 +69,23 @@
         "base-cwd",
         "base-data",
         "base-fs",
+        "base-fs-rename",
+        "base-generators",
         "base-list",
-        "base-options",
+        "base-option",
         "base-pipeline",
+        "base-pkg",
         "base-plugins",
+        "base-project",
         "base-questions",
         "base-runner",
         "base-store",
-        "base-tasks",
+        "base-task",
         "base-tree"
       ]
-    }
+    },
+    "reflinks": [
+      "cache-base"
+    ]
   }
 }
