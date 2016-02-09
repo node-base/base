@@ -312,7 +312,33 @@ describe('prototype methods', function() {
     it('should not call a plugin more than once on the same instance', function() {
       base.i = 0;
       function plugin(app) {
-        if (app.isRegistered('foo', true)) return;
+        if (app.isRegistered('foo')) return;
+        base.i++;
+      }
+
+      base.use(plugin);
+      base.use(plugin);
+      base.use(plugin);
+      base.use(plugin);
+
+      assert.equal(base.i, 1);
+    });
+
+    it('should not register a plugin when `false` is passed as the 2nd arg', function() {
+      function plugin(app) {
+        if (app.isRegistered('foo', false)) return;
+        this.foo = 'bar';
+      }
+
+      base.use(plugin);
+      assert(!base.registered.hasOwnProperty('foo'));
+      assert.equal(base.foo, 'bar');
+    });
+
+    it('should not call a plugin more than once on the same instance', function() {
+      base.i = 0;
+      function plugin(app) {
+        if (app.isRegistered('foo')) return;
         base.i++;
       }
 

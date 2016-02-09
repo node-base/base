@@ -123,7 +123,7 @@ function namespace(name) {
       if (this.registered.hasOwnProperty(name)) {
         return true;
       }
-      if (register === true) {
+      if (register !== false) {
         this.registered[name] = true;
         this.emit('plugin', name);
       }
