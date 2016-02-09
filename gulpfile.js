@@ -14,7 +14,11 @@ gulp.task('coverage', function() {
 gulp.task('mocha', ['coverage'], function() {
   return gulp.src('test.js')
     .pipe(mocha())
-    .pipe(istanbul.writeReports());
+    .pipe(istanbul.writeReports())
+    .pipe(istanbul.writeReports({
+      reporters: [ 'text', 'text-summary' ],
+      reportOpts: {dir: 'coverage', file: 'summary.txt'}
+    }))
 });
 
 gulp.task('eslint', function() {
