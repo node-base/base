@@ -277,6 +277,7 @@ function namespace(name) {
 
     Ctor.prototype.mixin = function(key, value) {
       Ctor.prototype[key] = value;
+      return this;
     };
 
     Ctor.mixins = function(Child) {
