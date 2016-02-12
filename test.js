@@ -521,6 +521,40 @@ describe('mixin', function() {
     assert(typeof base.xyz !== 'function');
   });
 
+  it('should chain calls to mixin:', function() {
+    function Foo() {
+      Base.call(this);
+    }
+    Base.extend(Foo);
+
+    var base = new Base();
+    var foo = new Foo();
+
+    base.mixin('abc', function() {})
+      .mixin('def', function() {});
+
+    foo.mixin('xyz', function() {})
+      .mixin('uvw', function() {});
+
+    assert.equal(typeof Base.prototype.abc, 'function');
+    assert.equal(typeof Base.prototype.def, 'function');
+    assert.equal(typeof Foo.prototype.abc, 'function');
+    assert.equal(typeof Foo.prototype.def, 'function');
+    assert.equal(typeof base.abc, 'function');
+    assert.equal(typeof base.def, 'function');
+    assert.equal(typeof foo.abc, 'function');
+    assert.equal(typeof foo.def, 'function');
+
+    assert(typeof Base.prototype.xyz !== 'function');
+    assert(typeof Base.prototype.uvw !== 'function');
+    assert.equal(typeof Foo.prototype.xyz, 'function');
+    assert.equal(typeof Foo.prototype.uvw, 'function');
+    assert.equal(typeof foo.xyz, 'function');
+    assert.equal(typeof foo.uvw, 'function');
+    assert(typeof base.xyz !== 'function');
+    assert(typeof base.uvw !== 'function');
+  });
+
   it('should not add to Base.prototype from an inheriting app:', function() {
     function Foo() {
       Base.call(this);
