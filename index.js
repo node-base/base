@@ -34,208 +34,204 @@ function namespace(name) {
   }
 
   /**
-   * Prototype methods
-   */
-
-  Base.prototype = {
-    constructor: Base,
-
-    /**
-     * Initialize `Base` defaults with the given `config` object
-     */
-
-    initBase: function(config) {
-      this.define('_callbacks', this._callbacks);
-      this.define('registered', {});
-      this.is('base');
-
-      this.options = this.options || {};
-      this.cache = this.cache || {};
-
-      if (name) this[name] = {};
-      if (typeof config === 'object') {
-        this.visit('set', config);
-      }
-      utils.run(this, 'use', fns);
-    },
-
-    /**
-     * Set the given `name` on `app._name` and `app.is*` properties. Used for doing
-     * lookups in plugins.
-     *
-     * ```js
-     * app.is('foo');
-     * console.log(app._name);
-     * //=> 'foo'
-     * console.log(app.isFoo);
-     * //=> true
-     * app.is('bar');
-     * console.log(app.isFoo);
-     * //=> true
-     * console.log(app.isBar);
-     * //=> true
-     * console.log(app._name);
-     * //=> 'bar'
-     * ```
-     * @name .is
-     * @param {String} `name`
-     * @return {Boolean}
-     * @api public
-     */
-
-    is: function(name) {
-      name = name.toLowerCase();
-      var ctor = name.charAt(0).toUpperCase() + name.slice(1);
-      this.define('is' + ctor, true);
-      this.define('_name', name);
-      this.define('_appname', name);
-      return this;
-    },
-
-    /**
-     * Returns true if a plugin has already been registered on an instance.
-     *
-     * Plugin implementors are encouraged to use this first thing in a plugin
-     * to prevent the plugin from being called more than once on the same
-     * instance.
-     *
-     * ```js
-     * var base = new Base();
-     * base.use(function(app) {
-     *   if (app.isRegistered('myPlugin')) return;
-     *   // do stuff to `app`
-     * });
-     *
-     * // to also record the plugin as being registered
-     * base.use(function(app) {
-     *   if (app.isRegistered('myPlugin', true)) return;
-     *   // do stuff to `app`
-     * });
-     * ```
-     * @name .isRegistered
-     * @emits `plugin` Emits the name of the plugin.
-     * @param {String} `name` The plugin name.
-     * @param {Boolean} `register` If the plugin if not already registered, to record it as being registered pass `true` as the second argument.
-     * @return {Boolean} Returns true if a plugin is already registered.
-     * @api public
-     */
-
-    isRegistered: function(name, register) {
-      if (this.registered.hasOwnProperty(name)) {
-        return true;
-      }
-      if (register !== false) {
-        this.registered[name] = true;
-        this.emit('plugin', name);
-      }
-      return false;
-    },
-
-    /**
-     * Define a plugin function to be called immediately upon init.
-     * Plugins are chainable and the only parameter exposed to the
-     * plugin is the application instance.
-     *
-     * ```js
-     * var app = new Base()
-     *   .use(foo)
-     *   .use(bar)
-     *   .use(baz)
-     * ```
-     * @name .use
-     * @emits `use` with no arguments.
-     * @param {Function} `fn` plugin function to call
-     * @return {Object} Returns the item instance for chaining.
-     * @api public
-     */
-
-    use: function(fn) {
-      fn.call(this, this);
-      this.emit('use');
-      return this;
-    },
-
-    /**
-     * Lazily invoke a registered plugin. **Note** that this method can only
-     * be used with:
-     *
-     * 1. plugins that _add a single method or property_ to `app`
-     * 2. plugins that do not (themselves) add a getter/setter property (they're already lazy)
-     * 3. plugins that do not return a function
-     *
-     * ```js
-     * app.lazy('store', require('base-store'));
-     * ```
-     * @name .lazy
-     * @param {String} `prop` The name of the property or method added by the plugin.
-     * @param {Function} `fn` The plugin function
-     * @param {Object} `options` Options to use when the plugin is invoked.
-     * @return {Object} Returns the instance for chaining
-     * @api public
-     */
-
-    lazy: function(prop, fn, opts) {
-      this.define(prop, {
-        configurable: true,
-        set: function(val) {
-          this.define(prop, val);
-        },
-        get: function() {
-          this.use(fn(opts));
-          return this[prop];
-        }
-      });
-      return this;
-    },
-
-    /**
-     * Define a non-enumerable property on the instance. Dot-notation
-     * is **not supported** with `define`.
-     *
-     * ```js
-     * // arbitrary `render` function using lodash `template`
-     * define('render', function(str, locals) {
-     *   return _.template(str)(locals);
-     * });
-     * ```
-     * @name .define
-     * @emits `define` with `key` and `value` as arguments.
-     * @param {String} `key` The name of the property to define.
-     * @param {any} `value`
-     * @return {Object} Returns the instance for chaining.
-     * @api public
-     */
-
-    define: function(key, val) {
-      this.emit('define', key, val);
-      utils.define(this, key, val);
-      return this;
-    },
-
-    /**
-     * Mix property `key` onto the Base prototype. If base-methods
-     * is inherited using `Base.extend` this method will be overridden
-     * by a new `mixin` method that will only add properties to the
-     * prototype of the inheriting application.
-     *
-     * @name .mixin
-     * @param {String} `key`
-     * @param {Object|Array} `val`
-     * @return {Object} Returns the instance for chaining.
-     * @api public
-     */
-
-    mixin: function(key, val) {
-      Base.prototype[key] = val;
-      return this;
-    }
-  };
-
-  /**
    * Inherit cache-base
    */
 
   util.inherits(Base, Cache);
+
+  /**
+   * Prototype methods
+   */
+
+  /**
+   * Initialize `Base` defaults with the given `config` object
+   */
+
+  Base.prototype.initBase = function(config) {
+    this.define('_callbacks', this._callbacks);
+    this.define('registered', {});
+    this.is('base');
+
+    this.options = this.options || {};
+    this.cache = this.cache || {};
+
+    if (name) this[name] = {};
+    if (typeof config === 'object') {
+      this.visit('set', config);
+    }
+    utils.run(this, 'use', fns);
+  };
+
+  /**
+   * Set the given `name` on `app._name` and `app.is*` properties. Used for doing
+   * lookups in plugins.
+   *
+   * ```js
+   * app.is('foo');
+   * console.log(app._name);
+   * //=> 'foo'
+   * console.log(app.isFoo);
+   * //=> true
+   * app.is('bar');
+   * console.log(app.isFoo);
+   * //=> true
+   * console.log(app.isBar);
+   * //=> true
+   * console.log(app._name);
+   * //=> 'bar'
+   * ```
+   * @name .is
+   * @param {String} `name`
+   * @return {Boolean}
+   * @api public
+   */
+
+  Base.prototype.is = function(name) {
+    name = name.toLowerCase();
+    var ctor = name.charAt(0).toUpperCase() + name.slice(1);
+    this.define('is' + ctor, true);
+    this.define('_name', name);
+    this.define('_appname', name);
+    return this;
+  };
+
+  /**
+   * Returns true if a plugin has already been registered on an instance.
+   *
+   * Plugin implementors are encouraged to use this first thing in a plugin
+   * to prevent the plugin from being called more than once on the same
+   * instance.
+   *
+   * ```js
+   * var base = new Base();
+   * base.use(function(app) {
+   *   if (app.isRegistered('myPlugin')) return;
+   *   // do stuff to `app`
+   * });
+   *
+   * // to also record the plugin as being registered
+   * base.use(function(app) {
+   *   if (app.isRegistered('myPlugin', true)) return;
+   *   // do stuff to `app`
+   * });
+   * ```
+   * @name .isRegistered
+   * @emits `plugin` Emits the name of the plugin.
+   * @param {String} `name` The plugin name.
+   * @param {Boolean} `register` If the plugin if not already registered, to record it as being registered pass `true` as the second argument.
+   * @return {Boolean} Returns true if a plugin is already registered.
+   * @api public
+   */
+
+  Base.prototype.isRegistered = function(name, register) {
+    if (this.registered.hasOwnProperty(name)) {
+      return true;
+    }
+    if (register !== false) {
+      this.registered[name] = true;
+      this.emit('plugin', name);
+    }
+    return false;
+  };
+
+  /**
+   * Define a plugin function to be called immediately upon init.
+   * Plugins are chainable and the only parameter exposed to the
+   * plugin is the application instance.
+   *
+   * ```js
+   * var app = new Base()
+   *   .use(foo)
+   *   .use(bar)
+   *   .use(baz)
+   * ```
+   * @name .use
+   * @emits `use` with no arguments.
+   * @param {Function} `fn` plugin function to call
+   * @return {Object} Returns the item instance for chaining.
+   * @api public
+   */
+
+  Base.prototype.use = function(fn) {
+    fn.call(this, this);
+    this.emit('use');
+    return this;
+  };
+
+  /**
+   * Lazily invoke a registered plugin. **Note** that this method can only
+   * be used with:
+   *
+   * 1. plugins that _add a single method or property_ to `app`
+   * 2. plugins that do not (themselves) add a getter/setter property (they're already lazy)
+   * 3. plugins that do not return a function
+   *
+   * ```js
+   * app.lazy('store', require('base-store'));
+   * ```
+   * @name .lazy
+   * @param {String} `prop` The name of the property or method added by the plugin.
+   * @param {Function} `fn` The plugin function
+   * @param {Object} `options` Options to use when the plugin is invoked.
+   * @return {Object} Returns the instance for chaining
+   * @api public
+   */
+
+  Base.prototype.lazy = function(prop, fn, opts) {
+    this.define(prop, {
+      configurable: true,
+      set: function(val) {
+        this.define(prop, val);
+      },
+      get: function() {
+        this.use(fn(opts));
+        return this[prop];
+      }
+    });
+    return this;
+  };
+
+  /**
+   * Define a non-enumerable property on the instance. Dot-notation
+   * is **not supported** with `define`.
+   *
+   * ```js
+   * // arbitrary `render` function using lodash `template`
+   * define('render', function(str, locals) {
+   *   return _.template(str)(locals);
+   * });
+   * ```
+   * @name .define
+   * @emits `define` with `key` and `value` as arguments.
+   * @param {String} `key` The name of the property to define.
+   * @param {any} `value`
+   * @return {Object} Returns the instance for chaining.
+   * @api public
+   */
+
+  Base.prototype.define = function(key, val) {
+    this.emit('define', key, val);
+    utils.define(this, key, val);
+    return this;
+  };
+
+  /**
+   * Mix property `key` onto the Base prototype. If base-methods
+   * is inherited using `Base.extend` this method will be overridden
+   * by a new `mixin` method that will only add properties to the
+   * prototype of the inheriting application.
+   *
+   * @name .mixin
+   * @param {String} `key`
+   * @param {Object|Array} `val`
+   * @return {Object} Returns the instance for chaining.
+   * @api public
+   */
+
+  Base.prototype.mixin = function(key, val) {
+    Base.prototype[key] = val;
+    return this;
+  };
 
   /**
    * Static method for adding global plugin functions that will
