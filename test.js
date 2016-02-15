@@ -742,7 +742,7 @@ describe('lazy', function() {
       return function() {
         this.foo = 'bar';
         idx++;
-      }
+      };
     }
 
     assert.equal(idx, 0);
@@ -759,7 +759,7 @@ describe('lazy', function() {
         this.foo = {};
         this.foo.bar = 'baz';
         idx++;
-      }
+      };
     }
 
     assert.equal(idx, 0);
