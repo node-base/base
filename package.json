@@ -7,6 +7,10 @@
   "contributors": [
     "Brian Woodward (https://github.com/doowb)"
   ],
+  "maintainers": [
+    "Brian Woodward (https://github.com/doowb)",
+    "Jon Schlinkert (https://github.com/jonschlinkert)"
+  ],
   "repository": "node-base/base",
   "bugs": {
     "url": "https://github.com/node-base/base/issues"
@@ -52,6 +56,7 @@
     "visit"
   ],
   "verb": {
+    "run": true,
     "toc": true,
     "layout": "default",
     "tasks": [
@@ -86,10 +91,15 @@
       ]
     },
     "reflinks": [
-      "cache-base"
+      "cache-base",
+      "verb",
+      "class-utils"
     ],
     "helpers": [
       "helper-coverage"
-    ]
+    ],
+    "lint": {
+      "reflinks": true
+    }
   }
 }
