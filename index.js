@@ -135,6 +135,28 @@ function namespace(name) {
   };
 
   /**
+   * Throws an error when plugin `name` is not registered.
+   *
+   * ```js
+   * var base = new Base();
+   * base.use(function(app) {
+   *   app.assertPlugin('base-foo');
+   *   app.assertPlugin('base-bar');
+   *   app.assertPlugin('base-baz');
+   * });
+   * ```
+   * @name .assertPlugin
+   * @param {String} `name` The plugin name.
+   * @api public
+   */
+
+  Base.prototype.assertPlugin = function(name) {
+    if (!this.registered.hasOwnProperty(name)) {
+      throw new Error(`expected plugin ${name} to be registered`);
+    }
+  };
+
+  /**
    * Define a plugin function to be called immediately upon init.
    * Plugins are chainable and the only parameter exposed to the
    * plugin is the application instance.
