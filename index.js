@@ -152,7 +152,7 @@ function namespace(name) {
 
   Base.prototype.assertPlugin = function(name) {
     if (!this.registered.hasOwnProperty(name)) {
-      throw new Error(`expected plugin ${name} to be registered`);
+      throw new Error('expected plugin ' + name + ' to be registered');
     }
   };
 
