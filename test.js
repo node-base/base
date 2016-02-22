@@ -354,6 +354,41 @@ describe('prototype methods', function() {
 
       assert.equal(base.i, 1);
     });
+
+    it('should not throw an error when a plugin is registered and checked with `assertPlugin`', function() {
+      function fooPlugin(app) {
+        if (app.isRegistered('foo')) return;
+        base.foo = 'foo';
+      }
+
+      function barPlugin(app) {
+        if (app.isRegistered('bar')) return;
+        app.assertPlugin('foo');
+        base.foo = base.foo + 'bar';
+      }
+
+      base.use(fooPlugin);
+      base.use(barPlugin);
+
+      assert.equal(base.foo, 'foobar');
+    });
+
+    it('should throw an error when a plugin is not registered and checked with `assertPlugin`', function(cb) {
+      function barPlugin(app) {
+        if (app.isRegistered('bar')) return;
+        app.assertPlugin('foo');
+        base.foo = base.foo + 'bar';
+      }
+
+      try {
+        base.use(barPlugin);
+        cb(new Error('expected an error'));
+      } catch (err) {
+        assert(err);
+        assert.equal(err.message, 'expected plugin foo to be registered');
+        cb();
+      }
+    });
   });
 
   describe('set', function() {
