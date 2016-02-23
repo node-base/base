@@ -91,9 +91,9 @@ function namespace(name) {
     this.define('_name', name);
     this.define('_appname', name);
 
-    this._namespace = this._name;
+    this.define('_namespace', this._name);
     utils.namespace(this, parent);
-    this.debug = debug(this._namespace);
+    this.define('debug', debug(this._namespace));
 
     this.debug.append = function(prop) {
       this.namespace = parent + ':' + prop;
