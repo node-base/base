@@ -351,6 +351,30 @@ describe('prototype methods', function() {
       var baz = new Baz();
       assert.equal(baz.debug.namespace, 'base:foo:bar');
     });
+
+    it('should append a custom debug namespace', function() {
+      function Foo(options) {
+        Base.call(this, null, options);
+        this.is('foo');
+      }
+      Base.extend(Foo);
+
+      function Bar(options) {
+        Foo.call(this, options);
+        this.is('bar');
+      }
+      Foo.extend(Bar);
+
+      function Baz(options) {
+        Bar.call(this, options);
+        this.is('bar');
+        this.debug.append('a:b:c');
+      }
+      Bar.extend(Baz);
+
+      var baz = new Baz();
+      assert.equal(baz.debug.namespace, 'base:foo:bar:a:b:c');
+    });
   });
 
   describe('use', function() {

@@ -8,6 +8,7 @@ require = utils; // eslint-disable-line
  * Lazily required module dependencies
  */
 
+require('arr-union', 'union');
 require('cache-base', 'Cache');
 require('define-property', 'define');
 require('class-utils', 'cu');
@@ -35,14 +36,11 @@ utils.pascal = function(name) {
 };
 
 utils.namespace = function(app, parent) {
-  if (parent) {
-    var segs = parent.split(':');
-    if (segs[segs.length - 1] !== app._name) {
-      app._namespace = parent + ':' + app._name;
-    } else {
-      app._namespace = parent;
-    }
-  }
+  var parentSegs = parent ? parent.split(':') : [];
+  var segs = app._name.split(':');
+
+  var namespace = utils.union([], parentSegs, segs);
+  app._namespace = namespace.join(':');
 };
 
 /**

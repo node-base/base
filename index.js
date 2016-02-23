@@ -93,8 +93,11 @@ function namespace(name) {
 
     this._namespace = this._name;
     utils.namespace(this, parent);
-
     this.debug = debug(this._namespace);
+
+    this.debug.append = function(prop) {
+      this.namespace = parent + ':' + prop;
+    };
     return this;
   };
 
