@@ -1,7 +1,7 @@
 {
   "name": "base",
   "description": "base is the foundation for creating modular, unit testable and highly pluggable node.js applications, starting with a handful of common methods, like `set`, `get`, `del` and `use`.",
-  "version": "0.7.6",
+  "version": "0.7.7",
   "homepage": "https://github.com/node-base/base",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
   "contributors": [
