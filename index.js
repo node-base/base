@@ -1,5 +1,6 @@
 'use strict';
 
+var debug = require('debug');
 var util = require('util');
 
 function namespace(name) {
@@ -25,12 +26,12 @@ function namespace(name) {
    * @api public
    */
 
-  function Base(config) {
+  function Base(config, options) {
     if (!(this instanceof Base)) {
       return new Base(config);
     }
     Cache.call(this, config);
-    this.initBase(config);
+    this.initBase(config, options);
   }
 
   /**
@@ -40,20 +41,16 @@ function namespace(name) {
   util.inherits(Base, Cache);
 
   /**
-   * Prototype methods
-   */
-
-  /**
    * Initialize `Base` defaults with the given `config` object
    */
 
-  Base.prototype.initBase = function(config) {
+  Base.prototype.initBase = function(config, options) {
+    this.options = utils.merge({}, this.options, options);
+    this.cache = this.cache || {};
+
+    this.is('base');
     this.define('_callbacks', this._callbacks);
     this.define('registered', {});
-    this.is('base');
-
-    this.options = this.options || {};
-    this.cache = this.cache || {};
 
     if (name) this[name] = {};
     if (typeof config === 'object') {
@@ -87,11 +84,17 @@ function namespace(name) {
    */
 
   Base.prototype.is = function(name) {
+    var parent = (this._namespace || this._name || '').toLowerCase();
+
     name = name.toLowerCase();
-    var ctor = name.charAt(0).toUpperCase() + name.slice(1);
-    this.define('is' + ctor, true);
+    this.define('is' + utils.pascal(name), true);
     this.define('_name', name);
     this.define('_appname', name);
+
+    this._namespace = this._name;
+    utils.namespace(this, parent);
+
+    this.debug = debug(this._namespace);
     return this;
   };
 

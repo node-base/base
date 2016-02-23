@@ -11,6 +11,7 @@ require = utils; // eslint-disable-line
 require('cache-base', 'Cache');
 require('define-property', 'define');
 require('class-utils', 'cu');
+require('mixin-deep', 'merge');
 require = fn; // eslint-disable-line
 
 /**
@@ -26,6 +27,19 @@ utils.run = function(obj, prop, arr) {
   var len = arr.length, i = 0;
   while (len--) {
     obj[prop](arr[i++]);
+  }
+};
+
+utils.pascal = function(name) {
+  return name.charAt(0).toUpperCase() + name.slice(1);
+};
+
+utils.namespace = function(app, parent) {
+  if (parent) {
+    var segs = parent.split(':');
+    if (segs[segs.length - 1] !== app._name) {
+      app._namespace = parent + ':' + app._name;
+    }
   }
 };
 

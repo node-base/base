@@ -3,6 +3,7 @@
 require('mocha');
 require('should');
 var assert = require('assert');
+var utils = require('./utils');
 var Base = require('./');
 var base;
 
@@ -30,6 +31,29 @@ describe('constructor', function() {
     base = new Base([{foo: 'bar'}, {baz: 'qux'}]);
     assert.equal(base.foo, 'bar');
     assert.equal(base.baz, 'qux');
+  });
+
+  it('should set options passed as the second argument', function() {
+    base = new Base(null, {abc: 'xyz'});
+    assert.equal(base.options.abc, 'xyz');
+  });
+
+  it('should merge options throughout the inheritance chain', function() {
+    function Foo(options) {
+      Base.call(this, null, options);
+      this.options.x = 'y';
+    }
+    Base.extend(Foo);
+
+    function Bar(options) {
+      Foo.call(this, options);
+    }
+    Foo.extend(Bar);
+
+    var bar = new Bar({a: 'b'});
+
+    assert.equal(bar.options.a, 'b');
+    assert.equal(bar.options.x, 'y');
   });
 
   it('should add foo', function() {
@@ -277,6 +301,33 @@ describe('prototype methods', function() {
     var Ctor = require('./');
     Base = Ctor.namespace();
     base = new Base();
+  });
+
+  describe('debug', function() {
+    beforeEach(function() {
+      base = new Base();
+    });
+
+    it('should expose a `debug` method', function() {
+      assert.equal(typeof base.debug, 'function');
+    });
+
+    it('should append child namespaces', function() {
+      function Foo(options) {
+        Base.call(this, null, options);
+        this.is('foo');
+      }
+      Base.extend(Foo);
+
+      function Bar(options) {
+        Foo.call(this, options);
+        this.is('bar');
+      }
+      Foo.extend(Bar);
+
+      var bar = new Bar();
+      assert.equal(bar.debug.namespace, 'base:foo:bar');
+    });
   });
 
   describe('use', function() {
