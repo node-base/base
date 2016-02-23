@@ -315,10 +315,10 @@ prototype properties, and descriptors from `Provider` to `Receiver`.
 ## Test coverage
 
 ```
-Statements   : 100% ( 83/83 )
-Branches     : 100% ( 22/22 )
-Functions    : 100% ( 19/19 )
-Lines        : 100% ( 82/82 )
+Statements   : 100% ( 107/107 )
+Branches     : 100% ( 29/29 )
+Functions    : 100% ( 22/22 )
+Lines        : 100% ( 106/106 )
 ```
 
 ## Related projects

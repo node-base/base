@@ -39,6 +39,8 @@ utils.namespace = function(app, parent) {
     var segs = parent.split(':');
     if (segs[segs.length - 1] !== app._name) {
       app._namespace = parent + ':' + app._name;
+    } else {
+      app._namespace = parent;
     }
   }
 };

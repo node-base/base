@@ -328,6 +328,29 @@ describe('prototype methods', function() {
       var bar = new Bar();
       assert.equal(bar.debug.namespace, 'base:foo:bar');
     });
+
+    it('should not double-append the same child namespace', function() {
+      function Foo(options) {
+        Base.call(this, null, options);
+        this.is('foo');
+      }
+      Base.extend(Foo);
+
+      function Bar(options) {
+        Foo.call(this, options);
+        this.is('bar');
+      }
+      Foo.extend(Bar);
+
+      function Baz(options) {
+        Bar.call(this, options);
+        this.is('bar');
+      }
+      Bar.extend(Baz);
+
+      var baz = new Baz();
+      assert.equal(baz.debug.namespace, 'base:foo:bar');
+    });
   });
 
   describe('use', function() {
