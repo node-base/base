@@ -13,22 +13,33 @@ function namespace(name) {
   }
 
   /**
-   * Create an instance of `Base` with `options`.
+   * Create an instance of `Base` with `config` and `options`.
    *
    * ```js
-   * var app = new Base();
+   * var app = new Base({baz: 'qux'}, {yeah: 123, nope: 456});
+   *
    * app.set('foo', 'bar');
-   * console.log(app.get('foo'));
-   * //=> 'bar'
+   *
+   * console.log(app.get('foo')); //=> 'bar'
+   * console.log(app.get('baz')); //=> 'qux'
+   * console.log(app.get('yeah')); //=> undefined
+   *
+   * console.log(app.foo); //=> 'bar'
+   * console.log(app.baz); //=> 'qux'
+   * console.log(app.yeah); //=> undefined
+   *
+   * console.log(app.options.yeah); //=> 123
+   * console.log(app.options.nope); //=> 456
    * ```
    *
+   * @param {Object} `config` passed to [cache-base][]
    * @param {Object} `options`
    * @api public
    */
 
   function Base(config, options) {
     if (!(this instanceof Base)) {
-      return new Base(config);
+      return new Base(config, options);
     }
     Cache.call(this, config);
     this.initBase(config, options);
