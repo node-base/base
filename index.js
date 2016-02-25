@@ -13,7 +13,7 @@ function namespace(name) {
   }
 
   /**
-   * Create an instance of `Base` with `options`.
+   * Create an instance of `Base` with `config` and `options`.
    *
    * ```js
    * var app = new Base();
@@ -22,6 +22,7 @@ function namespace(name) {
    * //=> 'bar'
    * ```
    *
+   * @param {Object} `config` passed to [cache-base][]
    * @param {Object} `options`
    * @api public
    */
