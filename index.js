@@ -28,7 +28,7 @@ function namespace(name) {
 
   function Base(config, options) {
     if (!(this instanceof Base)) {
-      return new Base(config);
+      return new Base(config, options);
     }
     Cache.call(this, config);
     this.initBase(config, options);
