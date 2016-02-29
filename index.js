@@ -1,6 +1,5 @@
 'use strict';
 
-var debug = require('debug');
 var util = require('util');
 
 function namespace(name) {
@@ -96,19 +95,31 @@ function namespace(name) {
 
   Base.prototype.is = function(name) {
     var parent = (this._namespace || this._name || '').toLowerCase();
-
     name = name.toLowerCase();
+
     this.define('is' + utils.pascal(name), true);
     this.define('_name', name);
     this.define('_appname', name);
+    this.define('_namespace', name);
 
-    this.define('_namespace', this._name);
-    utils.namespace(this, parent);
-    this.define('debug', debug(this._namespace));
-
-    this.debug.append = function(prop) {
-      this.namespace = parent + ':' + prop;
-    };
+    // internal plugins
+    this.use(utils.namespacePlugin(parent));
+    this.use(utils.debugPlugin([
+      'collection',
+      'context',
+      'engine',
+      'helper',
+      'helpers',
+      'item',
+      'layout',
+      'list',
+      'lookup',
+      'plugin',
+      'render',
+      'routes',
+      'view',
+      'views'
+    ]));
     return this;
   };
 
