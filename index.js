@@ -104,22 +104,7 @@ function namespace(name) {
 
     // internal plugins
     this.use(utils.namespacePlugin(parent));
-    this.use(utils.debugPlugin([
-      'collection',
-      'context',
-      'engine',
-      'helper',
-      'helpers',
-      'item',
-      'layout',
-      'list',
-      'lookup',
-      'plugin',
-      'render',
-      'routes',
-      'view',
-      'views'
-    ]));
+    this.use(utils.debugPlugin());
     return this;
   };
 

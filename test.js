@@ -321,17 +321,6 @@ describe('prototype methods', function() {
       assert.equal(base._debugNamespace, 'base');
     });
 
-    it('should have built-in debug namespaced methods', function() {
-      var app = new Base();
-      var foo = app.debug.helper('loading foo helper');
-
-      assert.equal(app._debugNamespace, 'base:helper');
-      assert.equal(foo._debugNamespace, 'base:helper');
-      assert.notEqual(app._debugNamespace, app._namespace);
-      assert.notEqual(app._debugNamespace, foo._namespace);
-      assert.notEqual(foo._debugNamespace, foo._namespace);
-    });
-
     it('should not double-append the same child namespace', function() {
       function Foo() {
         Base.call(this);
@@ -399,30 +388,6 @@ describe('prototype methods', function() {
 
       var baz = new Baz();
       assert.equal(baz._debugNamespace, 'base:foo:bar:baz');
-    });
-
-    it.skip('should append a custom debug namespace', function() {
-      function Foo() {
-        Base.call(this);
-        this.is('foo');
-      }
-      Base.extend(Foo);
-
-      function Bar() {
-        Foo.call(this);
-        this.is('bar');
-      }
-      Foo.extend(Bar);
-
-      function Baz() {
-        Bar.call(this);
-        this.is('baz');
-        this.debug.append('a:b:c');
-      }
-      Bar.extend(Baz);
-
-      var baz = new Baz();
-      assert.equal(baz.debug.namespace, 'base:foo:bar:baz:a:b:c');
     });
   });
 
