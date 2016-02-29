@@ -85,8 +85,8 @@ utils.debugPlugin = function debugPlugin(namespaces) {
       return debugFactory.apply(app, arguments);
     });
     if (namespaces.length) {
-      var len = namespaces.length
-      var i = 0
+      var len = namespaces.length;
+      var i = 0;
 
       while (i < len) {
         var ns = namespaces[i++];

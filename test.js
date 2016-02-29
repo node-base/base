@@ -314,7 +314,7 @@ describe('prototype methods', function() {
     });
 
     it('should debug without arguments be base namespace', function() {
-      var app = base.debug()('foo bar baz')
+      var app = base.debug()('foo bar baz');
       assert.equal(app._namespace, 'base');
       assert.equal(base._namespace, 'base');
       assert.equal(app._debugNamespace, 'base');
