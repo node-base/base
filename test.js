@@ -1,10 +1,7 @@
 'use strict';
 
-require('mocha');
-require('should');
 var assert = require('assert');
-var utils = require('./utils');
-var Base = require('./');
+var Base = require('./index');
 var base;
 
 describe('constructor', function() {
@@ -312,68 +309,85 @@ describe('prototype methods', function() {
       assert.equal(typeof base.debug, 'function');
     });
 
-    it('should append child namespaces', function() {
-      function Foo(options) {
-        Base.call(this, null, options);
-        this.is('foo');
-      }
-      Base.extend(Foo);
+    it('should debug return a `debug` function', function() {
+      assert.equal(typeof base.debug('one'), 'function');
+    });
 
-      function Bar(options) {
-        Foo.call(this, options);
-        this.is('bar');
-      }
-      Foo.extend(Bar);
-
-      var bar = new Bar();
-      assert.equal(bar.debug.namespace, 'base:foo:bar');
+    it('should debug without arguments be base namespace', function() {
+      var app = base.debug()('foo bar baz');
+      assert.equal(app._namespace, 'base');
+      assert.equal(base._namespace, 'base');
+      assert.equal(app._debugNamespace, 'base');
+      assert.equal(base._debugNamespace, 'base');
     });
 
     it('should not double-append the same child namespace', function() {
-      function Foo(options) {
-        Base.call(this, null, options);
+      function Foo() {
+        Base.call(this);
         this.is('foo');
       }
       Base.extend(Foo);
 
-      function Bar(options) {
-        Foo.call(this, options);
+      function Bar() {
+        Foo.call(this);
         this.is('bar');
       }
       Foo.extend(Bar);
 
-      function Baz(options) {
-        Bar.call(this, options);
+      function Baz() {
+        Bar.call(this);
         this.is('bar');
       }
       Bar.extend(Baz);
 
       var baz = new Baz();
-      assert.equal(baz.debug.namespace, 'base:foo:bar');
+      assert.equal(baz._debugNamespace, 'base:foo:bar');
     });
 
-    it('should append a custom debug namespace', function() {
-      function Foo(options) {
-        Base.call(this, null, options);
+    it('should `debug` method return a new `debug` function', function() {
+      var one = base.debug('one');
+      var app1 = one('that is okey');
+      assert.equal(typeof one, 'function');
+      assert.equal(app1._debugNamespace, 'base:one');
+
+      /**
+       * Be careful with the order of calling the things
+       * if you move this two lines above respectively
+       * below `one` and below `app1`, then `app1._debugNamespace`
+       * will fail, that's logical.
+       *
+       * More guaranteed is always to lookup `app._namespace`, it is
+       * real app namespace, but not the `debug` namespace.
+       * One is sure, debug namespace is bigger and always starts
+       * with `app._namespace`.
+       */
+      var two = base.debug('one:two', 123, 'three', 'four:five');
+      var app2 = two('that is awesome');
+      assert.equal(typeof two, 'function');
+      assert.equal(app2._debugNamespace, 'base:one:two:three:four:five');
+    });
+
+    it('should append child namespaces', function() {
+      function Foo() {
+        Base.call(this);
         this.is('foo');
       }
       Base.extend(Foo);
 
-      function Bar(options) {
-        Foo.call(this, options);
+      function Bar() {
+        Foo.call(this);
         this.is('bar');
       }
       Foo.extend(Bar);
 
-      function Baz(options) {
-        Bar.call(this, options);
-        this.is('bar');
-        this.debug.append('a:b:c');
+      function Baz() {
+        Bar.call(this);
+        this.is('baz');
       }
       Bar.extend(Baz);
 
       var baz = new Baz();
-      assert.equal(baz.debug.namespace, 'base:foo:bar:a:b:c');
+      assert.equal(baz._debugNamespace, 'base:foo:bar:baz');
     });
   });
 
