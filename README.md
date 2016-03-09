@@ -72,7 +72,7 @@ console.log(app.cache.foo);
 
 All of the methods from [cache-base](https://github.com/jonschlinkert/cache-base)are exposed on the `base` API, as well as the following methods.
 
-### [Base](index.js#L40)
+### [Base](index.js#L41)
 
 Create an instance of `Base` with `config` and `options`.
 
@@ -100,7 +100,7 @@ console.log(app.options.yeah); //=> 123
 console.log(app.options.nope); //=> 456
 ```
 
-### [.is](index.js#L97)
+### [.is](index.js#L104)
 
 Set the given `name` on `app._name` and `app.is*` properties. Used for doing lookups in plugins.
 
@@ -126,7 +126,7 @@ console.log(app._name);
 //=> 'bar'
 ```
 
-### [.isRegistered](index.js#L143)
+### [.isRegistered](index.js#L155)
 
 Returns true if a plugin has already been registered on an instance.
 
@@ -160,7 +160,7 @@ base.use(function(app) {
 });
 ```
 
-### [.assertPlugin](index.js#L170)
+### [.assertPlugin](index.js#L182)
 
 Throws an error when plugin `name` is not registered.
 
@@ -179,7 +179,7 @@ base.use(function(app) {
 });
 ```
 
-### [.use](index.js#L194)
+### [.use](index.js#L206)
 
 Define a plugin function to be called immediately upon init. Plugins are chainable and the only parameter exposed to the plugin is the application instance.
 
@@ -201,7 +201,7 @@ var app = new Base()
   .use(baz)
 ```
 
-### [.lazy](index.js#L219)
+### [.lazy](index.js#L231)
 
 Lazily invoke a registered plugin. **Note** that this method can only be used with:
 
@@ -222,7 +222,7 @@ Lazily invoke a registered plugin. **Note** that this method can only be used wi
 app.lazy('store', require('base-store'));
 ```
 
-### [.define](index.js#L251)
+### [.define](index.js#L263)
 
 Define a non-enumerable property on the instance. Dot-notation is **not supported** with `define`.
 
@@ -245,7 +245,7 @@ define('render', function(str, locals) {
 });
 ```
 
-### [.mixin](index.js#L270)
+### [.mixin](index.js#L282)
 
 Mix property `key` onto the Base prototype. If base-methods
 is inherited using `Base.extend` this method will be overridden
@@ -258,7 +258,7 @@ prototype of the inheriting application.
 * `val` **{Object|Array}**
 * `returns` **{Object}**: Returns the instance for chaining.
 
-### [.use](index.js#L292)
+### [.use](index.js#L304)
 
 Static method for adding global plugin functions that will be added to an instance when created.
 
@@ -277,13 +277,13 @@ console.log(app.foo);
 //=> 'bar'
 ```
 
-### [.extend](index.js#L304)
+### [.extend](index.js#L316)
 
 Static method for inheriting both the prototype and
 static methods of the `Base` class. See [class-utils](https://github.com/jonschlinkert/class-utils)
 for more details.
 
-### [.Base.mixin](index.js#L342)
+### [.Base.mixin](index.js#L354)
 
 Static method for adding mixins to the prototype. When a function is returned from the mixin plugin, it will be added to an array so it can be used on inheriting classes via `Base.mixins(Child)`.
 
@@ -302,7 +302,7 @@ Base.mixin(function fn(proto) {
 });
 ```
 
-### [.Base.mixins](index.js#L363)
+### [.Base.mixins](index.js#L375)
 
 Static method for running currently saved global mixin functions against a child constructor.
 
@@ -317,7 +317,7 @@ Base.extend(Child);
 Base.mixins(Child);
 ```
 
-### [.inherit](index.js#L375)
+### [.inherit](index.js#L387)
 
 Similar to `util.inherit`, but copies all static properties,
 prototype properties, and descriptors from `Provider` to `Receiver`.
@@ -348,7 +348,7 @@ There are a number of different plugins available for extending base. Let us kno
 * [base-option](https://www.npmjs.com/package/base-option): Adds a few options methods to base, like `option`, `enable` and `disable`. See the readme… [more](https://www.npmjs.com/package/base-option) | [homepage](https://github.com/node-base/base-option)
 * [base-pipeline](https://www.npmjs.com/package/base-pipeline): base-methods plugin that adds pipeline and plugin methods for dynamically composing streaming plugin pipelines. | [homepage](https://github.com/jonschlinkert/base-pipeline)
 * [base-pkg](https://www.npmjs.com/package/base-pkg): Base plugin for adding a `pkg` object with get/set methods for getting data from package.json… [more](https://www.npmjs.com/package/base-pkg) | [homepage](https://github.com/jonschlinkert/base-pkg)
-* [base-plugins](https://www.npmjs.com/package/base-plugins): Upgrade's plugin support in base-methods to allow plugins to be called any time after init. | [homepage](https://github.com/jonschlinkert/base-plugins)
+* [base-plugins](https://www.npmjs.com/package/base-plugins): Upgrade's plugin support in base applications to allow plugins to be called any time after… [more](https://www.npmjs.com/package/base-plugins) | [homepage](https://github.com/jonschlinkert/base-plugins)
 * [base-project](https://www.npmjs.com/package/base-project): Base plugin that adds a `project` getter to the instance for getting the name of… [more](https://www.npmjs.com/package/base-project) | [homepage](https://github.com/jonschlinkert/base-project)
 * [base-questions](https://www.npmjs.com/package/base-questions): Plugin for base-methods that adds methods for prompting the user and storing the answers on… [more](https://www.npmjs.com/package/base-questions) | [homepage](https://github.com/jonschlinkert/base-questions)
 * [base-runner](https://www.npmjs.com/package/base-runner): Orchestrate multiple instances of base-methods at once. | [homepage](https://github.com/jonschlinkert/base-runner)
@@ -396,4 +396,4 @@ Released under the [MIT license](https://github.com/node-base/base/blob/master/L
 
 ***
 
-_This file was generated by [verb](https://github.com/verbose/verb), v0.9.0, on February 24, 2016._
+_This file was generated by [verb](https://github.com/verbose/verb), v0.9.0, on March 09, 2016._
