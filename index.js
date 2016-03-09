@@ -1,5 +1,6 @@
 'use strict';
 
+var Emitter = require('component-emitter');
 var debug = require('debug');
 var util = require('util');
 
@@ -52,6 +53,12 @@ function namespace(name) {
   util.inherits(Base, Cache);
 
   /**
+   * Add static emitter methods
+   */
+
+  Emitter(Base);
+
+  /**
    * Initialize `Base` defaults with the given `config` object
    */
 
@@ -95,9 +102,14 @@ function namespace(name) {
    */
 
   Base.prototype.is = function(name) {
-    var parent = (this._namespace || this._name || '').toLowerCase();
+    if (typeof name === 'function') {
+      this.constructor = name;
+      name = this.constructor.name.toLowerCase();
+    }
 
+    var parent = (this._namespace || this._name || '').toLowerCase();
     name = name.toLowerCase();
+
     this.define('is' + utils.pascal(name), true);
     this.define('_name', name);
     this.define('_appname', name);
@@ -373,6 +385,7 @@ function namespace(name) {
    */
 
   Base.inherit = utils.cu.inherit;
+  Base.bubble = utils.cu.bubble;
   return Base;
 }
 
