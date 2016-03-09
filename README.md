@@ -70,7 +70,7 @@ console.log(app.cache.foo);
 
 ## API
 
-All of the methods from [cache-base](https://github.com/jonschlinkert/cache-base)are exposed on the `base` API, as well as the following methods.
+All of the methods from [cache-base](https://github.com/jonschlinkert/cache-base) are exposed on the `base` API, as well as the following methods.
 
 ### [Base](index.js#L41)
 
@@ -321,7 +321,7 @@ Base.mixins(Child);
 
 Similar to `util.inherit`, but copies all static properties,
 prototype properties, and descriptors from `Provider` to `Receiver`.
-[class-utils](https://github.com/jonschlinkert/class-utils)for more details.
+[class-utils](https://github.com/jonschlinkert/class-utils) for more details.
 
 ## Test coverage
 
