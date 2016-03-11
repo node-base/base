@@ -285,6 +285,39 @@ function namespace(name) {
   };
 
   /**
+   * Getter/setter for a `base` (or shared) instance of `base` applications.
+   *
+   * This property only works when a "parent" instance is created on `app`.
+   * If `app.parent` is defined, the `base` getter ensures that the `base`
+   * instance is always the very first instance.
+   *
+   * ```js
+   * var a = new Base();
+   * a.foo = 'bar';
+   *
+   * var b = new Base();
+   * b.parent = a;
+   *
+   * var c = new Base();
+   * c.parent = b;
+   *
+   * console.log(c.foo);
+   * //=> undefined
+   * console.log(c.base.foo);
+   * //=> 'bar'
+   * ```
+   * @name .base
+   * @api public
+   */
+
+  Object.defineProperty(Base.prototype, 'base', {
+    configurable: true,
+    get: function() {
+      return this.parent ? this.parent.base : this;
+    }
+  });
+
+  /**
    * Static method for adding global plugin functions that will
    * be added to an instance when created.
    *

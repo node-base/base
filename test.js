@@ -94,7 +94,7 @@ describe('static properties', function() {
     assert.equal(typeof foo.extend, 'function');
   });
 
-  describe('extend', function() {
+  describe('.extend', function() {
     it('should set the extend method on the given object:', function() {
       function Ctor() {}
       Base.extend(Ctor);
@@ -102,7 +102,7 @@ describe('static properties', function() {
     });
   });
 
-  describe('use', function() {
+  describe('.use', function() {
     it('should set the use method on the given object:', function() {
       function Ctor() {}
       Base.extend(Ctor);
@@ -157,7 +157,7 @@ describe('static properties', function() {
     });
   });
 
-  describe('mixin', function() {
+  describe('.mixin', function() {
     it('should set the mixin method on the given object:', function() {
       function Ctor() {}
       Base.extend(Ctor);
@@ -186,7 +186,7 @@ describe('static properties', function() {
     });
   });
 
-  describe('mixins', function() {
+  describe('.mixins', function() {
     it('should set the mixins method on the given object:', function() {
       function Ctor() {}
       Base.extend(Ctor);
@@ -377,7 +377,7 @@ describe('prototype methods', function() {
     });
   });
 
-  describe('use', function() {
+  describe('.use', function() {
     beforeEach(function() {
       base = new Base();
     });
@@ -489,7 +489,7 @@ describe('prototype methods', function() {
     });
   });
 
-  describe('set', function() {
+  describe('.set', function() {
     it('should set a key-value pair on the instance:', function() {
       base.set('foo', 'bar');
       assert.equal(base.foo, 'bar');
@@ -511,7 +511,7 @@ describe('prototype methods', function() {
     });
   });
 
-  describe('get', function() {
+  describe('.get', function() {
     it('should get a property from the instance:', function() {
       base.set({a: 'b'});
       assert.equal(base.get('a'), 'b');
@@ -536,7 +536,7 @@ describe('prototype methods', function() {
     });
   });
 
-  describe('has', function() {
+  describe('.has', function() {
     it('should work with namespaces:', function() {
       var Ctor = require('./');
       Base = Ctor.namespace('cache');
@@ -570,7 +570,7 @@ describe('prototype methods', function() {
     });
   });
 
-  describe('visit', function() {
+  describe('.visit', function() {
     it('should visit an object with the given method:', function() {
       base.visit('set', {a: 'b', c: 'd'});
       assert.equal(base.get('a'), 'b');
@@ -583,7 +583,7 @@ describe('prototype methods', function() {
     });
   });
 
-  describe('del', function() {
+  describe('.del', function() {
     it('should remove a property:', function() {
       base.set({a: 'b'});
       assert.equal(base.a, 'b');
@@ -607,7 +607,7 @@ describe('prototype methods', function() {
   });
 });
 
-describe('mixin', function() {
+describe('.mixin', function() {
   beforeEach(function() {
     var Ctor = require('./');
     Base = Ctor.namespace();
@@ -850,7 +850,32 @@ describe('namespaces', function() {
   });
 });
 
-describe('is', function() {
+describe('.base', function() {
+  beforeEach(function() {
+    base = new Base();
+  });
+
+  it('should set a `base` property on the instance', function() {
+    assert(base.base);
+    assert.equal(typeof base.base, 'object');
+  });
+
+  it('should use `parent` to set app.base', function() {
+    var foo = new Base();
+    foo.abc = 'xyz';
+
+    var bar = new Base();
+    bar.parent = foo;
+
+    var baz = new Base();
+    baz.parent = bar;
+
+    assert(baz.base);
+    assert.equal(baz.base.abc, 'xyz');
+  });
+});
+
+describe('.is', function() {
   beforeEach(function() {
     var Ctor = require('./');
     Base = Ctor.namespace();
@@ -862,9 +887,21 @@ describe('is', function() {
     assert(base.isFoo);
     assert.equal(base.isFoo, true);
   });
+
+  it('should set name when argument is a constructor function', function() {
+    function Foo() {
+      Base.call(this);
+      this.is(Foo);
+    }
+    Base.extend(Foo);
+    var foo = new Foo();
+
+    assert(foo.isFoo);
+    assert.equal(foo.isFoo, true);
+  });
 });
 
-describe('lazy', function() {
+describe('.lazy', function() {
   beforeEach(function() {
     base = new Base();
   });
