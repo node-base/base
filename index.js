@@ -309,7 +309,7 @@ function namespace(name) {
    * @name .mixin
    * @param {String} `key`
    * @param {Object|Array} `val`
-   * @return {Object} Returns the instance for chaining.
+   * @return {Object} Returns the `base` instance for chaining.
    * @api public
    */
 
@@ -330,20 +330,35 @@ function namespace(name) {
    * console.log(app.foo);
    * //=> 'bar'
    * ```
-   *
-   * @param  {Function} `fn` Plugin function to use on each instance.
+   * @name #use
+   * @param {Function} `fn` Plugin function to use on each instance.
+   * @return {Object} Returns the `Base` constructor for chaining
    * @api public
    */
 
   Base.use = function(fn) {
     fns.push(fn);
+    return Base;
   };
 
   /**
-   * Static method for inheriting both the prototype and
-   * static methods of the `Base` class. See [class-utils][]
-   * for more details.
+   * Static method for inheriting both prototype and static methods
+   * of the `Base` class. See [class-utils][] for more details.
    *
+   * ```js
+   * var extend = cu.extend(Parent);
+   * Parent.extend(Child);
+   *
+   * // optional methods
+   * Parent.extend(Child, {
+   *   foo: function() {},
+   *   bar: function() {}
+   * });
+   * ```
+   * @name #extend
+   * @param {Function} `Ctor` constructor to extend
+   * @param {Object} `methods` Optional prototype properties to mix in.
+   * @return {Object} Returns the `Base` constructor for chaining
    * @api public
    */
 
@@ -364,6 +379,7 @@ function namespace(name) {
     Ctor.mixins = function(Child) {
       utils.run(Child, 'mixin', Ctor.prototype.mixins);
     };
+    return Base;
   });
 
   /**
@@ -380,9 +396,10 @@ function namespace(name) {
    * });
    * ```
    *
-   * @param  {Function} `fn` Function to call
+   * @name #mixin
+   * @param {Function} `fn` Function to call
+   * @return {Object} Returns the `Base` constructor for chaining
    * @api public
-   * @name  Base.mixin
    */
 
   Base.prototype.mixins = Base.prototype.mixins || [];
@@ -391,6 +408,7 @@ function namespace(name) {
     if (typeof mixin === 'function') {
       Base.prototype.mixins.push(mixin);
     }
+    return Base;
   };
 
   /**
@@ -400,21 +418,29 @@ function namespace(name) {
    * Base.extend(Child);
    * Base.mixins(Child);
    * ```
-   *
-   * @param  {Function} `Child` Constructor function of a child class
+   * @name #mixins
+   * @param {Function} `Child` Constructor function of a child class
+   * @return {Object} Returns the `Base` constructor for chaining
    * @api public
-   * @name  Base.mixins
    */
 
   Base.mixins = function(Child) {
     utils.run(Child, 'mixin', Base.prototype.mixins);
+    return Base;
   };
 
   /**
-   * Similar to `util.inherit`, but copies all static properties,
-   * prototype properties, and descriptors from `Provider` to `Receiver`.
-   * [class-utils] for more details.
+   * Similar to `util.inherit`, but copies all static properties, prototype
+   * properties, and descriptors from `Provider` to `Receiver`. [class-utils] for
+   * more details.
    *
+   * ```js
+   * Base.inherit(Foo, Bar);
+   * ```
+   * @name #inherit
+   * @param {Function} `Receiver` Receiving (child) constructor
+   * @param {Function} `Provider` Providing (parent) constructor
+   * @return {Object} Returns the `Base` constructor for chaining
    * @api public
    */
 
