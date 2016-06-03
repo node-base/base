@@ -32,10 +32,10 @@
     "cache-base": "^0.8.2",
     "class-utils": "^0.3.2",
     "component-emitter": "^1.2.0",
-    "debug": "^2.2.0",
     "define-property": "^0.2.5",
     "lazy-cache": "^1.0.3",
-    "mixin-deep": "^1.1.3"
+    "mixin-deep": "^1.1.3",
+    "pascalcase": "^0.1.1"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
@@ -45,7 +45,9 @@
     "gulp-mocha": "^2.2.0",
     "helper-coverage": "^0.1.3",
     "mocha": "^2.4.5",
-    "should": "^8.2.2"
+    "should": "^8.2.2",
+    "through2": "^2.0.1",
+    "verb-readme-generator": "^0.1.13"
   },
   "keywords": [
     "boilerplate",
@@ -61,7 +63,7 @@
   ],
   "verb": {
     "run": true,
-    "toc": true,
+    "toc": false,
     "layout": "default",
     "tasks": [
       "readme"
@@ -69,38 +71,34 @@
     "plugins": [
       "gulp-format-md"
     ],
+    "helpers": [
+      "helper-coverage"
+    ],
     "related": {
       "description": "There are a number of different plugins available for extending base. Let us know if you create your own!",
       "hightlight": "generate",
       "list": [
-        "base-argv",
-        "base-cli",
-        "base-config",
         "base-cwd",
         "base-data",
         "base-fs",
-        "base-fs-rename",
         "base-generators",
-        "base-list",
         "base-option",
         "base-pipeline",
         "base-pkg",
         "base-plugins",
-        "base-project",
         "base-questions",
-        "base-runner",
         "base-store",
-        "base-task",
-        "base-tree"
+        "base-task"
       ]
     },
     "reflinks": [
       "cache-base",
+      "class-utils",
       "verb",
-      "class-utils"
-    ],
-    "helpers": [
-      "helper-coverage"
+      "assemble",
+      "generate",
+      "scaffold",
+      "boilerplate"
     ],
     "lint": {
       "reflinks": true

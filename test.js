@@ -303,80 +303,6 @@ describe('prototype methods', function() {
     base = new Base();
   });
 
-  describe('debug', function() {
-    beforeEach(function() {
-      base = new Base();
-    });
-
-    it('should expose a `debug` method', function() {
-      assert.equal(typeof base.debug, 'function');
-    });
-
-    it('should append child namespaces', function() {
-      function Foo(options) {
-        Base.call(this, null, options);
-        this.is('foo');
-      }
-      Base.extend(Foo);
-
-      function Bar(options) {
-        Foo.call(this, options);
-        this.is('bar');
-      }
-      Foo.extend(Bar);
-
-      var bar = new Bar();
-      assert.equal(bar.debug.namespace, 'base:foo:bar');
-    });
-
-    it('should not double-append the same child namespace', function() {
-      function Foo(options) {
-        Base.call(this, null, options);
-        this.is('foo');
-      }
-      Base.extend(Foo);
-
-      function Bar(options) {
-        Foo.call(this, options);
-        this.is('bar');
-      }
-      Foo.extend(Bar);
-
-      function Baz(options) {
-        Bar.call(this, options);
-        this.is('bar');
-      }
-      Bar.extend(Baz);
-
-      var baz = new Baz();
-      assert.equal(baz.debug.namespace, 'base:foo:bar');
-    });
-
-    it('should append a custom debug namespace', function() {
-      function Foo(options) {
-        Base.call(this, null, options);
-        this.is('foo');
-      }
-      Base.extend(Foo);
-
-      function Bar(options) {
-        Foo.call(this, options);
-        this.is('bar');
-      }
-      Foo.extend(Bar);
-
-      function Baz(options) {
-        Bar.call(this, options);
-        this.is('bar');
-        this.debug.append('a:b:c');
-      }
-      Bar.extend(Baz);
-
-      var baz = new Baz();
-      assert.equal(baz.debug.namespace, 'base:foo:bar:a:b:c');
-    });
-  });
-
   describe('.use', function() {
     beforeEach(function() {
       base = new Base();
@@ -451,41 +377,6 @@ describe('prototype methods', function() {
       base.use(plugin);
 
       assert.equal(base.i, 1);
-    });
-
-    it('should not throw an error when a plugin is registered and checked with `assertPlugin`', function() {
-      function fooPlugin(app) {
-        if (app.isRegistered('foo')) return;
-        base.foo = 'foo';
-      }
-
-      function barPlugin(app) {
-        if (app.isRegistered('bar')) return;
-        app.assertPlugin('foo');
-        base.foo = base.foo + 'bar';
-      }
-
-      base.use(fooPlugin);
-      base.use(barPlugin);
-
-      assert.equal(base.foo, 'foobar');
-    });
-
-    it('should throw an error when a plugin is not registered and checked with `assertPlugin`', function(cb) {
-      function barPlugin(app) {
-        if (app.isRegistered('bar')) return;
-        app.assertPlugin('foo');
-        base.foo = base.foo + 'bar';
-      }
-
-      try {
-        base.use(barPlugin);
-        cb(new Error('expected an error'));
-      } catch (err) {
-        assert(err);
-        assert.equal(err.message, 'expected plugin foo to be registered');
-        cb();
-      }
     });
   });
 
@@ -887,57 +778,6 @@ describe('.is', function() {
     assert(base.isFoo);
     assert.equal(base.isFoo, true);
   });
-
-  it('should set name when argument is a constructor function', function() {
-    function Foo() {
-      Base.call(this);
-      this.is(Foo);
-    }
-    Base.extend(Foo);
-    var foo = new Foo();
-
-    assert(foo.isFoo);
-    assert.equal(foo.isFoo, true);
-  });
-});
-
-describe('.lazy', function() {
-  beforeEach(function() {
-    base = new Base();
-  });
-
-  it('should lazily invoke a plugin the first time its called', function() {
-    var idx = 0;
-    function plugin() {
-      return function() {
-        this.foo = 'bar';
-        idx++;
-      };
-    }
-
-    assert.equal(idx, 0);
-    base.lazy('foo', plugin);
-    assert.equal(idx, 0);
-    assert.equal(base.foo, 'bar');
-    assert.equal(idx, 1);
-  });
-
-  it('should lazily invoke a nested property the first time its parent is called', function() {
-    var idx = 0;
-    function plugin() {
-      return function() {
-        this.foo = {};
-        this.foo.bar = 'baz';
-        idx++;
-      };
-    }
-
-    assert.equal(idx, 0);
-    base.lazy('foo', plugin);
-    assert.equal(idx, 0);
-    assert.equal(base.foo.bar, 'baz');
-    assert.equal(idx, 1);
-  });
 });
 
 describe('events', function() {
@@ -953,23 +793,6 @@ describe('events', function() {
     base.emit('foo', 'bar');
   });
 
-  it('should emit use', function(cb) {
-    base.on('use', function(key, val) {
-      cb();
-    });
-    base.use(function() {});
-  });
-
-  it('should emit plugin', function(cb) {
-    base.on('plugin', function(key) {
-      assert.equal(key, 'foo');
-      cb();
-    });
-    base.use(function() {
-      this.isRegistered('foo', true);
-    });
-  });
-
   it('should emit set', function(cb) {
     base.on('set', function(key, val) {
       assert.equal(key, 'foo');
@@ -977,15 +800,6 @@ describe('events', function() {
       cb();
     });
     base.set('foo', 'bar');
-  });
-
-  it('should emit define', function(cb) {
-    base.on('define', function(key, val) {
-      assert.equal(key, 'foo');
-      assert.equal(val, 'bar');
-      cb();
-    });
-    base.define('foo', 'bar');
   });
 
   it('should emit get', function(cb) {

@@ -13,6 +13,7 @@ require('cache-base', 'Cache');
 require('define-property', 'define');
 require('class-utils', 'cu');
 require('mixin-deep', 'merge');
+require('pascalcase', 'pascal');
 require = fn; // eslint-disable-line
 
 /**
@@ -29,18 +30,6 @@ utils.run = function(obj, prop, arr) {
   while (len--) {
     obj[prop](arr[i++]);
   }
-};
-
-utils.pascal = function(name) {
-  return name.charAt(0).toUpperCase() + name.slice(1);
-};
-
-utils.namespace = function(app, parent) {
-  var parentSegs = parent ? parent.split(':') : [];
-  var segs = app._name.split(':');
-
-  var namespace = utils.union([], parentSegs, segs);
-  app._namespace = namespace.join(':');
 };
 
 /**

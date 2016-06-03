@@ -1,7 +1,6 @@
 'use strict';
 
 var Emitter = require('component-emitter');
-var debug = require('debug');
 var util = require('util');
 
 function namespace(name) {
@@ -43,6 +42,10 @@ function namespace(name) {
       return new Base(config, options);
     }
     Cache.call(this, config);
+    this.is('base');
+    this.cache = this.cache || {};
+    this.define('registered', {});
+    if (name) this[name] = {};
     this.initBase(config, options);
   }
 
@@ -64,7 +67,6 @@ function namespace(name) {
 
   Base.prototype.initBase = function(config, options) {
     this.options = utils.merge({}, this.options, options);
-    this.cache = this.cache || {};
 
     /**
      * Getter/setter for exposing a `base` (shared) instance of `base`
@@ -100,11 +102,8 @@ function namespace(name) {
       }
     });
 
-    this.is('base');
+    // make `app._callbacks` non-enumerable
     this.define('_callbacks', this._callbacks);
-    this.define('registered', {});
-
-    if (name) this[name] = {};
     if (typeof config === 'object') {
       this.visit('set', config);
     }
@@ -136,25 +135,12 @@ function namespace(name) {
    */
 
   Base.prototype.is = function(name) {
-    if (typeof name === 'function') {
-      this.constructor = name;
-      name = this.constructor.name.toLowerCase();
+    if (typeof name !== 'string') {
+      throw new TypeError('expected name to be a string');
     }
-
-    var parent = (this._namespace || this._name || '').toLowerCase();
-    name = name.toLowerCase();
-
     this.define('is' + utils.pascal(name), true);
     this.define('_name', name);
     this.define('_appname', name);
-
-    this.define('_namespace', this._name);
-    utils.namespace(this, parent);
-    this.define('debug', debug(this._namespace));
-
-    this.debug.append = function(prop) {
-      this.namespace = parent + ':' + prop;
-    };
     return this;
   };
 
@@ -192,31 +178,8 @@ function namespace(name) {
     }
     if (register !== false) {
       this.registered[name] = true;
-      this.emit('plugin', name);
     }
     return false;
-  };
-
-  /**
-   * Throws an error when plugin `name` is not registered.
-   *
-   * ```js
-   * var base = new Base();
-   * base.use(function(app) {
-   *   app.assertPlugin('base-foo');
-   *   app.assertPlugin('base-bar');
-   *   app.assertPlugin('base-baz');
-   * });
-   * ```
-   * @name .assertPlugin
-   * @param {String} `name` The plugin name.
-   * @api public
-   */
-
-  Base.prototype.assertPlugin = function(name) {
-    if (!this.registered.hasOwnProperty(name)) {
-      throw new Error('expected plugin ' + name + ' to be registered');
-    }
   };
 
   /**
@@ -239,40 +202,6 @@ function namespace(name) {
 
   Base.prototype.use = function(fn) {
     fn.call(this, this);
-    this.emit('use');
-    return this;
-  };
-
-  /**
-   * Lazily invoke a registered plugin. **Note** that this method can only
-   * be used with:
-   *
-   * 1. plugins that _add a single method or property_ to `app`
-   * 2. plugins that do not (themselves) add a getter/setter property (they're already lazy)
-   * 3. plugins that do not return a function
-   *
-   * ```js
-   * app.lazy('store', require('base-store'));
-   * ```
-   * @name .lazy
-   * @param {String} `prop` The name of the property or method added by the plugin.
-   * @param {Function} `fn` The plugin function
-   * @param {Object} `options` Options to use when the plugin is invoked.
-   * @return {Object} Returns the instance for chaining
-   * @api public
-   */
-
-  Base.prototype.lazy = function(prop, fn, opts) {
-    this.define(prop, {
-      configurable: true,
-      set: function(val) {
-        this.define(prop, val);
-      },
-      get: function() {
-        this.use(fn(opts));
-        return this[prop];
-      }
-    });
     return this;
   };
 
@@ -295,7 +224,6 @@ function namespace(name) {
    */
 
   Base.prototype.define = function(key, val) {
-    this.emit('define', key, val);
     utils.define(this, key, val);
     return this;
   };
