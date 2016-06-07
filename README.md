@@ -1,6 +1,11 @@
 # base [![NPM version](https://img.shields.io/npm/v/base.svg?style=flat)](https://www.npmjs.com/package/base) [![NPM downloads](https://img.shields.io/npm/dm/base.svg?style=flat)](https://npmjs.org/package/base) [![Build Status](https://img.shields.io/travis/node-base/base.svg?style=flat)](https://travis-ci.org/node-base/base)
 
-base is the foundation for creating modular, unit testable and highly pluggable node.js applications, starting with a handful of common methods, like `set`, `get`, `del` and `use`.
+<!-- logo -->
+<p align="center">
+<a href="https://github.com/node-base/base">
+<img height="250" width="250" src="https://raw.githubusercontent.com/node-base/base/master/docs/logo.png">
+</a>
+</p>
 
 ## What is Base?
 
@@ -60,61 +65,34 @@ console.log(app.cache.foo);
 
 ## API
 
-### [Base](index.js#L40)
+### [Base](index.js#L38)
 
-Create an instance of `Base` with `config` and `options`.
+Create an instance of `Base` with the given `config` and `options`.
 
 **Params**
 
-* `config` **{Object}**: passed to [cache-base](https://github.com/jonschlinkert/cache-base)
-* `options` **{Object}**
+* `config` **{Object}**: If supplied, this object is passed to [cache-base](https://github.com/jonschlinkert/cache-base) to merge onto the the instance upon instantiation.
+* `options` **{Object}**: If supplied, this object is used to initialize the `base.options` object.
 
 **Example**
 
 ```js
-var app = new Base({baz: 'qux'}, {yeah: 123, nope: 456});
-
+// initialize with `config` and `options`
+var app = new Base({isApp: true}, {abc: true});
 app.set('foo', 'bar');
 
-console.log(app.get('foo')); //=> 'bar'
-console.log(app.get('baz')); //=> 'qux'
-console.log(app.get('yeah')); //=> undefined
-
+// values defined with the given `config` object will be on the root of the instance
+console.log(app.baz); //=> true
 console.log(app.foo); //=> 'bar'
-console.log(app.baz); //=> 'qux'
-console.log(app.yeah); //=> undefined
+// or use `.get`
+console.log(app.get('isApp')); //=> true
+console.log(app.get('foo')); //=> 'bar'
 
-console.log(app.options.yeah); //=> 123
-console.log(app.options.nope); //=> 456
+// values defined with the given `options` object will be on `app.options
+console.log(app.options.abc); //=> true
 ```
 
-### [.base](index.js#L98)
-
-Getter/setter for exposing a `base` (shared) instance of `base` applications.
-
-This property only works when a "parent" instance is created on `app`.
-If `app.parent` is defined, the `app.base` getter ensures that the `base`
-instance is always the very first instance.
-
-**Example**
-
-```js
-var a = new Base();
-a.foo = 'bar';
-
-var b = new Base();
-b.parent = a;
-
-var c = new Base();
-c.parent = b;
-
-console.log(c.foo);
-//=> undefined
-console.log(c.base.foo);
-//=> 'bar'
-```
-
-### [.is](index.js#L137)
+### [.is](index.js#L101)
 
 Set the given `name` on `app._name` and `app.is*` properties. Used for doing lookups in plugins.
 
@@ -140,7 +118,7 @@ console.log(app._name);
 //=> 'bar'
 ```
 
-### [.isRegistered](index.js#L175)
+### [.isRegistered](index.js#L139)
 
 Returns true if a plugin has already been registered on an instance.
 
@@ -156,7 +134,7 @@ instance.
 
 **Events**
 
-* `emits`: `plugin` Emits the name of the plugin.
+* `emits`: `plugin` Emits the name of the plugin being registered. Useful for unit tests, to ensure plugins are only registered once.
 
 **Example**
 
@@ -174,18 +152,17 @@ base.use(function(app) {
 });
 ```
 
-### [.use](index.js#L203)
+### [.use](index.js#L169)
 
-Define a plugin function to be called immediately upon init. Plugins are chainable and the only parameter exposed to the plugin is the application instance.
+Define a plugin function to be called immediately upon init. Plugins are chainable and expose the following arguments to the plugin function:
+
+* `app`: the current instance of `Base`
+* `base`: the [first ancestor instance](#base) of `Base`
 
 **Params**
 
 * `fn` **{Function}**: plugin function to call
 * `returns` **{Object}**: Returns the item instance for chaining.
-
-**Events**
-
-* `emits`: `use` with no arguments.
 
 **Example**
 
@@ -196,9 +173,9 @@ var app = new Base()
   .use(baz)
 ```
 
-### [.define](index.js#L226)
+### [.define](index.js#L191)
 
-Define a non-enumerable property on the instance. Dot-notation is **not supported** with `define`.
+The `.define` method is used for adding non-enumerable property on the instance. Dot-notation is **not supported** with `define`.
 
 **Params**
 
@@ -206,25 +183,18 @@ Define a non-enumerable property on the instance. Dot-notation is **not supporte
 * `value` **{any}**
 * `returns` **{Object}**: Returns the instance for chaining.
 
-**Events**
-
-* `emits`: `define` with `key` and `value` as arguments.
-
 **Example**
 
 ```js
 // arbitrary `render` function using lodash `template`
-define('render', function(str, locals) {
+app.define('render', function(str, locals) {
   return _.template(str)(locals);
 });
 ```
 
-### [.mixin](index.js#L244)
+### [.mixin](index.js#L213)
 
-Mix property `key` onto the Base prototype. If base-methods
-is inherited using `Base.extend` this method will be overridden
-by a new `mixin` method that will only add properties to the
-prototype of the inheriting application.
+Mix property `key` onto the Base prototype. If base is inherited using `Base.extend` this method will be overridden by a new `mixin` method that will only add properties to the prototype of the inheriting application.
 
 **Params**
 
@@ -232,7 +202,47 @@ prototype of the inheriting application.
 * `val` **{Object|Array}**
 * `returns` **{Object}**: Returns the `base` instance for chaining.
 
-### [Base.use](index.js#L267)
+**Example**
+
+```js
+app.mixin('foo', function() {
+  // do stuff
+});
+```
+
+### [.base](index.js#L259)
+
+Getter/setter used when creating nested instances of `Base`, for storing a reference to the first ancestor instance. This works by setting an instance of `Base` on the `parent` property of a "child" instance. The `base` property defaults to the current instance if no `parent` property is defined.
+
+**Example**
+
+```js
+// create an instance of `Base`, this is our first ("base") instance
+var first = new Base();
+first.foo = 'bar'; // arbitrary property, to make it easier to see what's happening later
+
+// create another instance
+var second = new Base();
+// create a reference to the first instance (`first`)
+second.parent = first;
+
+// create another instance
+var third = new Base();
+// create a reference to the previous instance (`second`)
+// repeat this pattern every time a "child" instance is created
+third.parent = second;
+
+// we can always access the first instance using the `base` property
+console.log(first.base.foo);
+//=> 'bar'
+console.log(second.base.foo);
+//=> 'bar'
+console.log(third.base.foo);
+//=> 'bar'
+// and now you know how to get to third base ;)
+```
+
+### [Base.use](index.js#L284)
 
 Static method for adding global plugin functions that will be added to an instance when created.
 
@@ -252,9 +262,9 @@ console.log(app.foo);
 //=> 'bar'
 ```
 
-### [Base.extend](index.js#L293)
+### [#extend](index.js#L327)
 
-Static method for inheriting both prototype and static methods of the `Base` class. See [class-utils](https://github.com/jonschlinkert/class-utils) for more details.
+Static method for inheriting the prototype and static methods of the `Base` class. This method greatly simplifies the process of creating inheritance-based applications. See [static-extend][] for more details.
 
 **Params**
 
@@ -275,9 +285,9 @@ Parent.extend(Child, {
 });
 ```
 
-### [Base.mixin](index.js#L333)
+### [#mixin](index.js#L369)
 
-Static method for adding mixins to the prototype. When a function is returned from the mixin plugin, it will be added to an array so it can be used on inheriting classes via `Base.mixins(Child)`.
+Used for adding methods to the `Base` prototype, and/or to the prototype of child instances. When a mixin function returns a function, the returned function is pushed onto the `.mixins` array, making it available to be used on inheriting classes whenever `Base.mixins()` is called (e.g. `Base.mixins(Child)`).
 
 **Params**
 
@@ -287,17 +297,16 @@ Static method for adding mixins to the prototype. When a function is returned fr
 **Example**
 
 ```js
-Base.mixin(function fn(proto) {
+Base.mixin(function(proto) {
   proto.foo = function(msg) {
     return 'foo ' + msg;
   };
-  return fn;
 });
 ```
 
-### [Base.mixins](index.js#L355)
+### [#mixins](index.js#L391)
 
-Static method for running currently saved global mixin functions against a child constructor.
+Static method for running global mixin functions against a child constructor. Mixins must be registered before calling this method.
 
 **Params**
 
@@ -311,9 +320,9 @@ Base.extend(Child);
 Base.mixins(Child);
 ```
 
-### [Base.inherit](index.js#L375)
+### [#inherit](index.js#L410)
 
-Similar to `util.inherit`, but copies all static properties, prototype properties, and descriptors from `Provider` to `Receiver`. [class-utils](https://github.com/jonschlinkert/class-utils) for more details.
+Similar to `util.inherit`, but copies all static properties, prototype properties, and getters/setters from `Provider` to `Receiver`. See [class-utils](https://github.com/jonschlinkert/class-utils#inherit) for more details.
 
 **Params**
 
@@ -409,4 +418,4 @@ Released under the [MIT license](https://github.com/node-base/base/blob/master/L
 
 ***
 
-_This file was generated by [verb](https://github.com/verbose/verb), v0.9.0, on June 03, 2016._
+_This file was generated by [verb](https://github.com/verbose/verb), v0.9.0, on June 07, 2016._
