@@ -1,39 +1,37 @@
 'use strict';
 
-var Emitter = require('component-emitter');
 var util = require('util');
+var utils = require('./utils');
+
+/**
+ * Optionally define a custom `cache` namespace to use.
+ */
 
 function namespace(name) {
-  var utils = require('./utils');
+  var Cache = name ? utils.Cache.namespace(name) : utils.Cache;
   var fns = [];
 
-  var Cache = utils.Cache;
-  if (name) {
-    Cache = Cache.namespace(name);
-  }
-
   /**
-   * Create an instance of `Base` with `config` and `options`.
+   * Create an instance of `Base` with the given `config` and `options`.
    *
    * ```js
-   * var app = new Base({baz: 'qux'}, {yeah: 123, nope: 456});
-   *
+   * // initialize with `config` and `options`
+   * var app = new Base({isApp: true}, {abc: true});
    * app.set('foo', 'bar');
    *
-   * console.log(app.get('foo')); //=> 'bar'
-   * console.log(app.get('baz')); //=> 'qux'
-   * console.log(app.get('yeah')); //=> undefined
-   *
+   * // values defined with the given `config` object will be on the root of the instance
+   * console.log(app.baz); //=> true
    * console.log(app.foo); //=> 'bar'
-   * console.log(app.baz); //=> 'qux'
-   * console.log(app.yeah); //=> undefined
+   * // or use `.get`
+   * console.log(app.get('isApp')); //=> true
+   * console.log(app.get('foo')); //=> 'bar'
    *
-   * console.log(app.options.yeah); //=> 123
-   * console.log(app.options.nope); //=> 456
+   * // values defined with the given `options` object will be on `app.options
+   * console.log(app.options.abc); //=> true
    * ```
    *
-   * @param {Object} `config` passed to [cache-base][]
-   * @param {Object} `options`
+   * @param {Object} `config` If supplied, this object is passed to [cache-base][] to merge onto the the instance upon instantiation.
+   * @param {Object} `options` If supplied, this object is used to initialize the `base.options` object.
    * @api public
    */
 
@@ -43,9 +41,6 @@ function namespace(name) {
     }
     Cache.call(this, config);
     this.is('base');
-    this.cache = this.cache || {};
-    this.define('registered', {});
-    if (name) this[name] = {};
     this.initBase(config, options);
   }
 
@@ -59,7 +54,7 @@ function namespace(name) {
    * Add static emitter methods
    */
 
-  Emitter(Base);
+  utils.Emitter(Base);
 
   /**
    * Initialize `Base` defaults with the given `config` object
@@ -67,47 +62,16 @@ function namespace(name) {
 
   Base.prototype.initBase = function(config, options) {
     this.options = utils.merge({}, this.options, options);
-
-    /**
-     * Getter/setter for exposing a `base` (shared) instance of `base`
-     * applications.
-     *
-     * This property only works when a "parent" instance is created on `app`.
-     * If `app.parent` is defined, the `app.base` getter ensures that the `base`
-     * instance is always the very first instance.
-     *
-     * ```js
-     * var a = new Base();
-     * a.foo = 'bar';
-     *
-     * var b = new Base();
-     * b.parent = a;
-     *
-     * var c = new Base();
-     * c.parent = b;
-     *
-     * console.log(c.foo);
-     * //=> undefined
-     * console.log(c.base.foo);
-     * //=> 'bar'
-     * ```
-     * @name .base
-     * @api public
-     */
-
-    Object.defineProperty(this, 'base', {
-      configurable: true,
-      get: function() {
-        return this.parent ? this.parent.base : this;
-      }
-    });
+    this.cache = this.cache || {};
+    this.define('registered', {});
+    if (name) this[name] = {};
 
     // make `app._callbacks` non-enumerable
     this.define('_callbacks', this._callbacks);
     if (typeof config === 'object') {
       this.visit('set', config);
     }
-    utils.run(this, 'use', fns);
+    Base.run(this, 'use', fns);
   };
 
   /**
@@ -165,7 +129,7 @@ function namespace(name) {
    * });
    * ```
    * @name .isRegistered
-   * @emits `plugin` Emits the name of the plugin.
+   * @emits `plugin` Emits the name of the plugin being registered. Useful for unit tests, to ensure plugins are only registered once.
    * @param {String} `name` The plugin name.
    * @param {Boolean} `register` If the plugin if not already registered, to record it as being registered pass `true` as the second argument.
    * @return {Boolean} Returns true if a plugin is already registered.
@@ -178,14 +142,17 @@ function namespace(name) {
     }
     if (register !== false) {
       this.registered[name] = true;
+      this.emit('plugin', name);
     }
     return false;
   };
 
   /**
-   * Define a plugin function to be called immediately upon init.
-   * Plugins are chainable and the only parameter exposed to the
-   * plugin is the application instance.
+   * Define a plugin function to be called immediately upon init. Plugins are chainable
+   * and expose the following arguments to the plugin function:
+   *
+   * - `app`: the current instance of `Base`
+   * - `base`: the [first ancestor instance](#base) of `Base`
    *
    * ```js
    * var app = new Base()
@@ -194,7 +161,6 @@ function namespace(name) {
    *   .use(baz)
    * ```
    * @name .use
-   * @emits `use` with no arguments.
    * @param {Function} `fn` plugin function to call
    * @return {Object} Returns the item instance for chaining.
    * @api public
@@ -206,17 +172,16 @@ function namespace(name) {
   };
 
   /**
-   * Define a non-enumerable property on the instance. Dot-notation
-   * is **not supported** with `define`.
+   * The `.define` method is used for adding non-enumerable property on the instance.
+   * Dot-notation is **not supported** with `define`.
    *
    * ```js
    * // arbitrary `render` function using lodash `template`
-   * define('render', function(str, locals) {
+   * app.define('render', function(str, locals) {
    *   return _.template(str)(locals);
    * });
    * ```
    * @name .define
-   * @emits `define` with `key` and `value` as arguments.
    * @param {String} `key` The name of the property to define.
    * @param {any} `value`
    * @return {Object} Returns the instance for chaining.
@@ -229,11 +194,15 @@ function namespace(name) {
   };
 
   /**
-   * Mix property `key` onto the Base prototype. If base-methods
-   * is inherited using `Base.extend` this method will be overridden
-   * by a new `mixin` method that will only add properties to the
-   * prototype of the inheriting application.
+   * Mix property `key` onto the Base prototype. If base is inherited using
+   * `Base.extend` this method will be overridden by a new `mixin` method that will
+   * only add properties to the prototype of the inheriting application.
    *
+   * ```js
+   * app.mixin('foo', function() {
+   *   // do stuff
+   * });
+   * ```
    * @name .mixin
    * @param {String} `key`
    * @param {Object|Array} `val`
@@ -245,6 +214,54 @@ function namespace(name) {
     Base.prototype[key] = val;
     return this;
   };
+
+  /**
+   * Non-enumberable mixin array, used by the static [Base.mixin]() method.
+   */
+
+  Base.prototype.mixins = Base.prototype.mixins || [];
+
+  /**
+   * Getter/setter used when creating nested instances of `Base`, for storing a reference
+   * to the first ancestor instance. This works by setting an instance of `Base` on the `parent`
+   * property of a "child" instance. The `base` property defaults to the current instance if
+   * no `parent` property is defined.
+   *
+   * ```js
+   * // create an instance of `Base`, this is our first ("base") instance
+   * var first = new Base();
+   * first.foo = 'bar'; // arbitrary property, to make it easier to see what's happening later
+   *
+   * // create another instance
+   * var second = new Base();
+   * // create a reference to the first instance (`first`)
+   * second.parent = first;
+   *
+   * // create another instance
+   * var third = new Base();
+   * // create a reference to the previous instance (`second`)
+   * // repeat this pattern every time a "child" instance is created
+   * third.parent = second;
+   *
+   * // we can always access the first instance using the `base` property
+   * console.log(first.base.foo);
+   * //=> 'bar'
+   * console.log(second.base.foo);
+   * //=> 'bar'
+   * console.log(third.base.foo);
+   * //=> 'bar'
+   * // and now you know how to get to third base ;)
+   * ```
+   * @name .base
+   * @api public
+   */
+
+  Object.defineProperty(Base.prototype, 'base', {
+    configurable: true,
+    get: function() {
+      return this.parent ? this.parent.base : this;
+    }
+  });
 
   /**
    * Static method for adding global plugin functions that will
@@ -270,8 +287,25 @@ function namespace(name) {
   };
 
   /**
-   * Static method for inheriting both prototype and static methods
-   * of the `Base` class. See [class-utils][] for more details.
+   * Run an array of functions by passing each function
+   * to a method on the given object specified by the given property.
+   *
+   * @param  {Object} `obj` Object containing method to use.
+   * @param  {String} `prop` Name of the method on the object to use.
+   * @param  {Array} `arr` Array of functions to pass to the method.
+   */
+
+  Base.run = function(obj, prop, arr) {
+    var len = arr.length, i = 0;
+    while (len--) {
+      obj[prop](arr[i++]);
+    }
+  };
+
+  /**
+   * Static method for inheriting the prototype and static methods of the `Base` class.
+   * This method greatly simplifies the process of creating inheritance-based applications.
+   * See [static-extend][] for more details.
    *
    * ```js
    * var extend = cu.extend(Parent);
@@ -290,57 +324,59 @@ function namespace(name) {
    * @api public
    */
 
-  Base.extend = utils.cu.extend(Base, function(Ctor, Parent) {
-    Ctor.prototype.mixins = [];
-    Ctor.mixin = function(fn) {
+  utils.define(Base, 'extend', utils.cu.extend(Base, function(Ctor, Parent) {
+    Ctor.prototype.mixins = Ctor.prototype.mixins || [];
+
+    utils.define(Ctor, 'mixin', function(fn) {
       var mixin = fn(Ctor.prototype, Ctor);
       if (typeof mixin === 'function') {
         Ctor.prototype.mixins.push(mixin);
       }
-    };
+      return Ctor;
+    });
+
+    utils.define(Ctor, 'mixins', function(Child) {
+      Base.run(Child, 'mixin', Ctor.prototype.mixins);
+      return Ctor;
+    });
 
     Ctor.prototype.mixin = function(key, value) {
       Ctor.prototype[key] = value;
       return this;
     };
-
-    Ctor.mixins = function(Child) {
-      utils.run(Child, 'mixin', Ctor.prototype.mixins);
-    };
     return Base;
-  });
+  }));
 
   /**
-   * Static method for adding mixins to the prototype.
-   * When a function is returned from the mixin plugin, it will be added to
-   * an array so it can be used on inheriting classes via `Base.mixins(Child)`.
+   * Used for adding methods to the `Base` prototype, and/or to the prototype of child instances.
+   * When a mixin function returns a function, the returned function is pushed onto the `.mixins`
+   * array, making it available to be used on inheriting classes whenever `Base.mixins()` is
+   * called (e.g. `Base.mixins(Child)`).
    *
    * ```js
-   * Base.mixin(function fn(proto) {
+   * Base.mixin(function(proto) {
    *   proto.foo = function(msg) {
    *     return 'foo ' + msg;
    *   };
-   *   return fn;
    * });
    * ```
-   *
    * @name #mixin
    * @param {Function} `fn` Function to call
    * @return {Object} Returns the `Base` constructor for chaining
    * @api public
    */
 
-  Base.prototype.mixins = Base.prototype.mixins || [];
-  Base.mixin = function(fn) {
+  utils.define(Base, 'mixin', function(fn) {
     var mixin = fn(Base.prototype, Base);
     if (typeof mixin === 'function') {
       Base.prototype.mixins.push(mixin);
     }
     return Base;
-  };
+  });
 
   /**
-   * Static method for running currently saved global mixin functions against a child constructor.
+   * Static method for running global mixin functions against a child constructor.
+   * Mixins must be registered before calling this method.
    *
    * ```js
    * Base.extend(Child);
@@ -352,15 +388,14 @@ function namespace(name) {
    * @api public
    */
 
-  Base.mixins = function(Child) {
-    utils.run(Child, 'mixin', Base.prototype.mixins);
+  utils.define(Base, 'mixins', function(Child) {
+    Base.run(Child, 'mixin', Base.prototype.mixins);
     return Base;
-  };
+  });
 
   /**
-   * Similar to `util.inherit`, but copies all static properties, prototype
-   * properties, and descriptors from `Provider` to `Receiver`. [class-utils] for
-   * more details.
+   * Similar to `util.inherit`, but copies all static properties, prototype properties, and
+   * getters/setters from `Provider` to `Receiver`. See [class-utils][]{#inherit} for more details.
    *
    * ```js
    * Base.inherit(Foo, Bar);
@@ -372,13 +407,13 @@ function namespace(name) {
    * @api public
    */
 
-  Base.inherit = utils.cu.inherit;
-  Base.bubble = utils.cu.bubble;
+  utils.define(Base, 'inherit', utils.cu.inherit);
+  utils.define(Base, 'bubble', utils.cu.bubble);
   return Base;
 }
 
 /**
- * Expose `base-methods`
+ * Expose `Base` with default settings
  */
 
 module.exports = namespace();
