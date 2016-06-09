@@ -281,10 +281,10 @@ function namespace(name) {
    * @api public
    */
 
-  Base.use = function(fn) {
+  utils.define(Base, 'use', function(fn) {
     fns.push(fn);
     return Base;
-  };
+  });
 
   /**
    * Run an array of functions by passing each function
@@ -295,12 +295,13 @@ function namespace(name) {
    * @param  {Array} `arr` Array of functions to pass to the method.
    */
 
-  Base.run = function(obj, prop, arr) {
+  utils.define(Base, 'run', function(obj, prop, arr) {
     var len = arr.length, i = 0;
     while (len--) {
       obj[prop](arr[i++]);
     }
-  };
+    return Base;
+  });
 
   /**
    * Static method for inheriting the prototype and static methods of the `Base` class.
