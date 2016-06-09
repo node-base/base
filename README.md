@@ -1,6 +1,5 @@
 # base [![NPM version](https://img.shields.io/npm/v/base.svg?style=flat)](https://www.npmjs.com/package/base) [![NPM downloads](https://img.shields.io/npm/dm/base.svg?style=flat)](https://npmjs.org/package/base) [![Build Status](https://img.shields.io/travis/node-base/base.svg?style=flat)](https://travis-ci.org/node-base/base)
 
-<!-- logo -->
 <p align="center">
 <a href="https://github.com/node-base/base">
 <img height="250" width="250" src="https://raw.githubusercontent.com/node-base/base/master/docs/logo.png">
@@ -9,43 +8,72 @@
 
 ## What is Base?
 
-Base is a framework for rapidly creating node.js applications, with a handful of commonly needed methods, like `.set`, `.get` and `.has`, and a plugin system and conventions that make it easy to extend your application with custom code written in pure JavaScript.
+Base is a framework for rapidly creating high quality node.js applications, using plugins like building blocks.
 
-## Install
+### Guiding principles
 
-Install with [npm](https://www.npmjs.com/):
+The core team follows these principles to help guide API decisions:
 
-```sh
-$ npm install base --save
-```
+* **Compact API surface**: The smaller the API surface, the easier the library will be to learn and use.
+* **Easy to extend**: Implementors can use any npm package, and write plugins in pure JavaScript. If you're building complex apps, Base simplifies inheritance.
+* **Easy to test**: No special setup should be required to unit test `Base` or base plugins
 
-## Usage
+### Minimal API surface
+
+[The API](#api) was designed to provide only the minimum necessary functionality for creating a useful application, with or without [plugins](#plugins).
+
+**Base core**
+
+Base itself ships with only a handful of [useful methods](#api), such as:
+
+* `.set`: for setting values on the instance
+* `.get`: for getting values from the instance
+* `.has`: to check if a property exists on the instance
+* `.define`: for setting non-enumerable values on the instance
+* `.use`: for adding plugins
+
+**Be generic**
+
+When deciding on method to add or remove, we try to answer these questions:
+
+1. Will all or most Base applications need this method?
+2. Will this method encourage practices or enforce conventions that are beneficial to implementors?
+3. Can or should this be done in a plugin instead?
+
+### Composability
+
+**Plugin system**
+
+It couldn't be easier to extend Base with any features or custom functionality you can think of.
+
+Base plugins are just functions that take an instance of `Base`:
 
 ```js
-var base = require('base');
-```
+var base = new Base();
 
-**inherit**
-
-```js
-function App() {
-  base.call(this);
+function plugin(base) {
+  // do plugin stuff, in pure JavaScript
 }
-base.extend(App);
+// use the plugin
+base.use(plugin);
+```
 
-var app = new App();
+**Inheritance**
+
+Easily inherit Base using `.extend`:
+
+```js
+var Base = require('base');
+
+function MyApp() {
+  Base.call(this);
+}
+Base.extend(MyApp);
+
+var app = new MyApp();
 app.set('a', 'b');
 app.get('a');
 //=> 'b';
-```
-
-**instantiate**
-
-```js
-var app = base();
-app.set('foo', 'bar');
-console.log(app.foo);
-//=> 'bar'
 ```
 
 **Inherit or instantiate with a namespace**
@@ -63,7 +91,25 @@ console.log(app.cache.foo);
 //=> 'bar'
 ```
 
+## Install
+
+Install with [npm](https://www.npmjs.com/):
+
+```sh
+$ npm install base --save
+```
+
 ## API
+
+**Usage**
+
+```js
+var Base = require('base');
+var app = new Base();
+app.set('foo', 'bar');
+console.log(app.foo);
+//=> 'bar'
+```
 
 ### [Base](index.js#L38)
 
@@ -242,7 +288,7 @@ console.log(third.base.foo);
 // and now you know how to get to third base ;)
 ```
 
-### [Base.use](index.js#L284)
+### [#use](index.js#L284)
 
 Static method for adding global plugin functions that will be added to an instance when created.
 
@@ -262,9 +308,9 @@ console.log(app.foo);
 //=> 'bar'
 ```
 
-### [#extend](index.js#L327)
+### [#extend](index.js#L328)
 
-Static method for inheriting the prototype and static methods of the `Base` class. This method greatly simplifies the process of creating inheritance-based applications. See [static-extend][] for more details.
+Static method for inheriting the prototype and static methods of the `Base` class. This method greatly simplifies the process of creating inheritance-based applications. See [static-extend](https://github.com/jonschlinkert/static-extend) for more details.
 
 **Params**
 
@@ -285,7 +331,7 @@ Parent.extend(Child, {
 });
 ```
 
-### [#mixin](index.js#L369)
+### [#mixin](index.js#L370)
 
 Used for adding methods to the `Base` prototype, and/or to the prototype of child instances. When a mixin function returns a function, the returned function is pushed onto the `.mixins` array, making it available to be used on inheriting classes whenever `Base.mixins()` is called (e.g. `Base.mixins(Child)`).
 
@@ -304,7 +350,7 @@ Base.mixin(function(proto) {
 });
 ```
 
-### [#mixins](index.js#L391)
+### [#mixins](index.js#L392)
 
 Static method for running global mixin functions against a child constructor. Mixins must be registered before calling this method.
 
@@ -320,7 +366,7 @@ Base.extend(Child);
 Base.mixins(Child);
 ```
 
-### [#inherit](index.js#L410)
+### [#inherit](index.js#L411)
 
 Similar to `util.inherit`, but copies all static properties, prototype properties, and getters/setters from `Provider` to `Receiver`. See [class-utils](https://github.com/jonschlinkert/class-utils#inherit) for more details.
 
@@ -350,12 +396,16 @@ The following node.js applications were built with `Base`:
 
 ```
 Statements   : 98.95% ( 94/95 )
-Branches     : 95.83% ( 23/24 )
+Branches     : 92.31% ( 24/26 )
 Functions    : 100% ( 17/17 )
 Lines        : 98.94% ( 93/94 )
 ```
 
 ## History
+
+**v0.11.0 - major breaking changes!**
+
+* Static `.use` and `.run` methods are now non-enumerable
 
 **v0.9.0 - major breaking changes!**
 
@@ -384,9 +434,9 @@ There are a number of different plugins available for extending base. Let us kno
 
 ## Contributing
 
-This document was generated by [verb](https://github.com/verbose/verb), please don't edit directly. Any changes to the readme must be made in [.verb.md](.verb.md). See [Building Docs](#building-docs).
+This document was generated by [verb-readme-generator](https://github.com/verbose/verb-readme-generator) (a [verb](https://github.com/verbose/verb) generator), please don't edit directly. Any changes to the readme must be made in [.verb.md](.verb.md). See [Building Docs](#building-docs).
 
-Pull requests and stars are always welcome. For bugs and feature requests, [please create an issue](https://github.com/node-base/base/issues/new).
+Pull requests and stars are always welcome. For bugs and feature requests, [please create an issue](../../issues/new). Or visit the [verb-readme-generator](https://github.com/verbose/verb-readme-generator) project to submit bug reports or pull requests for the readme layout template.
 
 ## Building docs
 
@@ -418,4 +468,4 @@ Released under the [MIT license](https://github.com/node-base/base/blob/master/L
 
 ***
 
-_This file was generated by [verb](https://github.com/verbose/verb), v0.9.0, on June 07, 2016._
+_This file was generated by [verb](https://github.com/verbose/verb), v0.9.0, on June 09, 2016._
