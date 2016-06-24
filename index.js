@@ -68,7 +68,7 @@ function namespace(name) {
 
     // make `app._callbacks` non-enumerable
     this.define('_callbacks', this._callbacks);
-    if (typeof config === 'object') {
+    if (utils.isObject(config)) {
       this.visit('set', config);
     }
     Base.run(this, 'use', fns);
@@ -189,6 +189,9 @@ function namespace(name) {
    */
 
   Base.prototype.define = function(key, val) {
+    if (utils.isObject(key)) {
+      return this.visit('define', key);
+    }
     utils.define(this, key, val);
     return this;
   };

@@ -13,6 +13,7 @@ require('cache-base', 'Cache');
 require('define-property', 'define');
 require('component-emitter', 'Emitter');
 require('class-utils', 'cu');
+require('isobject', 'isObject');
 require('mixin-deep', 'merge');
 require('pascalcase', 'pascal');
 require = fn; // eslint-disable-line

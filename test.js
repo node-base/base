@@ -380,6 +380,33 @@ describe('prototype methods', function() {
     });
   });
 
+  describe('.define', function() {
+    it('should define a key-value pair on the instance:', function() {
+      base.define('foo', 'bar');
+      assert.equal(base.foo, 'bar');
+    });
+
+    it('should define an own property', function() {
+      base.define('foo', 'bar');
+      assert(base.hasOwnProperty('foo'));
+    });
+
+    it('should define a non-emumerable property', function() {
+      base.define('foo', 'bar');
+      assert(Object.keys(base).indexOf('foo') === -1);
+    });
+
+    it('should multiple properties', function() {
+      base.define({
+        foo: 'bar',
+        baz: 'qux'
+      });
+
+      assert(base.hasOwnProperty('foo'));
+      assert(base.hasOwnProperty('baz'));
+    });
+  });
+
   describe('.set', function() {
     it('should set a key-value pair on the instance:', function() {
       base.set('foo', 'bar');
