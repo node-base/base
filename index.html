@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Base by node-base</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Base</h1>
+      <h2 class="project-tagline">Easily create complex node.js applications using plugins. base-methods ships with a handful of starter methods, like `set`, `get`, `del` and `use`, everything else is plugins!</h2>
+      <a href="https://github.com/node-base/base" class="btn">View on GitHub</a>
+      <a href="https://github.com/node-base/base/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/node-base/base/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="base---" class="anchor" href="#base---" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>base <a href="https://www.npmjs.com/package/base"><img src="https://img.shields.io/npm/v/base.svg?style=flat" alt="NPM version"></a> <a href="https://npmjs.org/package/base"><img src="https://img.shields.io/npm/dm/base.svg?style=flat" alt="NPM downloads"></a> <a href="https://travis-ci.org/node-base/base"><img src="https://img.shields.io/travis/node-base/base.svg?style=flat" alt="Build Status"></a>
+</h1>
+
+<p align="center">
+<a href="https://github.com/node-base/base">
+<img height="250" width="250" src="https://raw.githubusercontent.com/node-base/base/master/docs/logo.png">
+</a>
+</p>
+
+<h2>
+<a id="what-is-base" class="anchor" href="#what-is-base" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What is Base?</h2>
+
+<p>Base is a framework for rapidly creating high quality node.js applications, using plugins like building blocks.</p>
+
+<h3>
+<a id="guiding-principles" class="anchor" href="#guiding-principles" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Guiding principles</h3>
+
+<p>The core team follows these principles to help guide API decisions:</p>
+
+<ul>
+<li>
+<strong>Compact API surface</strong>: The smaller the API surface, the easier the library will be to learn and use.</li>
+<li>
+<strong>Easy to extend</strong>: Implementors can use any npm package, and write plugins in pure JavaScript. If you're building complex apps, Base simplifies inheritance.</li>
+<li>
+<strong>Easy to test</strong>: No special setup should be required to unit test <code>Base</code> or base plugins</li>
+</ul>
+
+<h3>
+<a id="minimal-api-surface" class="anchor" href="#minimal-api-surface" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Minimal API surface</h3>
+
+<p><a href="#api">The API</a> was designed to provide only the minimum necessary functionality for creating a useful application, with or without <a href="#plugins">plugins</a>.</p>
+
+<p><strong>Base core</strong></p>
+
+<p>Base itself ships with only a handful of <a href="#api">useful methods</a>, such as:</p>
+
+<ul>
+<li>
+<code>.set</code>: for setting values on the instance</li>
+<li>
+<code>.get</code>: for getting values from the instance</li>
+<li>
+<code>.has</code>: to check if a property exists on the instance</li>
+<li>
+<code>.define</code>: for setting non-enumerable values on the instance</li>
+<li>
+<code>.use</code>: for adding plugins</li>
+</ul>
+
+<p><strong>Be generic</strong></p>
+
+<p>When deciding on method to add or remove, we try to answer these questions:</p>
+
+<ol>
+<li>Will all or most Base applications need this method?</li>
+<li>Will this method encourage practices or enforce conventions that are beneficial to implementors?</li>
+<li>Can or should this be done in a plugin instead?</li>
+</ol>
+
+<h3>
+<a id="composability" class="anchor" href="#composability" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Composability</h3>
+
+<p><strong>Plugin system</strong></p>
+
+<p>It couldn't be easier to extend Base with any features or custom functionality you can think of.</p>
+
+<p>Base plugins are just functions that take an instance of <code>Base</code>:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> base <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Base</span>();
+
+<span class="pl-k">function</span> <span class="pl-en">plugin</span>(<span class="pl-smi">base</span>) {
+  <span class="pl-c">// do plugin stuff, in pure JavaScript</span>
+}
+<span class="pl-c">// use the plugin</span>
+<span class="pl-smi">base</span>.<span class="pl-en">use</span>(plugin);</pre></div>
+
+<p><strong>Inheritance</strong></p>
+
+<p>Easily inherit Base using <code>.extend</code>:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> Base <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>base<span class="pl-pds">'</span></span>);
+
+<span class="pl-k">function</span> <span class="pl-en">MyApp</span>() {
+  <span class="pl-smi">Base</span>.<span class="pl-c1">call</span>(<span class="pl-v">this</span>);
+}
+<span class="pl-smi">Base</span>.<span class="pl-en">extend</span>(MyApp);
+
+<span class="pl-k">var</span> app <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">MyApp</span>();
+<span class="pl-smi">app</span>.<span class="pl-en">set</span>(<span class="pl-s"><span class="pl-pds">'</span>a<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>b<span class="pl-pds">'</span></span>);
+<span class="pl-smi">app</span>.<span class="pl-en">get</span>(<span class="pl-s"><span class="pl-pds">'</span>a<span class="pl-pds">'</span></span>);
+<span class="pl-c">//=&gt; 'b';</span></pre></div>
+
+<p><strong>Inherit or instantiate with a namespace</strong></p>
+
+<p>By default, the <code>.get</code>, <code>.set</code> and <code>.has</code> methods set and get values from the root of the <code>base</code> instance. You can customize this using the <code>.namespace</code> method exposed on the exported function. For example:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> Base <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>base<span class="pl-pds">'</span></span>);
+<span class="pl-c">// get and set values on the `base.cache` object</span>
+<span class="pl-k">var</span> base <span class="pl-k">=</span> <span class="pl-smi">Base</span>.<span class="pl-en">namespace</span>(<span class="pl-s"><span class="pl-pds">'</span>cache<span class="pl-pds">'</span></span>);
+
+<span class="pl-k">var</span> app <span class="pl-k">=</span> <span class="pl-en">base</span>();
+<span class="pl-smi">app</span>.<span class="pl-en">set</span>(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>bar<span class="pl-pds">'</span></span>);
+<span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">app</span>.<span class="pl-smi">cache</span>.<span class="pl-smi">foo</span>);
+<span class="pl-c">//=&gt; 'bar'</span></pre></div>
+
+<h2>
+<a id="install" class="anchor" href="#install" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Install</h2>
+
+<p>Install with <a href="https://www.npmjs.com/">npm</a>:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ npm install --save base</pre></div>
+
+<h2>
+<a id="api" class="anchor" href="#api" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>API</h2>
+
+<p><strong>Usage</strong></p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> Base <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>base<span class="pl-pds">'</span></span>);
+<span class="pl-k">var</span> app <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Base</span>();
+<span class="pl-smi">app</span>.<span class="pl-en">set</span>(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>bar<span class="pl-pds">'</span></span>);
+<span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">app</span>.<span class="pl-smi">foo</span>);
+<span class="pl-c">//=&gt; 'bar'</span></pre></div>
+
+<h3>
+<a id="base" class="anchor" href="#base" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a href="index.js#L38">Base</a>
+</h3>
+
+<p>Create an instance of <code>Base</code> with the given <code>config</code> and <code>options</code>.</p>
+
+<p><strong>Params</strong></p>
+
+<ul>
+<li>
+<code>config</code> <strong>{Object}</strong>: If supplied, this object is passed to <a href="https://github.com/jonschlinkert/cache-base">cache-base</a> to merge onto the the instance upon instantiation.</li>
+<li>
+<code>options</code> <strong>{Object}</strong>: If supplied, this object is used to initialize the <code>base.options</code> object.</li>
+</ul>
+
+<p><strong>Example</strong></p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c">// initialize with `config` and `options`</span>
+<span class="pl-k">var</span> app <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Base</span>({isApp<span class="pl-k">:</span> <span class="pl-c1">true</span>}, {abc<span class="pl-k">:</span> <span class="pl-c1">true</span>});
+<span class="pl-smi">app</span>.<span class="pl-en">set</span>(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>bar<span class="pl-pds">'</span></span>);
+
+<span class="pl-c">// values defined with the given `config` object will be on the root of the instance</span>
+<span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">app</span>.<span class="pl-smi">baz</span>); <span class="pl-c">//=&gt; undefined</span>
+<span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">app</span>.<span class="pl-smi">foo</span>); <span class="pl-c">//=&gt; 'bar'</span>
+<span class="pl-c">// or use `.get`</span>
+<span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">app</span>.<span class="pl-en">get</span>(<span class="pl-s"><span class="pl-pds">'</span>isApp<span class="pl-pds">'</span></span>)); <span class="pl-c">//=&gt; true</span>
+<span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">app</span>.<span class="pl-en">get</span>(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>)); <span class="pl-c">//=&gt; 'bar'</span>
+
+<span class="pl-c">// values defined with the given `options` object will be on `app.options</span>
+<span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">app</span>.<span class="pl-c1">options</span>.<span class="pl-smi">abc</span>); <span class="pl-c">//=&gt; true</span></pre></div>
+
+<h3>
+<a id="is" class="anchor" href="#is" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a href="index.js#L101">.is</a>
+</h3>
+
+<p>Set the given <code>name</code> on <code>app._name</code> and <code>app.is*</code> properties. Used for doing lookups in plugins.</p>
+
+<p><strong>Params</strong></p>
+
+<ul>
+<li>
+<code>name</code> <strong>{String}</strong>
+</li>
+<li>
+<code>returns</code> <strong>{Boolean}</strong>
+</li>
+</ul>
+
+<p><strong>Example</strong></p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">app</span>.<span class="pl-en">is</span>(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>);
+<span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">app</span>.<span class="pl-smi">_name</span>);
+<span class="pl-c">//=&gt; 'foo'</span>
+<span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">app</span>.<span class="pl-smi">isFoo</span>);
+<span class="pl-c">//=&gt; true</span>
+<span class="pl-smi">app</span>.<span class="pl-en">is</span>(<span class="pl-s"><span class="pl-pds">'</span>bar<span class="pl-pds">'</span></span>);
+<span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">app</span>.<span class="pl-smi">isFoo</span>);
+<span class="pl-c">//=&gt; true</span>
+<span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">app</span>.<span class="pl-smi">isBar</span>);
+<span class="pl-c">//=&gt; true</span>
+<span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">app</span>.<span class="pl-smi">_name</span>);
+<span class="pl-c">//=&gt; 'bar'</span></pre></div>
+
+<h3>
+<a id="isregistered" class="anchor" href="#isregistered" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a href="index.js#L139">.isRegistered</a>
+</h3>
+
+<p>Returns true if a plugin has already been registered on an instance.</p>
+
+<p>Plugin implementors are encouraged to use this first thing in a plugin
+to prevent the plugin from being called more than once on the same
+instance.</p>
+
+<p><strong>Params</strong></p>
+
+<ul>
+<li>
+<code>name</code> <strong>{String}</strong>: The plugin name.</li>
+<li>
+<code>register</code> <strong>{Boolean}</strong>: If the plugin if not already registered, to record it as being registered pass <code>true</code> as the second argument.</li>
+<li>
+<code>returns</code> <strong>{Boolean}</strong>: Returns true if a plugin is already registered.</li>
+</ul>
+
+<p><strong>Events</strong></p>
+
+<ul>
+<li>
+<code>emits</code>: <code>plugin</code> Emits the name of the plugin being registered. Useful for unit tests, to ensure plugins are only registered once.</li>
+</ul>
+
+<p><strong>Example</strong></p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> base <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Base</span>();
+<span class="pl-smi">base</span>.<span class="pl-en">use</span>(<span class="pl-k">function</span>(<span class="pl-smi">app</span>) {
+  <span class="pl-k">if</span> (<span class="pl-smi">app</span>.<span class="pl-en">isRegistered</span>(<span class="pl-s"><span class="pl-pds">'</span>myPlugin<span class="pl-pds">'</span></span>)) <span class="pl-k">return</span>;
+  <span class="pl-c">// do stuff to `app`</span>
+});
+
+<span class="pl-c">// to also record the plugin as being registered</span>
+<span class="pl-smi">base</span>.<span class="pl-en">use</span>(<span class="pl-k">function</span>(<span class="pl-smi">app</span>) {
+  <span class="pl-k">if</span> (<span class="pl-smi">app</span>.<span class="pl-en">isRegistered</span>(<span class="pl-s"><span class="pl-pds">'</span>myPlugin<span class="pl-pds">'</span></span>, <span class="pl-c1">true</span>)) <span class="pl-k">return</span>;
+  <span class="pl-c">// do stuff to `app`</span>
+});</pre></div>
+
+<h3>
+<a id="use" class="anchor" href="#use" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a href="index.js#L169">.use</a>
+</h3>
+
+<p>Define a plugin function to be called immediately upon init. Plugins are chainable and expose the following arguments to the plugin function:</p>
+
+<ul>
+<li>
+<code>app</code>: the current instance of <code>Base</code>
+</li>
+<li>
+<code>base</code>: the <a href="#base">first ancestor instance</a> of <code>Base</code>
+</li>
+</ul>
+
+<p><strong>Params</strong></p>
+
+<ul>
+<li>
+<code>fn</code> <strong>{Function}</strong>: plugin function to call</li>
+<li>
+<code>returns</code> <strong>{Object}</strong>: Returns the item instance for chaining.</li>
+</ul>
+
+<p><strong>Example</strong></p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> app <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Base</span>()
+  .<span class="pl-en">use</span>(foo)
+  .<span class="pl-en">use</span>(bar)
+  .<span class="pl-en">use</span>(baz)</pre></div>
+
+<h3>
+<a id="define" class="anchor" href="#define" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a href="index.js#L191">.define</a>
+</h3>
+
+<p>The <code>.define</code> method is used for adding non-enumerable property on the instance. Dot-notation is <strong>not supported</strong> with <code>define</code>.</p>
+
+<p><strong>Params</strong></p>
+
+<ul>
+<li>
+<code>key</code> <strong>{String}</strong>: The name of the property to define.</li>
+<li>
+<code>value</code> <strong>{any}</strong>
+</li>
+<li>
+<code>returns</code> <strong>{Object}</strong>: Returns the instance for chaining.</li>
+</ul>
+
+<p><strong>Example</strong></p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c">// arbitrary `render` function using lodash `template`</span>
+<span class="pl-smi">app</span>.<span class="pl-en">define</span>(<span class="pl-s"><span class="pl-pds">'</span>render<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>(<span class="pl-smi">str</span>, <span class="pl-smi">locals</span>) {
+  <span class="pl-k">return</span> <span class="pl-smi">_</span>.<span class="pl-en">template</span>(str)(locals);
+});</pre></div>
+
+<h3>
+<a id="mixin" class="anchor" href="#mixin" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a href="index.js#L216">.mixin</a>
+</h3>
+
+<p>Mix property <code>key</code> onto the Base prototype. If base is inherited using <code>Base.extend</code> this method will be overridden by a new <code>mixin</code> method that will only add properties to the prototype of the inheriting application.</p>
+
+<p><strong>Params</strong></p>
+
+<ul>
+<li>
+<code>key</code> <strong>{String}</strong>
+</li>
+<li>
+<code>val</code> <strong>{Object|Array}</strong>
+</li>
+<li>
+<code>returns</code> <strong>{Object}</strong>: Returns the <code>base</code> instance for chaining.</li>
+</ul>
+
+<p><strong>Example</strong></p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">app</span>.<span class="pl-en">mixin</span>(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>() {
+  <span class="pl-c">// do stuff</span>
+});</pre></div>
+
+<h3>
+<a id="base-1" class="anchor" href="#base-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a href="index.js#L262">.base</a>
+</h3>
+
+<p>Getter/setter used when creating nested instances of <code>Base</code>, for storing a reference to the first ancestor instance. This works by setting an instance of <code>Base</code> on the <code>parent</code> property of a "child" instance. The <code>base</code> property defaults to the current instance if no <code>parent</code> property is defined.</p>
+
+<p><strong>Example</strong></p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c">// create an instance of `Base`, this is our first ("base") instance</span>
+<span class="pl-k">var</span> first <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Base</span>();
+<span class="pl-smi">first</span>.<span class="pl-smi">foo</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>bar<span class="pl-pds">'</span></span>; <span class="pl-c">// arbitrary property, to make it easier to see what's happening later</span>
+
+<span class="pl-c">// create another instance</span>
+<span class="pl-k">var</span> second <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Base</span>();
+<span class="pl-c">// create a reference to the first instance (`first`)</span>
+<span class="pl-smi">second</span>.<span class="pl-c1">parent</span> <span class="pl-k">=</span> first;
+
+<span class="pl-c">// create another instance</span>
+<span class="pl-k">var</span> third <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Base</span>();
+<span class="pl-c">// create a reference to the previous instance (`second`)</span>
+<span class="pl-c">// repeat this pattern every time a "child" instance is created</span>
+<span class="pl-smi">third</span>.<span class="pl-c1">parent</span> <span class="pl-k">=</span> second;
+
+<span class="pl-c">// we can always access the first instance using the `base` property</span>
+<span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">first</span>.<span class="pl-smi">base</span>.<span class="pl-smi">foo</span>);
+<span class="pl-c">//=&gt; 'bar'</span>
+<span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">second</span>.<span class="pl-smi">base</span>.<span class="pl-smi">foo</span>);
+<span class="pl-c">//=&gt; 'bar'</span>
+<span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">third</span>.<span class="pl-smi">base</span>.<span class="pl-smi">foo</span>);
+<span class="pl-c">//=&gt; 'bar'</span>
+<span class="pl-c">// and now you know how to get to third base ;)</span></pre></div>
+
+<h3>
+<a id="use-1" class="anchor" href="#use-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a href="index.js#L287">#use</a>
+</h3>
+
+<p>Static method for adding global plugin functions that will be added to an instance when created.</p>
+
+<p><strong>Params</strong></p>
+
+<ul>
+<li>
+<code>fn</code> <strong>{Function}</strong>: Plugin function to use on each instance.</li>
+<li>
+<code>returns</code> <strong>{Object}</strong>: Returns the <code>Base</code> constructor for chaining</li>
+</ul>
+
+<p><strong>Example</strong></p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">Base</span>.<span class="pl-en">use</span>(<span class="pl-k">function</span>(<span class="pl-smi">app</span>) {
+  <span class="pl-smi">app</span>.<span class="pl-smi">foo</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>bar<span class="pl-pds">'</span></span>;
+});
+<span class="pl-k">var</span> app <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Base</span>();
+<span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">app</span>.<span class="pl-smi">foo</span>);
+<span class="pl-c">//=&gt; 'bar'</span></pre></div>
+
+<h3>
+<a id="extend" class="anchor" href="#extend" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a href="index.js#L331">#extend</a>
+</h3>
+
+<p>Static method for inheriting the prototype and static methods of the <code>Base</code> class. This method greatly simplifies the process of creating inheritance-based applications. See <a href="https://github.com/jonschlinkert/static-extend">static-extend</a> for more details.</p>
+
+<p><strong>Params</strong></p>
+
+<ul>
+<li>
+<code>Ctor</code> <strong>{Function}</strong>: constructor to extend</li>
+<li>
+<code>methods</code> <strong>{Object}</strong>: Optional prototype properties to mix in.</li>
+<li>
+<code>returns</code> <strong>{Object}</strong>: Returns the <code>Base</code> constructor for chaining</li>
+</ul>
+
+<p><strong>Example</strong></p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> extend <span class="pl-k">=</span> <span class="pl-smi">cu</span>.<span class="pl-en">extend</span>(Parent);
+<span class="pl-smi">Parent</span>.<span class="pl-en">extend</span>(Child);
+
+<span class="pl-c">// optional methods</span>
+<span class="pl-smi">Parent</span>.<span class="pl-en">extend</span>(Child, {
+  <span class="pl-en">foo</span><span class="pl-k">:</span> <span class="pl-k">function</span>() {},
+  <span class="pl-en">bar</span><span class="pl-k">:</span> <span class="pl-k">function</span>() {}
+});</pre></div>
+
+<h3>
+<a id="mixin-1" class="anchor" href="#mixin-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a href="index.js#L373">#mixin</a>
+</h3>
+
+<p>Used for adding methods to the <code>Base</code> prototype, and/or to the prototype of child instances. When a mixin function returns a function, the returned function is pushed onto the <code>.mixins</code> array, making it available to be used on inheriting classes whenever <code>Base.mixins()</code> is called (e.g. <code>Base.mixins(Child)</code>).</p>
+
+<p><strong>Params</strong></p>
+
+<ul>
+<li>
+<code>fn</code> <strong>{Function}</strong>: Function to call</li>
+<li>
+<code>returns</code> <strong>{Object}</strong>: Returns the <code>Base</code> constructor for chaining</li>
+</ul>
+
+<p><strong>Example</strong></p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">Base</span>.<span class="pl-en">mixin</span>(<span class="pl-k">function</span>(<span class="pl-smi">proto</span>) {
+  <span class="pl-smi">proto</span>.<span class="pl-en">foo</span> <span class="pl-k">=</span> <span class="pl-k">function</span>(<span class="pl-smi">msg</span>) {
+    <span class="pl-k">return</span> <span class="pl-s"><span class="pl-pds">'</span>foo <span class="pl-pds">'</span></span> <span class="pl-k">+</span> msg;
+  };
+});</pre></div>
+
+<h3>
+<a id="mixins" class="anchor" href="#mixins" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a href="index.js#L395">#mixins</a>
+</h3>
+
+<p>Static method for running global mixin functions against a child constructor. Mixins must be registered before calling this method.</p>
+
+<p><strong>Params</strong></p>
+
+<ul>
+<li>
+<code>Child</code> <strong>{Function}</strong>: Constructor function of a child class</li>
+<li>
+<code>returns</code> <strong>{Object}</strong>: Returns the <code>Base</code> constructor for chaining</li>
+</ul>
+
+<p><strong>Example</strong></p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">Base</span>.<span class="pl-en">extend</span>(Child);
+<span class="pl-smi">Base</span>.<span class="pl-en">mixins</span>(Child);</pre></div>
+
+<h3>
+<a id="inherit" class="anchor" href="#inherit" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a href="index.js#L414">#inherit</a>
+</h3>
+
+<p>Similar to <code>util.inherit</code>, but copies all static properties, prototype properties, and getters/setters from <code>Provider</code> to <code>Receiver</code>. See <a href="https://github.com/jonschlinkert/class-utils#inherit">class-utils</a> for more details.</p>
+
+<p><strong>Params</strong></p>
+
+<ul>
+<li>
+<code>Receiver</code> <strong>{Function}</strong>: Receiving (child) constructor</li>
+<li>
+<code>Provider</code> <strong>{Function}</strong>: Providing (parent) constructor</li>
+<li>
+<code>returns</code> <strong>{Object}</strong>: Returns the <code>Base</code> constructor for chaining</li>
+</ul>
+
+<p><strong>Example</strong></p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">Base</span>.<span class="pl-en">inherit</span>(Foo, Bar);</pre></div>
+
+<h2>
+<a id="in-the-wild" class="anchor" href="#in-the-wild" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>In the wild</h2>
+
+<p>The following node.js applications were built with <code>Base</code>:</p>
+
+<ul>
+<li><a href="https://github.com/assemble/assemble">assemble</a></li>
+<li><a href="https://github.com/verbose/verb">verb</a></li>
+<li><a href="https://github.com/generate/generate">generate</a></li>
+<li><a href="https://github.com/jonschlinkert/scaffold">scaffold</a></li>
+<li><a href="https://github.com/jonschlinkert/boilerplate">boilerplate</a></li>
+</ul>
+
+<h2>
+<a id="test-coverage" class="anchor" href="#test-coverage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Test coverage</h2>
+
+<pre><code>Statements   : 98.95% ( 94/95 )
+Branches     : 92.31% ( 24/26 )
+Functions    : 100% ( 17/17 )
+Lines        : 98.94% ( 93/94 )
+</code></pre>
+
+<h2>
+<a id="history" class="anchor" href="#history" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>History</h2>
+
+<p><strong>v0.11.0 - major breaking changes!</strong></p>
+
+<ul>
+<li>Static <code>.use</code> and <code>.run</code> methods are now non-enumerable</li>
+</ul>
+
+<p><strong>v0.9.0 - major breaking changes!</strong></p>
+
+<ul>
+<li>
+<code>.is</code> no longer takes a function, a string must be passed</li>
+<li>all remaining <code>.debug</code> code has been removed</li>
+<li>
+<code>app._namespace</code> was removed (related to <code>debug</code>)</li>
+<li>
+<code>.plugin</code>, <code>.use</code>, and <code>.define</code> no longer emit events</li>
+<li>
+<code>.assertPlugin</code> was removed</li>
+<li>
+<code>.lazy</code> was removed</li>
+</ul>
+
+<h2>
+<a id="related-projects" class="anchor" href="#related-projects" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Related projects</h2>
+
+<p>There are a number of different plugins available for extending base. Let us know if you create your own!</p>
+
+<ul>
+<li>
+<a href="https://www.npmjs.com/package/base-cwd">base-cwd</a>: Base plugin that adds a getter/setter for the current working directory. | <a href="https://github.com/node-base/base-cwd" title="Base plugin that adds a getter/setter for the current working directory.">homepage</a>
+</li>
+<li>
+<a href="https://www.npmjs.com/package/base-data">base-data</a>: adds a <code>data</code> method to base-methods. | <a href="https://github.com/node-base/base-data" title="adds a `data` method to base-methods.">homepage</a>
+</li>
+<li>
+<a href="https://www.npmjs.com/package/base-fs">base-fs</a>: base-methods plugin that adds vinyl-fs methods to your 'base' application for working with the file… <a href="https://github.com/node-base/base-fs">more</a> | <a href="https://github.com/node-base/base-fs" title="base-methods plugin that adds vinyl-fs methods to your 'base' application for working with the file system, like src, dest, copy and symlink.">homepage</a>
+</li>
+<li>
+<a href="https://www.npmjs.com/package/base-generators">base-generators</a>: Adds project-generator support to your <code>base</code> application. | <a href="https://github.com/node-base/base-generators" title="Adds project-generator support to your `base` application.">homepage</a>
+</li>
+<li>
+<a href="https://www.npmjs.com/package/base-option">base-option</a>: Adds a few options methods to base, like <code>option</code>, <code>enable</code> and <code>disable</code>. See the readme… <a href="https://github.com/node-base/base-option">more</a> | <a href="https://github.com/node-base/base-option" title="Adds a few options methods to base, like `option`, `enable` and `disable`. See the readme for the full API.">homepage</a>
+</li>
+<li>
+<a href="https://www.npmjs.com/package/base-pipeline">base-pipeline</a>: base-methods plugin that adds pipeline and plugin methods for dynamically composing streaming plugin pipelines. | <a href="https://github.com/node-base/base-pipeline" title="base-methods plugin that adds pipeline and plugin methods for dynamically composing streaming plugin pipelines.">homepage</a>
+</li>
+<li>
+<a href="https://www.npmjs.com/package/base-pkg">base-pkg</a>: Plugin for adding a <code>pkg</code> method that exposes pkg-store to your base application. | <a href="https://github.com/node-base/base-pkg" title="Plugin for adding a `pkg` method that exposes pkg-store to your base application.">homepage</a>
+</li>
+<li>
+<a href="https://www.npmjs.com/package/base-plugins">base-plugins</a>: Upgrade's plugin support in base applications to allow plugins to be called any time after… <a href="https://github.com/node-base/base-plugins">more</a> | <a href="https://github.com/node-base/base-plugins" title="Upgrade's plugin support in base applications to allow plugins to be called any time after init.">homepage</a>
+</li>
+<li>
+<a href="https://www.npmjs.com/package/base-questions">base-questions</a>: Plugin for base-methods that adds methods for prompting the user and storing the answers on… <a href="https://github.com/node-base/base-questions">more</a> | <a href="https://github.com/node-base/base-questions" title="Plugin for base-methods that adds methods for prompting the user and storing the answers on a project-by-project basis.">homepage</a>
+</li>
+<li>
+<a href="https://www.npmjs.com/package/base-store">base-store</a>: Plugin for getting and persisting config values with your base-methods application. Adds a 'store' object… <a href="https://github.com/node-base/base-store">more</a> | <a href="https://github.com/node-base/base-store" title="Plugin for getting and persisting config values with your base-methods application. Adds a 'store' object that exposes all of the methods from the data-store library. Also now supports sub-stores!">homepage</a>
+</li>
+<li>
+<a href="https://www.npmjs.com/package/base-task">base-task</a>: base plugin that provides a very thin wrapper around <a href="https://github.com/doowb/composer">https://github.com/doowb/composer</a> for adding task methods to… <a href="https://github.com/node-base/base-task">more</a> | <a href="https://github.com/node-base/base-task" title="base plugin that provides a very thin wrapper around &lt;https://github.com/doowb/composer&gt; for adding task methods to your application.">homepage</a>
+</li>
+</ul>
+
+<h2>
+<a id="contributing" class="anchor" href="#contributing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Contributing</h2>
+
+<p>This document was generated by <a href="https://github.com/verbose/verb-readme-generator">verb-readme-generator</a> (a <a href="https://github.com/verbose/verb">verb</a> generator), please don't edit directly. Any changes to the readme must be made in <a href=".verb.md">.verb.md</a>. See <a href="#building-docs">Building Docs</a>.</p>
+
+<p>Pull requests and stars are always welcome. For bugs and feature requests, <a href="../../issues/new">please create an issue</a>.</p>
+
+<p>Or visit the <a href="https://github.com/verbose/verb-readme-generator">verb-readme-generator</a> project to submit bug reports or pull requests for the readme layout template.</p>
+
+<h2>
+<a id="building-docs" class="anchor" href="#building-docs" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Building docs</h2>
+
+<p><em>(This document was generated by <a href="https://github.com/verbose/verb-readme-generator">verb-readme-generator</a> (a <a href="https://github.com/verbose/verb">verb</a> generator), please don't edit the readme directly. Any changes to the readme must be made in <a href=".verb.md">.verb.md</a>.)</em></p>
+
+<p>Generate readme and API documentation with <a href="https://github.com/verbose/verb">verb</a>:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ npm install -g verb verb-readme-generator <span class="pl-k">&amp;&amp;</span> verb</pre></div>
+
+<h2>
+<a id="running-tests" class="anchor" href="#running-tests" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Running tests</h2>
+
+<p>Install dev dependencies:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ npm install -d <span class="pl-k">&amp;&amp;</span> npm <span class="pl-c1">test</span></pre></div>
+
+<h2>
+<a id="author" class="anchor" href="#author" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Author</h2>
+
+<p><strong>Jon Schlinkert</strong></p>
+
+<ul>
+<li><a href="https://github.com/jonschlinkert">github/jonschlinkert</a></li>
+<li><a href="http://twitter.com/jonschlinkert">twitter/jonschlinkert</a></li>
+</ul>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h2>
+
+<p>Copyright © 2016, <a href="https://github.com/jonschlinkert">Jon Schlinkert</a>.
+Released under the <a href="https://github.com/node-base/base/blob/master/LICENSE">MIT license</a>.</p>
+
+<hr>
+
+<p><em>This file was generated by <a href="https://github.com/verbose/verb">verb</a>, v0.9.0, on June 23, 2016.</em></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/node-base/base">Base</a> is maintained by <a href="https://github.com/node-base">node-base</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
