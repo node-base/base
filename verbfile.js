@@ -3,7 +3,7 @@
 var through = require('through2');
 
 module.exports = function(verb) {
-  verb.use(require('verb-readme-generator'));
+  verb.use(require('verb-generate-readme'));
   verb.task('default', ['readme'], function(cb) {
     return verb.src('README.md')
       .pipe(through.obj(function(file, enc, next) {

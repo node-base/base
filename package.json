@@ -1,15 +1,18 @@
 {
   "name": "base",
-  "description": "base is the foundation for creating modular, unit testable and highly pluggable node.js applications, starting with a handful of common methods, like `set`, `get`, `del` and `use`.",
+  "description": "Framework for rapidly creating high quality node.js applications, using plugins like building blocks",
   "version": "0.11.1",
   "homepage": "https://github.com/node-base/base",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
-  "contributors": [
-    "Brian Woodward (https://github.com/doowb)"
-  ],
   "maintainers": [
     "Brian Woodward (https://github.com/doowb)",
     "Jon Schlinkert (https://github.com/jonschlinkert)"
+  ],
+  "contributors": [
+    "Brian Woodward <brian.woodward@gmail.com> (https://twitter.com/doowb)",
+    "Charlike Mike Reagent (https://i.am.charlike.online)",
+    "John O'Donnell (https://github.com/criticalmash)",
+    "Jon Schlinkert <jon.schlinkert@sellside.com> (http://twitter.com/jonschlinkert)"
   ],
   "repository": "node-base/base",
   "bugs": {
@@ -18,7 +21,8 @@
   "license": "MIT",
   "files": [
     "index.js",
-    "utils.js"
+    "utils.js",
+    "verbfile.js"
   ],
   "main": "index.js",
   "engines": {
@@ -29,28 +33,24 @@
   },
   "dependencies": {
     "arr-union": "^3.1.0",
-    "cache-base": "^0.8.4",
-    "class-utils": "^0.3.4",
+    "cache-base": "^1.0.0",
+    "class-utils": "^0.3.5",
     "component-emitter": "^1.2.1",
     "define-property": "^0.2.5",
     "isobject": "^3.0.0",
-    "lazy-cache": "^2.0.1",
-    "mixin-deep": "^1.1.3",
-    "pascalcase": "^0.1.1"
+    "lazy-cache": "^2.0.2",
+    "mixin-deep": "^1.2.0",
+    "pascalcase": "^0.1.1",
+    "through2": "^2.0.3",
+    "verb-generate-readme": "^0.4.3"
   },
   "devDependencies": {
-    "gulp": "^3.9.1",
-    "gulp-eslint": "^2.0.0",
-    "gulp-format-md": "^0.1.9",
-    "gulp-istanbul": "^0.10.4",
-    "gulp-mocha": "^2.2.0",
-    "helper-coverage": "^0.1.3",
-    "mocha": "^2.5.3",
-    "should": "^9.0.1",
-    "through2": "^2.0.1",
-    "verb-readme-generator": "^0.1.13"
+    "gulp-format-md": "^0.1.11",
+    "helper-changelog": "^0.3.0",
+    "mocha": "^3.2.0"
   },
   "keywords": [
+    "base",
     "boilerplate",
     "cache",
     "del",
@@ -65,7 +65,7 @@
   "verb": {
     "run": true,
     "toc": false,
-    "layout": "default",
+    "layout": null,
     "tasks": [
       "readme"
     ],
@@ -73,7 +73,7 @@
       "gulp-format-md"
     ],
     "helpers": [
-      "helper-coverage"
+      "helper-changelog"
     ],
     "related": {
       "description": "There are a number of different plugins available for extending base. Let us know if you create your own!",
@@ -94,14 +94,18 @@
     },
     "reflinks": [
       "assemble",
-      "boilerplate",
+      "base",
+      "base-plugins",
       "cache-base",
       "class-utils",
+      "enquirer",
       "generate",
-      "scaffold",
-      "verb",
+      "helper-changelog",
+      "prompt-base",
       "static-extend",
-      "verb-readme-generator"
+      "templates",
+      "update",
+      "verb"
     ],
     "lint": {
       "reflinks": true
