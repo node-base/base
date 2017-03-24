@@ -54,7 +54,9 @@ function namespace(name) {
    * Add static emitter methods
    */
 
-  utils.Emitter(Base);
+  for (var key in utils.Emitter.prototype) {
+    utils.define(Base, key, utils.Emitter.prototype[key]);
+  }
 
   /**
    * Initialize `Base` defaults with the given `config` object
@@ -102,7 +104,12 @@ function namespace(name) {
     if (typeof name !== 'string') {
       throw new TypeError('expected name to be a string');
     }
+
+    this.define('type', name);
     this.define('is' + utils.pascal(name), true);
+
+    // the following properties are deprecated and will
+    // be removed in a future release
     this.define('_name', name);
     this.define('_appname', name);
     return this;
@@ -413,6 +420,8 @@ function namespace(name) {
 
   utils.define(Base, 'inherit', utils.cu.inherit);
   utils.define(Base, 'bubble', utils.cu.bubble);
+  utils.define(Base, '_callbacks', Base._callbacks);
+  utils.define(Base, 'super_', Base.super_);
   return Base;
 }
 
