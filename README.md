@@ -1,21 +1,39 @@
-# base [![NPM version](https://img.shields.io/npm/v/base.svg?style=flat)](https://www.npmjs.com/package/base) [![NPM downloads](https://img.shields.io/npm/dm/base.svg?style=flat)](https://npmjs.org/package/base) [![Build Status](https://img.shields.io/travis/node-base/base.svg?style=flat)](https://travis-ci.org/node-base/base)
-
 <p align="center">
+
 <a href="https://github.com/node-base/base">
 <img height="250" width="250" src="https://raw.githubusercontent.com/node-base/base/master/docs/logo.png">
 </a>
 </p>
 
-## What is Base?
+# base
 
-Base is a framework for rapidly creating high quality node.js applications, using plugins like building blocks.
+[![NPM version](https://img.shields.io/npm/v/base.svg?style=flat)](https://www.npmjs.com/package/base) [![NPM monthly downloads](https://img.shields.io/npm/dm/base.svg?style=flat)](https://npmjs.org/package/base) [![Build Status](https://img.shields.io/travis/node-base/base.svg?style=flat)](https://travis-ci.org/node-base/base) [![Gitter](https://badges.gitter.im/join_chat.svg)](https://gitter.im/node-base/base)
+
+<details>
+<summary><strong>Table of contents</strong></summary>
+
+</details>
+
+<details>
+<summary><strong>About</strong></summary>
+
+## Why use Base?
+
+Base is the foundation for creating modular, unit testable and highly pluggable node.js applications.
+
+* Go from zero to working application within minutes
+* Create your own custom plugins to add features
+* Use [community plugins](https://www.npmjs.com/browse/keyword/baseplugin) to add feature-functionality to your application
+* Plugins are stackable, so you can build up [more sophisticated applications](#toolkit-suite) from simpler plugins. Moreover, those applications can also be used as plugins themselves.
+
+Most importantly, once you learn Base, you will be familiar with the core API of all applications built on Base. This means you will not only benefit as a developer, but as a user as well.
 
 ### Guiding principles
 
 The core team follows these principles to help guide API decisions:
 
 * **Compact API surface**: The smaller the API surface, the easier the library will be to learn and use.
-* **Easy to extend**: Implementors can use any npm package, and write plugins in pure JavaScript. If you're building complex apps, Base simplifies inheritance.
+* **Easy to extend**: Implementors can use any npm package, and write plugins in pure JavaScript. If you're building complex apps, Base dramatically simplifies inheritance.
 * **Easy to test**: No special setup should be required to unit test `Base` or base plugins
 
 ### Minimal API surface
@@ -58,6 +76,8 @@ function plugin(base) {
 base.use(plugin);
 ```
 
+Add "smart plugin" functionality with the [base-plugins](https://github.com/node-base/base-plugins) plugin.
+
 **Inheritance**
 
 Easily inherit Base using `.extend`:
@@ -90,6 +110,11 @@ app.set('foo', 'bar');
 console.log(app.cache.foo);
 //=> 'bar'
 ```
+</details>
+
+## Install
+
+**NPM**
 
 ## Install
 
@@ -99,17 +124,32 @@ Install with [npm](https://www.npmjs.com/):
 $ npm install --save base
 ```
 
-## API
+**yarn**
 
-**Usage**
+Install with [yarn](yarnpkg.com):
+
+```sh
+$ yarn add base && yarn upgrade
+```
+
+## Usage
 
 ```js
 var Base = require('base');
 var app = new Base();
+
+// set a value
 app.set('foo', 'bar');
 console.log(app.foo);
 //=> 'bar'
+
+// register a plugin
+app.use(function() {
+  // do stuff (see API docs for ".use")
+});
 ```
+
+## API
 
 ### [Base](index.js#L38)
 
@@ -138,7 +178,7 @@ console.log(app.get('foo')); //=> 'bar'
 console.log(app.options.abc); //=> true
 ```
 
-### [.is](index.js#L101)
+### [.is](index.js#L103)
 
 Set the given `name` on `app._name` and `app.is*` properties. Used for doing lookups in plugins.
 
@@ -164,7 +204,7 @@ console.log(app._name);
 //=> 'bar'
 ```
 
-### [.isRegistered](index.js#L139)
+### [.isRegistered](index.js#L146)
 
 Returns true if a plugin has already been registered on an instance.
 
@@ -198,7 +238,7 @@ base.use(function(app) {
 });
 ```
 
-### [.use](index.js#L169)
+### [.use](index.js#L176)
 
 Define a plugin function to be called immediately upon init. Plugins are chainable and expose the following arguments to the plugin function:
 
@@ -219,7 +259,7 @@ var app = new Base()
   .use(baz)
 ```
 
-### [.define](index.js#L191)
+### [.define](index.js#L198)
 
 The `.define` method is used for adding non-enumerable property on the instance. Dot-notation is **not supported** with `define`.
 
@@ -238,7 +278,7 @@ app.define('render', function(str, locals) {
 });
 ```
 
-### [.mixin](index.js#L216)
+### [.mixin](index.js#L223)
 
 Mix property `key` onto the Base prototype. If base is inherited using `Base.extend` this method will be overridden by a new `mixin` method that will only add properties to the prototype of the inheriting application.
 
@@ -256,7 +296,7 @@ app.mixin('foo', function() {
 });
 ```
 
-### [.base](index.js#L262)
+### [.base](index.js#L269)
 
 Getter/setter used when creating nested instances of `Base`, for storing a reference to the first ancestor instance. This works by setting an instance of `Base` on the `parent` property of a "child" instance. The `base` property defaults to the current instance if no `parent` property is defined.
 
@@ -288,7 +328,7 @@ console.log(third.base.foo);
 // and now you know how to get to third base ;)
 ```
 
-### [#use](index.js#L287)
+### [#use](index.js#L294)
 
 Static method for adding global plugin functions that will be added to an instance when created.
 
@@ -308,7 +348,7 @@ console.log(app.foo);
 //=> 'bar'
 ```
 
-### [#extend](index.js#L331)
+### [#extend](index.js#L338)
 
 Static method for inheriting the prototype and static methods of the `Base` class. This method greatly simplifies the process of creating inheritance-based applications. See [static-extend](https://github.com/jonschlinkert/static-extend) for more details.
 
@@ -331,7 +371,7 @@ Parent.extend(Child, {
 });
 ```
 
-### [#mixin](index.js#L373)
+### [#mixin](index.js#L380)
 
 Used for adding methods to the `Base` prototype, and/or to the prototype of child instances. When a mixin function returns a function, the returned function is pushed onto the `.mixins` array, making it available to be used on inheriting classes whenever `Base.mixins()` is called (e.g. `Base.mixins(Child)`).
 
@@ -350,7 +390,7 @@ Base.mixin(function(proto) {
 });
 ```
 
-### [#mixins](index.js#L395)
+### [#mixins](index.js#L402)
 
 Static method for running global mixin functions against a child constructor. Mixins must be registered before calling this method.
 
@@ -366,7 +406,7 @@ Base.extend(Child);
 Base.mixins(Child);
 ```
 
-### [#inherit](index.js#L414)
+### [#inherit](index.js#L421)
 
 Similar to `util.inherit`, but copies all static properties, prototype properties, and getters/setters from `Provider` to `Receiver`. See [class-utils](https://github.com/jonschlinkert/class-utils#inherit) for more details.
 
@@ -382,43 +422,28 @@ Similar to `util.inherit`, but copies all static properties, prototype propertie
 Base.inherit(Foo, Bar);
 ```
 
-## In the wild
+## Toolkit suite
 
-The following node.js applications were built with `Base`:
+Base is used as the foundation for all of the applications in the [toolkit suite](https://github.com/node-toolkit/getting-started) (except for [enquirer](https://github.com/enquirer/enquirer)):
 
-* [assemble](https://github.com/assemble/assemble)
-* [verb](https://github.com/verbose/verb)
-* [generate](https://github.com/generate/generate)
-* [scaffold](https://github.com/jonschlinkert/scaffold)
-* [boilerplate](https://github.com/jonschlinkert/boilerplate)
+**Building blocks**
 
-## Test coverage
+* [base](https://github.com/node-base/base): (you are here!) framework for rapidly creating high quality node.js applications, using plugins like building blocks.
+* [templates](https://github.com/jonschlinkert/templates): API for managing template collections and rendering templates with any node.js template engine. Can be used as the basis for creating a static site generator, blog framework, documentaton system, and so on.
+* [enquirer](https://github.com/enquirer/enquirer): composable, plugin-based prompt system (Base is used in [prompt-base](https://github.com/enquirer/prompt-base), the core prompt module that powers all prompt plugins)
 
-```
-Statements   : 98.95% ( 94/95 )
-Branches     : 92.31% ( 24/26 )
-Functions    : 100% ( 17/17 )
-Lines        : 98.94% ( 93/94 )
-```
+**Lifecycle**
 
-## History
+Developer frameworks and command line tools that address common phases of the software development lifecycle. Each of these tools can be used entirely standalone, but they work even better together.
 
-**v0.11.0 - major breaking changes!**
+* [generate](https://github.com/generate/generate): create projects
+* [assemble](https://github.com/assemble/assemble): build projects
+* [verb](https://github.com/verbose/verb): document projects
+* [update](https://github.com/update/update): maintain projects
 
-* Static `.use` and `.run` methods are now non-enumerable
+## About
 
-**v0.9.0 - major breaking changes!**
-
-* `.is` no longer takes a function, a string must be passed
-* all remaining `.debug` code has been removed
-* `app._namespace` was removed (related to `debug`)
-* `.plugin`, `.use`, and `.define` no longer emit events
-* `.assertPlugin` was removed
-* `.lazy` was removed
-
-## Related projects
-
-There are a number of different plugins available for extending base. Let us know if you create your own!
+### Related projects
 
 * [base-cwd](https://www.npmjs.com/package/base-cwd): Base plugin that adds a getter/setter for the current working directory. | [homepage](https://github.com/node-base/base-cwd "Base plugin that adds a getter/setter for the current working directory.")
 * [base-data](https://www.npmjs.com/package/base-data): adds a `data` method to base-methods. | [homepage](https://github.com/node-base/base-data "adds a `data` method to base-methods.")
@@ -432,44 +457,87 @@ There are a number of different plugins available for extending base. Let us kno
 * [base-store](https://www.npmjs.com/package/base-store): Plugin for getting and persisting config values with your base-methods application. Adds a 'store' object… [more](https://github.com/node-base/base-store) | [homepage](https://github.com/node-base/base-store "Plugin for getting and persisting config values with your base-methods application. Adds a 'store' object that exposes all of the methods from the data-store library. Also now supports sub-stores!")
 * [base-task](https://www.npmjs.com/package/base-task): base plugin that provides a very thin wrapper around [https://github.com/doowb/composer](https://github.com/doowb/composer) for adding task methods to… [more](https://github.com/node-base/base-task) | [homepage](https://github.com/node-base/base-task "base plugin that provides a very thin wrapper around <https://github.com/doowb/composer> for adding task methods to your application.")
 
-## Contributing
+### Tests
 
-This document was generated by [verb-readme-generator](https://github.com/verbose/verb-readme-generator) (a [verb](https://github.com/verbose/verb) generator), please don't edit directly. Any changes to the readme must be made in [.verb.md](.verb.md). See [Building Docs](#building-docs).
+Running and reviewing unit tests is a great way to get familiarized with a library and its API. You can install dependencies and run tests with the following command:
+
+```sh
+$ npm install && npm test
+```
+
+### Contributing
 
 Pull requests and stars are always welcome. For bugs and feature requests, [please create an issue](../../issues/new).
 
-Or visit the [verb-readme-generator](https://github.com/verbose/verb-readme-generator) project to submit bug reports or pull requests for the readme layout template.
+If Base doesn't do what you need, [please let us know](../../issues).
 
-## Building docs
+### Release History
 
-_(This document was generated by [verb-readme-generator](https://github.com/verbose/verb-readme-generator) (a [verb](https://github.com/verbose/verb) generator), please don't edit the readme directly. Any changes to the readme must be made in [.verb.md](.verb.md).)_
+#### key
 
-Generate readme and API documentation with [verb](https://github.com/verbose/verb):
+Changelog entries are classified using the following labels from [keep-a-changelog](https://github.com/olivierlacan/keep-a-changelog):
 
-```sh
-$ npm install -g verb verb-readme-generator && verb
-```
+* `added`: for new features
+* `changed`: for changes in existing functionality
+* `deprecated`: for once-stable features removed in upcoming releases
+* `removed`: for deprecated features removed in this release
+* `fixed`: for any bug fixes
 
-## Running tests
+Custom labels used in this changelog:
 
-Install dev dependencies:
+* `dependencies`: bumps dependencies
+* `housekeeping`: code re-organization, minor edits, or other changes that don't fit in one of the other categories.
 
-```sh
-$ npm install -d && npm test
-```
+**Heads up!**
 
-## Author
+Please [let us know](../../issues) if any of the following heading links are broken. Thanks!
+
+#### [0.12.0](https://github.com/node-base/base/compare/0.11.0...0.12.0)
+
+**Fixed**
+
+* ensure `__callbacks` and `super_` are non-enumberable
+
+**Added**
+
+* Now sets `app.type` when `app.is('foo')` is called. This allows Base instances to be used more like AST nodes, which is especially helpful with [smart plugins](https://github.com/node-base/base-plugins)
+
+#### [0.11.0](https://github.com/node-base/base/compare/0.9.0...0.11.0)
+
+**Major breaking changes!**
+
+* Static `.use` and `.run` methods are now non-enumerable
+
+#### [0.9.0](https://github.com/node-base/base/compare/0.8.0...0.9.0)
+
+**Major breaking changes!**
+
+* `.is` no longer takes a function, a string must be passed
+* all remaining `.debug` code has been removed
+* `app._namespace` was removed (related to `debug`)
+* `.plugin`, `.use`, and `.define` no longer emit events
+* `.assertPlugin` was removed
+* `.lazy` was removed
+
+_(Changelog generated by [helper-changelog](https://github.com/helpers/helper-changelog))_
+
+### Authors
 
 **Jon Schlinkert**
 
 * [github/jonschlinkert](https://github.com/jonschlinkert)
 * [twitter/jonschlinkert](http://twitter.com/jonschlinkert)
 
-## License
+**Brian Woodward**
 
-Copyright © 2016, [Jon Schlinkert](https://github.com/jonschlinkert).
-Released under the [MIT license](https://github.com/node-base/base/blob/master/LICENSE).
+* [github/doowb](https://github.com/doowb)
+* [twitter/doowb](http://twitter.com/doowb)
+
+### License
+
+Copyright © 2017, [Jon Schlinkert](https://github.com/jonschlinkert).
+MIT
 
 ***
 
-_This file was generated by [verb](https://github.com/verbose/verb), v0.9.0, on June 23, 2016._
+_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.4.3, on March 24, 2017._
