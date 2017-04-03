@@ -9,6 +9,7 @@
     "Jon Schlinkert (https://github.com/jonschlinkert)"
   ],
   "contributors": [
+    "<wtgtybhertgeghgtwtg@gmail.com> (https://github.com/wtgtybhertgeghgtwtg)",
     "Brian Woodward <brian.woodward@gmail.com> (https://twitter.com/doowb)",
     "Charlike Mike Reagent (https://i.am.charlike.online)",
     "John O'Donnell (https://github.com/criticalmash)",
@@ -20,9 +21,7 @@
   },
   "license": "MIT",
   "files": [
-    "index.js",
-    "utils.js",
-    "verbfile.js"
+    "index.js"
   ],
   "main": "index.js",
   "engines": {
@@ -38,16 +37,15 @@
     "component-emitter": "^1.2.1",
     "define-property": "^0.2.5",
     "isobject": "^3.0.0",
-    "lazy-cache": "^2.0.2",
     "mixin-deep": "^1.2.0",
-    "pascalcase": "^0.1.1",
-    "through2": "^2.0.3",
-    "verb-generate-readme": "^0.4.3"
+    "pascalcase": "^0.1.1"
   },
   "devDependencies": {
     "gulp-format-md": "^0.1.11",
     "helper-changelog": "^0.3.0",
-    "mocha": "^3.2.0"
+    "mocha": "^3.2.0",
+    "through2": "^2.0.3",
+    "verb-generate-readme": "^0.4.3"
   },
   "keywords": [
     "base",
