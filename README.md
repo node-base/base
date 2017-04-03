@@ -151,7 +151,7 @@ app.use(function() {
 
 ## API
 
-### [Base](index.js#L38)
+### [Base](index.js#L45)
 
 Create an instance of `Base` with the given `config` and `options`.
 
@@ -178,7 +178,7 @@ console.log(app.get('foo')); //=> 'bar'
 console.log(app.options.abc); //=> true
 ```
 
-### [.is](index.js#L103)
+### [.is](index.js#L110)
 
 Set the given `name` on `app._name` and `app.is*` properties. Used for doing lookups in plugins.
 
@@ -204,7 +204,7 @@ console.log(app._name);
 //=> 'bar'
 ```
 
-### [.isRegistered](index.js#L146)
+### [.isRegistered](index.js#L153)
 
 Returns true if a plugin has already been registered on an instance.
 
@@ -238,7 +238,7 @@ base.use(function(app) {
 });
 ```
 
-### [.use](index.js#L176)
+### [.use](index.js#L183)
 
 Define a plugin function to be called immediately upon init. Plugins are chainable and expose the following arguments to the plugin function:
 
@@ -259,7 +259,7 @@ var app = new Base()
   .use(baz)
 ```
 
-### [.define](index.js#L198)
+### [.define](index.js#L205)
 
 The `.define` method is used for adding non-enumerable property on the instance. Dot-notation is **not supported** with `define`.
 
@@ -278,7 +278,7 @@ app.define('render', function(str, locals) {
 });
 ```
 
-### [.mixin](index.js#L223)
+### [.mixin](index.js#L230)
 
 Mix property `key` onto the Base prototype. If base is inherited using `Base.extend` this method will be overridden by a new `mixin` method that will only add properties to the prototype of the inheriting application.
 
@@ -296,7 +296,7 @@ app.mixin('foo', function() {
 });
 ```
 
-### [.base](index.js#L269)
+### [.base](index.js#L276)
 
 Getter/setter used when creating nested instances of `Base`, for storing a reference to the first ancestor instance. This works by setting an instance of `Base` on the `parent` property of a "child" instance. The `base` property defaults to the current instance if no `parent` property is defined.
 
@@ -328,7 +328,7 @@ console.log(third.base.foo);
 // and now you know how to get to third base ;)
 ```
 
-### [#use](index.js#L294)
+### [#use](index.js#L301)
 
 Static method for adding global plugin functions that will be added to an instance when created.
 
@@ -348,7 +348,7 @@ console.log(app.foo);
 //=> 'bar'
 ```
 
-### [#extend](index.js#L338)
+### [#extend](index.js#L345)
 
 Static method for inheriting the prototype and static methods of the `Base` class. This method greatly simplifies the process of creating inheritance-based applications. See [static-extend](https://github.com/jonschlinkert/static-extend) for more details.
 
@@ -371,7 +371,7 @@ Parent.extend(Child, {
 });
 ```
 
-### [#mixin](index.js#L380)
+### [#mixin](index.js#L387)
 
 Used for adding methods to the `Base` prototype, and/or to the prototype of child instances. When a mixin function returns a function, the returned function is pushed onto the `.mixins` array, making it available to be used on inheriting classes whenever `Base.mixins()` is called (e.g. `Base.mixins(Child)`).
 
@@ -390,7 +390,7 @@ Base.mixin(function(proto) {
 });
 ```
 
-### [#mixins](index.js#L402)
+### [#mixins](index.js#L409)
 
 Static method for running global mixin functions against a child constructor. Mixins must be registered before calling this method.
 
@@ -406,9 +406,9 @@ Base.extend(Child);
 Base.mixins(Child);
 ```
 
-### [#inherit](index.js#L421)
+### [#inherit](index.js#L429)
 
-Similar to `util.inherit`, but copies all static properties, prototype properties, and getters/setters from `Provider` to `Receiver`. See [class-utils](https://github.com/jonschlinkert/class-utils#inherit) for more details.
+Similar to `util.inherits`, but copies all static properties, prototype properties, and getters/setters from `Provider` to `Receiver`. See [class-utils](https://github.com/jonschlinkert/class-utils#inherit) for more details.
 
 **Params**
 
@@ -452,7 +452,7 @@ Developer frameworks and command line tools that address common phases of the so
 * [base-option](https://www.npmjs.com/package/base-option): Adds a few options methods to base, like `option`, `enable` and `disable`. See the readme… [more](https://github.com/node-base/base-option) | [homepage](https://github.com/node-base/base-option "Adds a few options methods to base, like `option`, `enable` and `disable`. See the readme for the full API.")
 * [base-pipeline](https://www.npmjs.com/package/base-pipeline): base-methods plugin that adds pipeline and plugin methods for dynamically composing streaming plugin pipelines. | [homepage](https://github.com/node-base/base-pipeline "base-methods plugin that adds pipeline and plugin methods for dynamically composing streaming plugin pipelines.")
 * [base-pkg](https://www.npmjs.com/package/base-pkg): Plugin for adding a `pkg` method that exposes pkg-store to your base application. | [homepage](https://github.com/node-base/base-pkg "Plugin for adding a `pkg` method that exposes pkg-store to your base application.")
-* [base-plugins](https://www.npmjs.com/package/base-plugins): Upgrade's plugin support in base applications to allow plugins to be called any time after… [more](https://github.com/node-base/base-plugins) | [homepage](https://github.com/node-base/base-plugins "Upgrade's plugin support in base applications to allow plugins to be called any time after init.")
+* [base-plugins](https://www.npmjs.com/package/base-plugins): Adds 'smart plugin' support to your base application. | [homepage](https://github.com/node-base/base-plugins "Adds 'smart plugin' support to your base application.")
 * [base-questions](https://www.npmjs.com/package/base-questions): Plugin for base-methods that adds methods for prompting the user and storing the answers on… [more](https://github.com/node-base/base-questions) | [homepage](https://github.com/node-base/base-questions "Plugin for base-methods that adds methods for prompting the user and storing the answers on a project-by-project basis.")
 * [base-store](https://www.npmjs.com/package/base-store): Plugin for getting and persisting config values with your base-methods application. Adds a 'store' object… [more](https://github.com/node-base/base-store) | [homepage](https://github.com/node-base/base-store "Plugin for getting and persisting config values with your base-methods application. Adds a 'store' object that exposes all of the methods from the data-store library. Also now supports sub-stores!")
 * [base-task](https://www.npmjs.com/package/base-task): base plugin that provides a very thin wrapper around [https://github.com/doowb/composer](https://github.com/doowb/composer) for adding task methods to… [more](https://github.com/node-base/base-task) | [homepage](https://github.com/node-base/base-task "base plugin that provides a very thin wrapper around <https://github.com/doowb/composer> for adding task methods to your application.")
@@ -540,4 +540,4 @@ MIT
 
 ***
 
-_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.4.3, on March 24, 2017._
+_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.4.3, on April 02, 2017._
