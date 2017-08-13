@@ -12,6 +12,23 @@
 <details>
 <summary><strong>Table of contents</strong></summary>
 
+- [Why use Base?](#why-use-base)
+  * [Guiding principles](#guiding-principles)
+  * [Minimal API surface](#minimal-api-surface)
+  * [Composability](#composability)
+- [Install](#install)
+- [Install](#install-1)
+- [Usage](#usage)
+- [API](#api)
+- [Toolkit suite](#toolkit-suite)
+- [About](#about)
+  * [Related projects](#related-projects)
+  * [Tests](#tests)
+  * [Contributing](#contributing)
+  * [Release History](#release-history)
+  * [Authors](#authors)
+  * [License](#license)
+
 </details>
 
 <details>
@@ -19,12 +36,12 @@
 
 ## Why use Base?
 
-Base is the foundation for creating modular, unit testable and highly pluggable node.js applications.
+Base is a foundation for creating modular, unit testable and highly pluggable server-side node.js APIs.
 
 * Go from zero to working application within minutes
-* Create your own custom plugins to add features
 * Use [community plugins](https://www.npmjs.com/browse/keyword/baseplugin) to add feature-functionality to your application
-* Plugins are stackable, so you can build up [more sophisticated applications](#toolkit-suite) from simpler plugins. Moreover, those applications can also be used as plugins themselves.
+* Create your own custom plugins to add features
+* Like building blocks, plugins are stackable. Allowing you to build [sophisticated applications](#toolkit-suite) from simple plugins. Moreover, those applications can also be used as plugins themselves.
 
 Most importantly, once you learn Base, you will be familiar with the core API of all applications built on Base. This means you will not only benefit as a developer, but as a user as well.
 
@@ -35,6 +52,10 @@ The core team follows these principles to help guide API decisions:
 * **Compact API surface**: The smaller the API surface, the easier the library will be to learn and use.
 * **Easy to extend**: Implementors can use any npm package, and write plugins in pure JavaScript. If you're building complex apps, Base dramatically simplifies inheritance.
 * **Easy to test**: No special setup should be required to unit test `Base` or base plugins
+* **100% Node.js core style**
+
+  - No API sugar (left for higher level projects)
+  - Written in readable vanilla JavaScript
 
 ### Minimal API surface
 
@@ -296,7 +317,7 @@ app.mixin('foo', function() {
 });
 ```
 
-### [.base](index.js#L276)
+### [.base](index.js#L275)
 
 Getter/setter used when creating nested instances of `Base`, for storing a reference to the first ancestor instance. This works by setting an instance of `Base` on the `parent` property of a "child" instance. The `base` property defaults to the current instance if no `parent` property is defined.
 
@@ -325,10 +346,9 @@ console.log(second.base.foo);
 //=> 'bar'
 console.log(third.base.foo);
 //=> 'bar'
-// and now you know how to get to third base ;)
 ```
 
-### [#use](index.js#L301)
+### [Base.use](index.js#L300)
 
 Static method for adding global plugin functions that will be added to an instance when created.
 
@@ -348,7 +368,7 @@ console.log(app.foo);
 //=> 'bar'
 ```
 
-### [#extend](index.js#L345)
+### [Base.extend](index.js#L344)
 
 Static method for inheriting the prototype and static methods of the `Base` class. This method greatly simplifies the process of creating inheritance-based applications. See [static-extend](https://github.com/jonschlinkert/static-extend) for more details.
 
@@ -371,7 +391,7 @@ Parent.extend(Child, {
 });
 ```
 
-### [#mixin](index.js#L387)
+### [Base.mixin](index.js#L386)
 
 Used for adding methods to the `Base` prototype, and/or to the prototype of child instances. When a mixin function returns a function, the returned function is pushed onto the `.mixins` array, making it available to be used on inheriting classes whenever `Base.mixins()` is called (e.g. `Base.mixins(Child)`).
 
@@ -390,7 +410,7 @@ Base.mixin(function(proto) {
 });
 ```
 
-### [#mixins](index.js#L409)
+### [Base.mixins](index.js#L408)
 
 Static method for running global mixin functions against a child constructor. Mixins must be registered before calling this method.
 
@@ -406,7 +426,7 @@ Base.extend(Child);
 Base.mixins(Child);
 ```
 
-### [#inherit](index.js#L429)
+### [Base.inherit](index.js#L428)
 
 Similar to `util.inherits`, but copies all static properties, prototype properties, and getters/setters from `Provider` to `Receiver`. See [class-utils](https://github.com/jonschlinkert/class-utils#inherit) for more details.
 
@@ -424,13 +444,13 @@ Base.inherit(Foo, Bar);
 
 ## Toolkit suite
 
-Base is used as the foundation for all of the applications in the [toolkit suite](https://github.com/node-toolkit/getting-started) (except for [enquirer](https://github.com/enquirer/enquirer)):
+Base is used as the foundation for all of the applications in the [toolkit suite](https://github.com/node-toolkit/getting-started) (except for [enquirer](http://enquirer.io)):
 
 **Building blocks**
 
 * [base](https://github.com/node-base/base): (you are here!) framework for rapidly creating high quality node.js applications, using plugins like building blocks.
 * [templates](https://github.com/jonschlinkert/templates): API for managing template collections and rendering templates with any node.js template engine. Can be used as the basis for creating a static site generator, blog framework, documentaton system, and so on.
-* [enquirer](https://github.com/enquirer/enquirer): composable, plugin-based prompt system (Base is used in [prompt-base](https://github.com/enquirer/prompt-base), the core prompt module that powers all prompt plugins)
+* [enquirer](http://enquirer.io): composable, plugin-based prompt system (Base is used in [prompt-base](https://github.com/enquirer/prompt-base), the core prompt module that powers all prompt plugins)
 
 **Lifecycle**
 
@@ -540,4 +560,4 @@ MIT
 
 ***
 
-_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.4.3, on April 02, 2017._
+_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.6.0, on September 21, 2017._

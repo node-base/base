@@ -43,7 +43,7 @@
   "devDependencies": {
     "gulp-format-md": "^1.0.0",
     "helper-changelog": "^0.3.0",
-    "mocha": "^3.5.0",
+    "mocha": "^3.5.3",
     "through2": "^2.0.3",
     "verb-generate-readme": "^0.6.0"
   },
@@ -60,5 +60,53 @@
     "unset",
     "visit"
   ],
-  "verb": "help"
+  "verb": {
+    "run": true,
+    "toc": "collapsible",
+    "layout": null,
+    "tasks": [
+      "readme"
+    ],
+    "plugins": [
+      "gulp-format-md"
+    ],
+    "helpers": [
+      "helper-changelog"
+    ],
+    "related": {
+      "description": "There are a number of different plugins available for extending base. Let us know if you create your own!",
+      "hightlight": "generate",
+      "list": [
+        "base-cwd",
+        "base-data",
+        "base-fs",
+        "base-generators",
+        "base-option",
+        "base-pipeline",
+        "base-pkg",
+        "base-plugins",
+        "base-questions",
+        "base-store",
+        "base-task"
+      ]
+    },
+    "reflinks": [
+      "assemble",
+      "base",
+      "base-plugins",
+      "cache-base",
+      "class-utils",
+      "enquirer",
+      "generate",
+      "helper-changelog",
+      "prompt-base",
+      "static-extend",
+      "templates",
+      "update",
+      "verb"
+    ],
+    "lint": {
+      "reflinks": true
+    }
+  }
 }
