@@ -267,7 +267,6 @@ function namespace(name) {
    * //=> 'bar'
    * console.log(third.base.foo);
    * //=> 'bar'
-   * // and now you know how to get to third base ;)
    * ```
    * @name .base
    * @api public

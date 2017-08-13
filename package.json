@@ -1,6 +1,6 @@
 {
   "name": "base",
-  "description": "Framework for rapidly creating high quality node.js applications, using plugins like building blocks",
+  "description": "Framework for rapidly creating high quality, server-side node.js applications, using plugins like building blocks",
   "version": "0.13.0",
   "homepage": "https://github.com/node-base/base",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
@@ -9,11 +9,11 @@
     "Jon Schlinkert (https://github.com/jonschlinkert)"
   ],
   "contributors": [
-    "<wtgtybhertgeghgtwtg@gmail.com> (https://github.com/wtgtybhertgeghgtwtg)",
-    "Brian Woodward <brian.woodward@gmail.com> (https://twitter.com/doowb)",
-    "Charlike Mike Reagent (https://i.am.charlike.online)",
+    "Brian Woodward (https://twitter.com/doowb)",
     "John O'Donnell (https://github.com/criticalmash)",
-    "Jon Schlinkert <jon.schlinkert@sellside.com> (http://twitter.com/jonschlinkert)"
+    "Jon Schlinkert (http://twitter.com/jonschlinkert)",
+    "tunnckoCore (https://i.am.charlike.online)",
+    "(https://github.com/wtgtybhertgeghgtwtg)"
   ],
   "repository": "node-base/base",
   "bugs": {
@@ -32,20 +32,20 @@
   },
   "dependencies": {
     "arr-union": "^3.1.0",
-    "cache-base": "^1.0.0",
+    "cache-base": "^1.0.1",
     "class-utils": "^0.3.5",
     "component-emitter": "^1.2.1",
-    "define-property": "^0.2.5",
-    "isobject": "^3.0.0",
+    "define-property": "^1.0.0",
+    "isobject": "^3.0.1",
     "mixin-deep": "^1.2.0",
     "pascalcase": "^0.1.1"
   },
   "devDependencies": {
-    "gulp-format-md": "^0.1.11",
+    "gulp-format-md": "^1.0.0",
     "helper-changelog": "^0.3.0",
-    "mocha": "^3.2.0",
+    "mocha": "^3.5.0",
     "through2": "^2.0.3",
-    "verb-generate-readme": "^0.4.3"
+    "verb-generate-readme": "^0.6.0"
   },
   "keywords": [
     "base",
@@ -60,53 +60,5 @@
     "unset",
     "visit"
   ],
-  "verb": {
-    "run": true,
-    "toc": false,
-    "layout": null,
-    "tasks": [
-      "readme"
-    ],
-    "plugins": [
-      "gulp-format-md"
-    ],
-    "helpers": [
-      "helper-changelog"
-    ],
-    "related": {
-      "description": "There are a number of different plugins available for extending base. Let us know if you create your own!",
-      "hightlight": "generate",
-      "list": [
-        "base-cwd",
-        "base-data",
-        "base-fs",
-        "base-generators",
-        "base-option",
-        "base-pipeline",
-        "base-pkg",
-        "base-plugins",
-        "base-questions",
-        "base-store",
-        "base-task"
-      ]
-    },
-    "reflinks": [
-      "assemble",
-      "base",
-      "base-plugins",
-      "cache-base",
-      "class-utils",
-      "enquirer",
-      "generate",
-      "helper-changelog",
-      "prompt-base",
-      "static-extend",
-      "templates",
-      "update",
-      "verb"
-    ],
-    "lint": {
-      "reflinks": true
-    }
-  }
+  "verb": "help"
 }
