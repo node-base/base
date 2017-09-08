@@ -1,10 +1,20 @@
-# base [![NPM version](https://img.shields.io/npm/v/base.svg?style=flat)](https://www.npmjs.com/package/base) [![NPM downloads](https://img.shields.io/npm/dm/base.svg?style=flat)](https://npmjs.org/package/base) [![Build Status](https://img.shields.io/travis/node-base/base.svg?style=flat)](https://travis-ci.org/node-base/base)
-
 <p align="center">
-<a href="https://github.com/node-base/base">
-<img height="250" width="250" src="https://raw.githubusercontent.com/node-base/base/master/docs/logo.png">
-</a>
+  <a href="https://github.com/node-base/base">
+    <img height="250" width="250" src="https://raw.githubusercontent.com/node-base/base/master/docs/logo.png">
+  </a>
 </p>
+
+# base [![NPM version](https://img.shields.io/npm/v/base.svg?style=flat)](https://www.npmjs.com/package/base) [![NPM monthly downloads](https://img.shields.io/npm/dm/base.svg?style=flat)](https://npmjs.org/package/base)  [![NPM total downloads](https://img.shields.io/npm/dt/base.svg?style=flat)](https://npmjs.org/package/base) [![Linux Build Status](https://img.shields.io/travis/node-base/base.svg?style=flat&label=Travis)](https://travis-ci.org/node-base/base)
+
+> base is the foundation for creating modular, unit testable and highly pluggable node.js applications, starting with a handful of common methods, like `set`, `get`, `del` and `use`.
+
+## Install
+
+Install with [npm](https://www.npmjs.com/):
+
+```sh
+$ npm install --save base
+```
 
 ## What is Base?
 
@@ -91,14 +101,6 @@ console.log(app.cache.foo);
 //=> 'bar'
 ```
 
-## Install
-
-Install with [npm](https://www.npmjs.com/):
-
-```sh
-$ npm install --save base
-```
-
 ## API
 
 **Usage**
@@ -111,7 +113,7 @@ console.log(app.foo);
 //=> 'bar'
 ```
 
-### [Base](index.js#L38)
+### [Base](index.js#L44)
 
 Create an instance of `Base` with the given `config` and `options`.
 
@@ -138,7 +140,7 @@ console.log(app.get('foo')); //=> 'bar'
 console.log(app.options.abc); //=> true
 ```
 
-### [.is](index.js#L101)
+### [.is](index.js#L107)
 
 Set the given `name` on `app._name` and `app.is*` properties. Used for doing lookups in plugins.
 
@@ -164,7 +166,7 @@ console.log(app._name);
 //=> 'bar'
 ```
 
-### [.isRegistered](index.js#L139)
+### [.isRegistered](index.js#L145)
 
 Returns true if a plugin has already been registered on an instance.
 
@@ -198,7 +200,7 @@ base.use(function(app) {
 });
 ```
 
-### [.use](index.js#L169)
+### [.use](index.js#L175)
 
 Define a plugin function to be called immediately upon init. Plugins are chainable and expose the following arguments to the plugin function:
 
@@ -219,7 +221,7 @@ var app = new Base()
   .use(baz)
 ```
 
-### [.define](index.js#L191)
+### [.define](index.js#L197)
 
 The `.define` method is used for adding non-enumerable property on the instance. Dot-notation is **not supported** with `define`.
 
@@ -238,7 +240,7 @@ app.define('render', function(str, locals) {
 });
 ```
 
-### [.mixin](index.js#L216)
+### [.mixin](index.js#L222)
 
 Mix property `key` onto the Base prototype. If base is inherited using `Base.extend` this method will be overridden by a new `mixin` method that will only add properties to the prototype of the inheriting application.
 
@@ -256,7 +258,7 @@ app.mixin('foo', function() {
 });
 ```
 
-### [.base](index.js#L262)
+### [.base](index.js#L268)
 
 Getter/setter used when creating nested instances of `Base`, for storing a reference to the first ancestor instance. This works by setting an instance of `Base` on the `parent` property of a "child" instance. The `base` property defaults to the current instance if no `parent` property is defined.
 
@@ -288,7 +290,7 @@ console.log(third.base.foo);
 // and now you know how to get to third base ;)
 ```
 
-### [#use](index.js#L287)
+### [#use](index.js#L293)
 
 Static method for adding global plugin functions that will be added to an instance when created.
 
@@ -308,7 +310,7 @@ console.log(app.foo);
 //=> 'bar'
 ```
 
-### [#extend](index.js#L331)
+### [#extend](index.js#L337)
 
 Static method for inheriting the prototype and static methods of the `Base` class. This method greatly simplifies the process of creating inheritance-based applications. See [static-extend](https://github.com/jonschlinkert/static-extend) for more details.
 
@@ -331,7 +333,7 @@ Parent.extend(Child, {
 });
 ```
 
-### [#mixin](index.js#L373)
+### [#mixin](index.js#L379)
 
 Used for adding methods to the `Base` prototype, and/or to the prototype of child instances. When a mixin function returns a function, the returned function is pushed onto the `.mixins` array, making it available to be used on inheriting classes whenever `Base.mixins()` is called (e.g. `Base.mixins(Child)`).
 
@@ -350,7 +352,7 @@ Base.mixin(function(proto) {
 });
 ```
 
-### [#mixins](index.js#L395)
+### [#mixins](index.js#L401)
 
 Static method for running global mixin functions against a child constructor. Mixins must be registered before calling this method.
 
@@ -366,7 +368,7 @@ Base.extend(Child);
 Base.mixins(Child);
 ```
 
-### [#inherit](index.js#L414)
+### [#inherit](index.js#L420)
 
 Similar to `util.inherit`, but copies all static properties, prototype properties, and getters/setters from `Provider` to `Receiver`. See [class-utils](https://github.com/jonschlinkert/class-utils#inherit) for more details.
 
@@ -395,19 +397,27 @@ The following node.js applications were built with `Base`:
 ## Test coverage
 
 ```
-Statements   : 98.95% ( 94/95 )
-Branches     : 92.31% ( 24/26 )
+Statements   : 98.91% ( 91/92 )
+Branches     : 92.86% ( 26/28 )
 Functions    : 100% ( 17/17 )
-Lines        : 98.94% ( 93/94 )
+Lines        : 98.9% ( 90/91 )
 ```
 
 ## History
 
-**v0.11.0 - major breaking changes!**
+### v0.11.2
+
+* fixes https://github.com/micromatch/micromatch/issues/99
+
+### v0.11.0
+
+**Breaking changes**
 
 * Static `.use` and `.run` methods are now non-enumerable
 
-**v0.9.0 - major breaking changes!**
+### v0.9.0
+
+**Breaking changes**
 
 * `.is` no longer takes a function, a string must be passed
 * all remaining `.debug` code has been removed
@@ -416,9 +426,9 @@ Lines        : 98.94% ( 93/94 )
 * `.assertPlugin` was removed
 * `.lazy` was removed
 
-## Related projects
+## About
 
-There are a number of different plugins available for extending base. Let us know if you create your own!
+### Related projects
 
 * [base-cwd](https://www.npmjs.com/package/base-cwd): Base plugin that adds a getter/setter for the current working directory. | [homepage](https://github.com/node-base/base-cwd "Base plugin that adds a getter/setter for the current working directory.")
 * [base-data](https://www.npmjs.com/package/base-data): adds a `data` method to base-methods. | [homepage](https://github.com/node-base/base-data "adds a `data` method to base-methods.")
@@ -427,49 +437,55 @@ There are a number of different plugins available for extending base. Let us kno
 * [base-option](https://www.npmjs.com/package/base-option): Adds a few options methods to base, like `option`, `enable` and `disable`. See the readme… [more](https://github.com/node-base/base-option) | [homepage](https://github.com/node-base/base-option "Adds a few options methods to base, like `option`, `enable` and `disable`. See the readme for the full API.")
 * [base-pipeline](https://www.npmjs.com/package/base-pipeline): base-methods plugin that adds pipeline and plugin methods for dynamically composing streaming plugin pipelines. | [homepage](https://github.com/node-base/base-pipeline "base-methods plugin that adds pipeline and plugin methods for dynamically composing streaming plugin pipelines.")
 * [base-pkg](https://www.npmjs.com/package/base-pkg): Plugin for adding a `pkg` method that exposes pkg-store to your base application. | [homepage](https://github.com/node-base/base-pkg "Plugin for adding a `pkg` method that exposes pkg-store to your base application.")
-* [base-plugins](https://www.npmjs.com/package/base-plugins): Upgrade's plugin support in base applications to allow plugins to be called any time after… [more](https://github.com/node-base/base-plugins) | [homepage](https://github.com/node-base/base-plugins "Upgrade's plugin support in base applications to allow plugins to be called any time after init.")
+* [base-plugins](https://www.npmjs.com/package/base-plugins): Adds 'smart plugin' support to your base application. | [homepage](https://github.com/node-base/base-plugins "Adds 'smart plugin' support to your base application.")
 * [base-questions](https://www.npmjs.com/package/base-questions): Plugin for base-methods that adds methods for prompting the user and storing the answers on… [more](https://github.com/node-base/base-questions) | [homepage](https://github.com/node-base/base-questions "Plugin for base-methods that adds methods for prompting the user and storing the answers on a project-by-project basis.")
 * [base-store](https://www.npmjs.com/package/base-store): Plugin for getting and persisting config values with your base-methods application. Adds a 'store' object… [more](https://github.com/node-base/base-store) | [homepage](https://github.com/node-base/base-store "Plugin for getting and persisting config values with your base-methods application. Adds a 'store' object that exposes all of the methods from the data-store library. Also now supports sub-stores!")
 * [base-task](https://www.npmjs.com/package/base-task): base plugin that provides a very thin wrapper around [https://github.com/doowb/composer](https://github.com/doowb/composer) for adding task methods to… [more](https://github.com/node-base/base-task) | [homepage](https://github.com/node-base/base-task "base plugin that provides a very thin wrapper around <https://github.com/doowb/composer> for adding task methods to your application.")
 
-## Contributing
-
-This document was generated by [verb-readme-generator](https://github.com/verbose/verb-readme-generator) (a [verb](https://github.com/verbose/verb) generator), please don't edit directly. Any changes to the readme must be made in [.verb.md](.verb.md). See [Building Docs](#building-docs).
+### Contributing
 
 Pull requests and stars are always welcome. For bugs and feature requests, [please create an issue](../../issues/new).
 
-Or visit the [verb-readme-generator](https://github.com/verbose/verb-readme-generator) project to submit bug reports or pull requests for the readme layout template.
+### Contributors
 
-## Building docs
+| **Commits** | **Contributor** |  
+| --- | --- |  
+| 141 | [jonschlinkert](https://github.com/jonschlinkert) |  
+| 30  | [doowb](https://github.com/doowb) |  
+| 3   | [charlike](https://github.com/charlike) |  
+| 1   | [criticalmash](https://github.com/criticalmash) |  
+| 1   | [wtgtybhertgeghgtwtg](https://github.com/wtgtybhertgeghgtwtg) |  
 
-_(This document was generated by [verb-readme-generator](https://github.com/verbose/verb-readme-generator) (a [verb](https://github.com/verbose/verb) generator), please don't edit the readme directly. Any changes to the readme must be made in [.verb.md](.verb.md).)_
+### Building docs
 
-Generate readme and API documentation with [verb](https://github.com/verbose/verb):
+_(This project's readme.md is generated by [verb](https://github.com/verbose/verb-generate-readme), please don't edit the readme directly. Any changes to the readme must be made in the [.verb.md](.verb.md) readme template.)_
+
+To generate the readme, run the following command:
 
 ```sh
-$ npm install -g verb verb-readme-generator && verb
+$ npm install -g verbose/verb#dev verb-generate-readme && verb
 ```
 
-## Running tests
+### Running tests
 
-Install dev dependencies:
+Running and reviewing unit tests is a great way to get familiarized with a library and its API. You can install dependencies and run tests with the following command:
 
 ```sh
-$ npm install -d && npm test
+$ npm install && npm test
 ```
 
-## Author
+### Author
 
 **Jon Schlinkert**
 
 * [github/jonschlinkert](https://github.com/jonschlinkert)
-* [twitter/jonschlinkert](http://twitter.com/jonschlinkert)
+* [twitter/jonschlinkert](https://twitter.com/jonschlinkert)
 
-## License
+### License
 
-Copyright © 2016, [Jon Schlinkert](https://github.com/jonschlinkert).
-Released under the [MIT license](https://github.com/node-base/base/blob/master/LICENSE).
+Copyright © 2017, [Jon Schlinkert](https://github.com/jonschlinkert).
+Released under the [MIT License](LICENSE).
 
 ***
 
-_This file was generated by [verb](https://github.com/verbose/verb), v0.9.0, on June 23, 2016._
+_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.6.0, on September 07, 2017._
