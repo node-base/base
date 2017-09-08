@@ -3,7 +3,6 @@
 require('mocha');
 require('should');
 var assert = require('assert');
-var utils = require('./utils');
 var Base = require('./');
 var base;
 

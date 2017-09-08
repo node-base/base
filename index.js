@@ -1,14 +1,20 @@
 'use strict';
 
 var util = require('util');
-var utils = require('./utils');
+var define = require('define-property');
+var CacheBase = require('cache-base');
+var Emitter = require('component-emitter');
+var isObject = require('isobject');
+var merge = require('mixin-deep');
+var pascal = require('pascalcase');
+var cu = require('class-utils');
 
 /**
  * Optionally define a custom `cache` namespace to use.
  */
 
 function namespace(name) {
-  var Cache = name ? utils.Cache.namespace(name) : utils.Cache;
+  var Cache = name ? CacheBase.namespace(name) : CacheBase;
   var fns = [];
 
   /**
@@ -54,21 +60,21 @@ function namespace(name) {
    * Add static emitter methods
    */
 
-  utils.Emitter(Base);
+  Emitter(Base);
 
   /**
    * Initialize `Base` defaults with the given `config` object
    */
 
   Base.prototype.initBase = function(config, options) {
-    this.options = utils.merge({}, this.options, options);
+    this.options = merge({}, this.options, options);
     this.cache = this.cache || {};
     this.define('registered', {});
     if (name) this[name] = {};
 
     // make `app._callbacks` non-enumerable
     this.define('_callbacks', this._callbacks);
-    if (utils.isObject(config)) {
+    if (isObject(config)) {
       this.visit('set', config);
     }
     Base.run(this, 'use', fns);
@@ -102,7 +108,7 @@ function namespace(name) {
     if (typeof name !== 'string') {
       throw new TypeError('expected name to be a string');
     }
-    this.define('is' + utils.pascal(name), true);
+    this.define('is' + pascal(name), true);
     this.define('_name', name);
     this.define('_appname', name);
     return this;
@@ -189,10 +195,10 @@ function namespace(name) {
    */
 
   Base.prototype.define = function(key, val) {
-    if (utils.isObject(key)) {
+    if (isObject(key)) {
       return this.visit('define', key);
     }
-    utils.define(this, key, val);
+    define(this, key, val);
     return this;
   };
 
@@ -284,7 +290,7 @@ function namespace(name) {
    * @api public
    */
 
-  utils.define(Base, 'use', function(fn) {
+  define(Base, 'use', function(fn) {
     fns.push(fn);
     return Base;
   });
@@ -298,7 +304,7 @@ function namespace(name) {
    * @param  {Array} `arr` Array of functions to pass to the method.
    */
 
-  utils.define(Base, 'run', function(obj, prop, arr) {
+  define(Base, 'run', function(obj, prop, arr) {
     var len = arr.length, i = 0;
     while (len--) {
       obj[prop](arr[i++]);
@@ -328,10 +334,10 @@ function namespace(name) {
    * @api public
    */
 
-  utils.define(Base, 'extend', utils.cu.extend(Base, function(Ctor, Parent) {
+  define(Base, 'extend', cu.extend(Base, function(Ctor, Parent) {
     Ctor.prototype.mixins = Ctor.prototype.mixins || [];
 
-    utils.define(Ctor, 'mixin', function(fn) {
+    define(Ctor, 'mixin', function(fn) {
       var mixin = fn(Ctor.prototype, Ctor);
       if (typeof mixin === 'function') {
         Ctor.prototype.mixins.push(mixin);
@@ -339,7 +345,7 @@ function namespace(name) {
       return Ctor;
     });
 
-    utils.define(Ctor, 'mixins', function(Child) {
+    define(Ctor, 'mixins', function(Child) {
       Base.run(Child, 'mixin', Ctor.prototype.mixins);
       return Ctor;
     });
@@ -370,7 +376,7 @@ function namespace(name) {
    * @api public
    */
 
-  utils.define(Base, 'mixin', function(fn) {
+  define(Base, 'mixin', function(fn) {
     var mixin = fn(Base.prototype, Base);
     if (typeof mixin === 'function') {
       Base.prototype.mixins.push(mixin);
@@ -392,7 +398,7 @@ function namespace(name) {
    * @api public
    */
 
-  utils.define(Base, 'mixins', function(Child) {
+  define(Base, 'mixins', function(Child) {
     Base.run(Child, 'mixin', Base.prototype.mixins);
     return Base;
   });
@@ -411,8 +417,8 @@ function namespace(name) {
    * @api public
    */
 
-  utils.define(Base, 'inherit', utils.cu.inherit);
-  utils.define(Base, 'bubble', utils.cu.bubble);
+  define(Base, 'inherit', cu.inherit);
+  define(Base, 'bubble', cu.bubble);
   return Base;
 }
 
