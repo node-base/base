@@ -15,5 +15,3 @@ module.exports = function(verb) {
       .pipe(verb.dest('.'));
   });
 };
-
-
