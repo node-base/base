@@ -1,7 +1,7 @@
 {
   "name": "base",
   "description": "Framework for rapidly creating high quality, server-side node.js applications, using plugins like building blocks",
-  "version": "0.13.0",
+  "version": "0.13.1",
   "homepage": "https://github.com/node-base/base",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
   "maintainers": [
