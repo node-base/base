@@ -31,10 +31,10 @@
     "test": "mocha"
   },
   "dependencies": {
+    "@sellside/emitter": "^1.2.1",
     "arr-union": "^3.1.0",
     "cache-base": "^1.0.1",
     "class-utils": "^0.3.5",
-    "component-emitter": "^1.2.1",
     "define-property": "^1.0.0",
     "isobject": "^3.0.1",
     "mixin-deep": "^1.2.0",
@@ -63,7 +63,6 @@
   "verb": {
     "run": true,
     "toc": "collapsible",
-    "layout": null,
     "tasks": [
       "readme"
     ],
