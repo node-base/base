@@ -33,6 +33,7 @@ function namespace(name) {
    * console.log(app.options.abc); //=> true
    * ```
    *
+   * @name Base
    * @param {Object} `cache` If supplied, this object is passed to [cache-base][] to merge onto the the instance.
    * @param {Object} `options` If supplied, this object is used to initialize the `base.options` object.
    * @api public
