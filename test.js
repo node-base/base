@@ -415,10 +415,9 @@ describe('prototype methods', function() {
   });
 });
 
-describe.only('namespaces', function() {
+describe('namespaces', function() {
   beforeEach(function() {
     Base = require('./');
-    console.log(Base.mixin);
   });
 
   describe('constructor', function() {
