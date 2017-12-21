@@ -12,7 +12,7 @@ const Cache = require('cache-base');
  */
 
 function namespace(name) {
-  let fns = [];
+  const fns = [];
 
   /**
    * Create an instance of `Base` with the given `config` and `options`.
