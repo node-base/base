@@ -48,15 +48,18 @@ describe('constructor', function() {
   });
 
   it('should add foo', function() {
-    base = new Base({
-      foo: 'bar'
-    });
+    base = new Base({foo: 'bar'});
     assert.equal(base.foo, 'bar');
   });
 
   it('should set isBase on the instance', function() {
     base = new Base();
     assert.equal(base.isBase, true);
+  });
+
+  it('should set isApp on the instance', function() {
+    base = new Base();
+    assert.equal(base.isApp, true);
   });
 });
 
@@ -541,7 +544,14 @@ describe('.is', function() {
   it('should set a name prefixed with `is` on the instance:', function() {
     base.is('Foo');
     assert(base.isFoo);
+    assert.equal(base.type, 'foo');
     assert.equal(base.isFoo, true);
+  });
+
+  it('should remove isApp when another type is set', function() {
+    base.is('Foo');
+    assert(base.isFoo);
+    assert.equal(base.isApp, undefined);
   });
 });
 

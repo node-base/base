@@ -43,6 +43,7 @@ function namespace(name) {
     constructor(cache, options) {
       super(name, cache);
       this.is('base');
+      this.is('app');
       this.options = merge({}, this.options, options);
       this.cache = this.cache || {};
       this.define('registered', {});
@@ -68,8 +69,9 @@ function namespace(name) {
 
     is(type) {
       assert.equal(typeof type, 'string', 'expected type to be a string');
+      if (type !== 'app') delete this.isApp;
+      this.define('type', type.toLowerCase());
       this.define('is' + pascal(type), true);
-      this.define('type', type);
       return this;
     }
 
