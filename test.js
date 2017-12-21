@@ -11,11 +11,6 @@ describe('constructor', function() {
     assert(base instanceof Base);
   });
 
-  it('should return an instance of Base without new:', function() {
-    base = Base();
-    assert(base instanceof Base);
-  });
-
   it('should "visit" over an object to extend the instance', function() {
     base = new Base({foo: 'bar'});
     assert.equal(base.foo, 'bar');
@@ -37,16 +32,14 @@ describe('constructor', function() {
   });
 
   it('should merge options throughout the inheritance chain', function() {
-    function Foo(options) {
-      Base.call(this, null, options);
-      this.options.x = 'y';
+    class Foo extends Base {
+      constructor(options) {
+        super(null, options);
+        this.options.x = 'y';
+      }
     }
-    Base.extend(Foo);
 
-    function Bar(options) {
-      Foo.call(this, options);
-    }
-    Foo.extend(Bar);
+    class Bar extends Foo {}
 
     var bar = new Bar({a: 'b'});
 
@@ -76,46 +69,19 @@ describe('static properties', function() {
     assert.equal(typeof Base.use, 'function');
   });
 
-  it('should expose `.extend` method', function() {
-    assert.equal(typeof Base.extend, 'function');
-  });
-
-  it('should extend the given Ctor with static methods:', function() {
-    function Ctor() {
-      Base.call(this);
-    }
-    Base.extend(Ctor);
-    assert.equal(typeof Ctor.extend, 'function');
-
-    function foo() {}
-    Ctor.extend(foo);
-    assert.equal(typeof foo.extend, 'function');
-  });
-
-  describe('.extend', function() {
-    it('should set the extend method on the given object:', function() {
-      function Ctor() {}
-      Base.extend(Ctor);
-      assert.equal(typeof Ctor.extend, 'function');
-    });
+  it('should extend static properties:', function() {
+    class Ctor extends Base {}
+    assert.equal(typeof Ctor.use, 'function');
+    assert.equal(typeof Ctor.run, 'function');
   });
 
   describe('.use', function() {
-    it('should set the use method on the given object:', function() {
-      function Ctor() {}
-      Base.extend(Ctor);
-      assert.equal(typeof Ctor.use, 'function');
-    });
-
     it('should use a globally loaded plugin through the static use method:', function() {
-      function Ctor() {
-        Base.call(this);
-      }
-      Base.extend(Ctor);
+      class Ctor extends Base {}
       Ctor.use(function(app) {
         app.foo = 'bar';
       });
-      var inst = new Ctor();
+      const inst = new Ctor();
       assert.equal(inst.foo, 'bar');
     });
 
@@ -154,80 +120,18 @@ describe('static properties', function() {
       assert.equal(typeof bar.bar.bar, 'undefined');
     });
   });
-
-  describe('.mixin', function() {
-    it('should set the mixin method on the given object:', function() {
-      function Ctor() {}
-      Base.extend(Ctor);
-      assert.equal(typeof Base.mixin, 'function');
-      assert.equal(typeof Ctor.mixin, 'function');
-    });
-
-    it('should use a globally loaded mixin through the static mixin method:', function() {
-      function Ctor() {
-        Base.call(this);
-      }
-      Base.extend(Ctor);
-      Base.mixin(function(proto) {
-        proto.foo = 'bar';
-      });
-
-      var inst = new Ctor();
-      Ctor.mixin(function(proto) {
-        proto.bar = 'baz';
-      });
-
-      assert.equal(Base.prototype.foo, 'bar');
-      assert.equal(Ctor.prototype.bar, 'baz');
-      assert.equal(inst.foo, 'bar');
-      assert.equal(inst.bar, 'baz');
-    });
-  });
-
-  describe('.mixins', function() {
-    it('should set the mixins method on the given object:', function() {
-      function Ctor() {}
-      Base.extend(Ctor);
-      assert.equal(typeof Ctor.mixins, 'function');
-    });
-
-    it('should use a globally loaded mixin through the static mixins method:', function() {
-
-      function Ctor() {
-        Base.call(this);
-      }
-      Base.extend(Ctor);
-      Base.mixin(function fn(proto) {
-        proto.bar = 'bar';
-        return fn;
-      });
-
-      function Child() {
-        Ctor.call(this);
-      }
-      Base.extend(Child);
-      Base.mixins(Child);
-      Ctor.mixins(Child);
-
-      var inst = new Child();
-      assert.equal(Child.prototype.bar, 'bar');
-      assert.equal(inst.bar, 'bar');
-    });
-  });
 });
 
 describe('extend prototype methods', function() {
   beforeEach(function() {
-    var Ctor = require('./');
+    const Ctor = require('./');
     Base = Ctor.namespace();
   });
 
   it('should extend the prototype of the given Ctor:', function() {
-    function Ctor() {
-      Base.call(this);
-    }
-    Base.extend(Ctor);
-    assert.equal(typeof Ctor.extend, 'function');
+    class Ctor extends Base {}
+    assert.equal(typeof Ctor.use, 'function');
+    assert.equal(typeof Ctor.run, 'function');
 
     var ctor = new Ctor();
     assert.equal(typeof ctor.set, 'function');
@@ -254,25 +158,13 @@ describe('extend prototype methods', function() {
     assert.equal(typeof Base.prototype.define, 'function');
   });
 
-  it('should expose `prototype.mixin` method', function() {
-    assert.equal(typeof Base.prototype.mixin, 'function');
-  });
-
   it('should add prototype methods to the given Ctor:', function() {
-    function Ctor() {
-      Base.call(this);
-    }
-    Base.extend(Ctor);
+    class Ctor extends Base {}
     assert.equal(typeof Ctor.prototype.set, 'function');
     assert.equal(typeof Ctor.prototype.get, 'function');
     assert.equal(typeof Ctor.prototype.del, 'function');
     assert.equal(typeof Ctor.prototype.visit, 'function');
     assert.equal(typeof Ctor.prototype.define, 'function');
-    assert.equal(typeof Ctor.prototype.mixin, 'function');
-
-    function foo() {}
-    Ctor.extend(foo);
-    assert.equal(typeof foo.prototype.set, 'function');
   });
 });
 
@@ -523,151 +415,6 @@ describe('prototype methods', function() {
   });
 });
 
-describe('.mixin', function() {
-  beforeEach(function() {
-    var Ctor = require('./');
-    Base = Ctor.namespace();
-    base = new Base();
-  });
-
-  it('should add a property to the base prototype:', function() {
-    base.mixin('a', function() {});
-    assert.equal(typeof base.a, 'function');
-    assert.equal(typeof Base.prototype.a, 'function');
-  });
-
-  it('should add to the prototype of an inheriting app:', function() {
-    function Foo() {
-      Base.call(this);
-    }
-    Base.extend(Foo);
-    var foo = new Foo();
-    foo.mixin('a', function() {});
-    assert.equal(typeof Foo.prototype.a, 'function');
-    assert.equal(typeof foo.a, 'function');
-  });
-
-  it('should add to inheriting app prototype:', function() {
-    function Foo() {
-      Base.call(this);
-    }
-    Base.extend(Foo);
-
-    var base = new Base();
-    var foo = new Foo();
-
-    base.mixin('abc', function() {});
-    foo.mixin('xyz', function() {});
-
-    assert.equal(typeof Base.prototype.abc, 'function');
-    assert.equal(typeof Foo.prototype.abc, 'function');
-    assert.equal(typeof base.abc, 'function');
-    assert.equal(typeof foo.abc, 'function');
-
-    assert(typeof Base.prototype.xyz !== 'function');
-    assert.equal(typeof Foo.prototype.xyz, 'function');
-    assert.equal(typeof foo.xyz, 'function');
-    assert(typeof base.xyz !== 'function');
-  });
-
-  it('should chain calls to mixin:', function() {
-    function Foo() {
-      Base.call(this);
-    }
-    Base.extend(Foo);
-
-    var base = new Base();
-    var foo = new Foo();
-
-    base.mixin('abc', function() {})
-      .mixin('def', function() {});
-
-    foo.mixin('xyz', function() {})
-      .mixin('uvw', function() {});
-
-    assert.equal(typeof Base.prototype.abc, 'function');
-    assert.equal(typeof Base.prototype.def, 'function');
-    assert.equal(typeof Foo.prototype.abc, 'function');
-    assert.equal(typeof Foo.prototype.def, 'function');
-    assert.equal(typeof base.abc, 'function');
-    assert.equal(typeof base.def, 'function');
-    assert.equal(typeof foo.abc, 'function');
-    assert.equal(typeof foo.def, 'function');
-
-    assert(typeof Base.prototype.xyz !== 'function');
-    assert(typeof Base.prototype.uvw !== 'function');
-    assert.equal(typeof Foo.prototype.xyz, 'function');
-    assert.equal(typeof Foo.prototype.uvw, 'function');
-    assert.equal(typeof foo.xyz, 'function');
-    assert.equal(typeof foo.uvw, 'function');
-    assert(typeof base.xyz !== 'function');
-    assert(typeof base.uvw !== 'function');
-  });
-
-  it('should not add to Base.prototype from an inheriting app:', function() {
-    function Foo() {
-      Base.call(this);
-    }
-    Base.extend(Foo);
-
-    var foo = new Foo();
-    var base = new Base();
-
-    foo.mixin('a', function() {});
-
-    // yes
-    assert.equal(typeof Foo.prototype.a, 'function');
-    assert.equal(typeof foo.a, 'function');
-
-    // no
-    assert(typeof Base.prototype.a !== 'function');
-    assert(typeof base.a !== 'function');
-  });
-
-  it('should NOT mixin from one inheriting prototype to another:', function() {
-    function Foo() { Base.call(this); }
-    Base.extend(Foo);
-
-    function Bar() { Base.call(this); }
-    Base.extend(Bar);
-
-    var foo = new Foo();
-    var bar = new Bar();
-
-    foo.mixin('a', function() {});
-
-    // yes
-    assert.equal(typeof Foo.prototype.a, 'function');
-    assert.equal(typeof foo.a, 'function');
-
-    // no
-    assert(typeof Bar.prototype.a !== 'function');
-    assert(typeof bar.a !== 'function');
-  });
-
-  it('should mixin from Base.prototype to all others:', function() {
-    function Foo() { Base.call(this); }
-    Base.extend(Foo);
-
-    function Bar() { Base.call(this); }
-    Base.extend(Bar);
-
-    var base = new Base();
-    var foo = new Foo();
-    var bar = new Bar();
-
-    base.mixin('xyz', function() {});
-
-    assert.equal(typeof Base.prototype.xyz, 'function');
-    assert.equal(typeof Foo.prototype.xyz, 'function');
-    assert.equal(typeof Bar.prototype.xyz, 'function');
-
-    assert.equal(typeof base.xyz, 'function');
-    assert.equal(typeof foo.xyz, 'function');
-    assert.equal(typeof bar.xyz, 'function');
-  });
-});
-
 describe('namespaces', function() {
   beforeEach(function() {
     Base = require('./');
@@ -680,16 +427,9 @@ describe('namespaces', function() {
 
     it('should extend the given Ctor with static methods:', function() {
       var Foo = Base.namespace('cache');
-
-      function Ctor() {
-        Foo.call(this);
-      }
-      Foo.extend(Ctor);
-      assert.equal(typeof Ctor.extend, 'function');
-
-      function foo() {}
-      Ctor.extend(foo);
-      assert.equal(typeof foo.extend, 'function');
+      class Ctor extends Foo {}
+      assert.equal(typeof Ctor.use, 'function');
+      assert.equal(typeof Ctor.run, 'function');
     });
   });
 
