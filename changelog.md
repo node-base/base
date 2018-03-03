@@ -19,6 +19,21 @@ Custom labels used in this changelog:
 
 Please [let us know](../../issues) if any of the following heading links are broken. Thanks!
 
+## [2.0.0]
+
+**Changed**
+
+- Removed _static_ `.run` method since it's unnecessary (i.e. if you have the instance, you can just use `.use`)
+- adds support for passing arrays of functions to `.use` method
+
+## [1.0.0]
+
+First major release! 
+
+**Changed**
+
+- Refactored to use ES class 
+
 ## [0.12.0]
 
 **Fixed**
@@ -31,13 +46,13 @@ Please [let us know](../../issues) if any of the following heading links are bro
 
 ## [0.11.0]
 
-**Major breaking changes!**
+**Changed**
 
 - Static `.use` and `.run` methods are now non-enumerable
 
 ## [0.9.0](https://github.com/node-base/base/compare/0.8.0...0.9.0)
 
-**Major breaking changes!**
+**Changed**
 
 - `.is` no longer takes a function, a string must be passed 
 - all remaining `.debug` code has been removed
@@ -47,4 +62,12 @@ Please [let us know](../../issues) if any of the following heading links are bro
 - `.lazy` was removed
 
 
+[2.0.0]: https://github.com/node-base/base/compare/1.0.0...2.0.0
+[1.0.0]: https://github.com/node-base/base/compare/0.13.2...1.0.0
+[0.12.0]: https://github.com/node-base/base/compare/0.11.1...0.12.0
+[0.11.0]: https://github.com/node-base/base/compare/0.10.0...0.11.0
+[0.9.0]: https://github.com/node-base/base/compare/0.8.1...0.9.0
+
+[Unreleased]: https://github.com/node-base/base/compare/0.1.1...HEAD
 [keep-a-changelog]: https://github.com/olivierlacan/keep-a-changelog
+
