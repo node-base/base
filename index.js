@@ -1,8 +1,8 @@
 'use strict';
 
 const assert = require('assert');
+const typeOf = require('kind-of');
 const define = require('define-property');
-const isObject = require('isobject');
 const pascal = require('pascalcase');
 const merge = require('mixin-deep');
 const Cache = require('cache-base');
@@ -15,14 +15,15 @@ function namespace(name) {
   const fns = [];
 
   /**
-   * Create an instance of `Base` with the given `config` and `options`.
+   * Create an instance of `Base` with the given `cache` and `options`.
+   * Learn about the [cache object](#cache-object).
    *
    * ```js
-   * // initialize with `config` and `options`
+   * // initialize with `cache` and `options`
    * const app = new Base({isApp: true}, {abc: true});
    * app.set('foo', 'bar');
    *
-   * // values defined with the given `config` object will be on the root of the instance
+   * // values defined with the given `cache` object will be on the root of the instance
    * console.log(app.baz); //=> undefined
    * console.log(app.foo); //=> 'bar'
    * // or use `.get`
@@ -47,7 +48,10 @@ function namespace(name) {
       this.options = merge({}, this.options, options);
       this.cache = this.cache || {};
       this.define('registered', {});
-      this.constructor.run(this, 'use', fns);
+
+      if (fns.length) {
+        this.use(fns);
+      }
     }
 
     /**
@@ -68,7 +72,7 @@ function namespace(name) {
      */
 
     is(type) {
-      assert.equal(typeof type, 'string', 'expected type to be a string');
+      assert.equal(typeof type, 'string', 'expected "type" to be a string');
       if (type !== 'app') delete this.isApp;
       this.define('type', type.toLowerCase());
       this.define('is' + pascal(type), true);
@@ -116,23 +120,42 @@ function namespace(name) {
     }
 
     /**
-     * Define a plugin function to be called immediately upon init.
+     * Call a plugin function or array of plugin functions on the instance. Plugins
+     * are called with an instance of base, and options (if defined).
      *
      * ```js
      * const app = new Base()
-     *   .use(foo)
-     *   .use(bar)
+     *   .use([foo, bar])
      *   .use(baz)
      * ```
      * @name .use
-     * @param {Function} `fn` plugin function to call
+     * @param {String|Function|Array} `name` (optional) plugin name
+     * @param {Function|Array} `plugin` plugin function, or array of functions, to call.
+     * @param {...rest} Any additional arguments to pass to plugins(s).
      * @return {Object} Returns the item instance for chaining.
      * @api public
      */
 
-    use(fn) {
-      assert.equal(typeof fn, 'function', 'expected plugin to be a function');
-      fn.call(this, this);
+    use(...rest) {
+      let name = null;
+      let fns = null;
+
+      if (typeof rest[0] === 'string') {
+        name = rest.shift();
+      }
+
+      if (typeof rest[0] === 'function' || Array.isArray(rest[0])) {
+        fns = rest.shift();
+      }
+
+      if (Array.isArray(fns)) return fns.forEach(fn => this.use(fn, ...rest));
+      assert.equal(typeof fns, 'function', 'expected plugin to be a function');
+
+      if (typeof name === 'string' && this.isRegistered(name)) {
+        return this;
+      }
+
+      fns.call(this, this, ...rest);
       return this;
     }
 
@@ -141,10 +164,8 @@ function namespace(name) {
      * Dot-notation is **not supported** with `define`.
      *
      * ```js
-     * // arbitrary `render` function using lodash `template`
-     * app.define('render', function(str, locals) {
-     *   return _.template(str)(locals);
-     * });
+     * // example of a custom arbitrary `render` function created with lodash's `template` method
+     * app.define('render', (str, locals) => _.template(str)(locals));
      * ```
      * @name .define
      * @param {String} `key` The name of the property to define.
@@ -154,7 +175,7 @@ function namespace(name) {
      */
 
     define(key, val) {
-      if (isObject(key)) {
+      if (typeOf(key) === 'object') {
         return this.visit('define', key);
       }
       define(this, key, val);
@@ -224,25 +245,7 @@ function namespace(name) {
     }
 
     /**
-     * Run an array of functions by passing each function
-     * to a method on the given object specified by the given property.
-     *
-     * @param  {Object} `target` Object containing method to use.
-     * @param  {String} `key` Name of the method to call
-     * @param  {Array} `arr` Array of functions to pass to the method.
-     */
-
-    static run(target, key, arr) {
-      assert.equal(typeof key, 'string', 'expected key to be a string');
-      let len = arr.length, i = 0;
-      while (len--) {
-        target[key](arr[i++]);
-      }
-      return this;
-    }
-
-    /**
-     * Remove static mixin method from emitter
+     * Delete static mixin method from cache-base, JIT
      */
 
     static get mixin() {

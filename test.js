@@ -1,12 +1,12 @@
 'use strict';
 
 require('mocha');
-var assert = require('assert');
-var Base = require('./');
-var base;
+const assert = require('assert');
+let Base = require('./');
+let base;
 
 describe('constructor', function() {
-  it('should return an instance of Base:', function() {
+  it('should return an instance of Base', function() {
     base = new Base();
     assert(base instanceof Base);
   });
@@ -14,7 +14,7 @@ describe('constructor', function() {
   it('should "visit" over an object to extend the instance', function() {
     base = new Base({foo: 'bar'});
     assert.equal(base.foo, 'bar');
-    var app = new Base({options: {a: true, b: false}});
+    const app = new Base({options: {a: true, b: false}});
     assert(app.options);
     assert.equal(app.options.a, true);
     assert.equal(app.options.b, false);
@@ -40,8 +40,7 @@ describe('constructor', function() {
     }
 
     class Bar extends Foo {}
-
-    var bar = new Bar({a: 'b'});
+    const bar = new Bar({a: 'b'});
 
     assert.equal(bar.options.a, 'b');
     assert.equal(bar.options.x, 'y');
@@ -72,14 +71,13 @@ describe('static properties', function() {
     assert.equal(typeof Base.use, 'function');
   });
 
-  it('should extend static properties:', function() {
+  it('should extend static properties', function() {
     class Ctor extends Base {}
     assert.equal(typeof Ctor.use, 'function');
-    assert.equal(typeof Ctor.run, 'function');
   });
 
   describe('.use', function() {
-    it('should use a globally loaded plugin through the static use method:', function() {
+    it('should use a globally loaded plugin through the static use method', function() {
       class Ctor extends Base {}
       Ctor.use(function(app) {
         app.foo = 'bar';
@@ -88,19 +86,19 @@ describe('static properties', function() {
       assert.equal(inst.foo, 'bar');
     });
 
-    it('should use a globally loaded plugin through the static use method with namespace:', function() {
-      var Foo = Base.namespace('foo');
+    it('should use a globally loaded plugin through the static use method with namespace', function() {
+      const Foo = Base.namespace('foo');
       Foo.use(function(app) {
         app.set('bar', 'baz');
       });
-      var inst = new Foo();
+      const inst = new Foo();
       assert.equal(inst.get('bar'), 'baz');
       assert.equal(inst.foo.bar, 'baz');
     });
 
-    it('should use different globally installed plugins when using different namespaces:', function() {
-      var Foo = Base.namespace('foo');
-      var Bar = Base.namespace('bar');
+    it('should use different globally installed plugins when using different namespaces', function() {
+      const Foo = Base.namespace('foo');
+      const Bar = Base.namespace('bar');
 
       Foo.use(function(app) {
         app.set('bar', 'baz');
@@ -109,8 +107,8 @@ describe('static properties', function() {
         app.set('beep', 'boop');
       });
 
-      var foo = new Foo();
-      var bar = new Bar();
+      const foo = new Foo();
+      const bar = new Bar();
 
       assert.equal(foo.get('bar'), 'baz');
       assert.equal(foo.foo.bar, 'baz');
@@ -131,12 +129,11 @@ describe('extend prototype methods', function() {
     Base = Ctor.namespace();
   });
 
-  it('should extend the prototype of the given Ctor:', function() {
+  it('should extend the prototype of the given Ctor', function() {
     class Ctor extends Base {}
     assert.equal(typeof Ctor.use, 'function');
-    assert.equal(typeof Ctor.run, 'function');
 
-    var ctor = new Ctor();
+    const ctor = new Ctor();
     assert.equal(typeof ctor.set, 'function');
     assert.equal(typeof ctor.get, 'function');
   });
@@ -161,7 +158,7 @@ describe('extend prototype methods', function() {
     assert.equal(typeof Base.prototype.define, 'function');
   });
 
-  it('should add prototype methods to the given Ctor:', function() {
+  it('should add prototype methods to the given Ctor', function() {
     class Ctor extends Base {}
     assert.equal(typeof Ctor.prototype.set, 'function');
     assert.equal(typeof Ctor.prototype.get, 'function');
@@ -173,17 +170,17 @@ describe('extend prototype methods', function() {
 
 describe('instance properties', function() {
   beforeEach(function() {
-    var Ctor = require('./');
+    const Ctor = require('./');
     Base = Ctor.namespace();
     base = new Base();
   });
 
-  it('should expose the options property:', function() {
+  it('should expose the options property', function() {
     assert(base.options);
     assert.equal(typeof base.options, 'object');
   });
 
-  it('should expose the cache property:', function() {
+  it('should expose the cache property', function() {
     assert(base.cache);
     assert.equal(typeof base.cache, 'object');
   });
@@ -191,7 +188,7 @@ describe('instance properties', function() {
 
 describe('prototype methods', function() {
   beforeEach(function() {
-    var Ctor = require('./');
+    const Ctor = require('./');
     Base = Ctor.namespace();
     base = new Base();
   });
@@ -201,19 +198,19 @@ describe('prototype methods', function() {
       base = new Base();
     });
 
-    it('should expose the use method:', function() {
+    it('should expose a .use method', function() {
       assert(base.use);
       assert.equal(typeof base.use, 'function');
     });
 
-    it('should call the function passed to `use`:', function(cb) {
+    it('should call the function passed to `use`', function(cb) {
       base.use(function(app) {
         assert(app);
         cb();
       });
     });
 
-    it('should expose the app instance:', function(cb) {
+    it('should expose the app instance', function(cb) {
       base.foo = 'bar';
       base.use(function(app) {
         assert.equal(app.foo, 'bar');
@@ -221,12 +218,34 @@ describe('prototype methods', function() {
       });
     });
 
-    it('should expose the app instance as "this":', function(cb) {
+    it('should expose the app instance as "this"', function(cb) {
       base.foo = 'bar';
       base.use(function(app) {
         assert.equal(this.foo, 'bar');
         cb();
       });
+    });
+
+    it('should run a plugin multiple times', function() {
+      base.count = 0;
+      function plugin() {
+        this.count++;
+      }
+      base.use(plugin);
+      base.use(plugin);
+      base.use(plugin);
+      assert.equal(base.count, 3);
+    });
+
+    it('should not run a plugin more than once when a plugin name is given', function() {
+      base.count = 0;
+      function plugin() {
+        this.count++;
+      }
+      base.use('foo', plugin);
+      base.use('foo', plugin);
+      base.use('foo', plugin);
+      assert.equal(base.count, 1);
     });
   });
 
@@ -274,7 +293,7 @@ describe('prototype methods', function() {
   });
 
   describe('.define', function() {
-    it('should define a key-value pair on the instance:', function() {
+    it('should define a key-value pair on the instance', function() {
       base.define('foo', 'bar');
       assert.equal(base.foo, 'bar');
     });
@@ -301,39 +320,39 @@ describe('prototype methods', function() {
   });
 
   describe('.set', function() {
-    it('should set a key-value pair on the instance:', function() {
+    it('should set a key-value pair on the instance', function() {
       base.set('foo', 'bar');
       assert.equal(base.foo, 'bar');
     });
 
-    it('should set nested property:', function() {
+    it('should set nested property', function() {
       base.set('a.b.c', 'd');
       assert.equal(base.a.b.c, 'd');
     });
 
-    it('should set a nested property with the key as an array:', function() {
+    it('should set a nested property with the key as an array', function() {
       base.set(['a', 'b', 'c'], 'd');
       assert.equal(base.a.b.c, 'd');
     });
 
-    it('should set an object on the instance:', function() {
+    it('should set an object on the instance', function() {
       base.set({a: 'b'});
       assert.equal(base.a, 'b');
     });
   });
 
   describe('.get', function() {
-    it('should get a property from the instance:', function() {
+    it('should get a property from the instance', function() {
       base.set({a: 'b'});
       assert.equal(base.get('a'), 'b');
     });
 
-    it('should get a nested property from the instance:', function() {
+    it('should get a nested property from the instance', function() {
       base.set({a: {b: {c: 'd'}}});
       assert.equal(base.get('a.b.c'), 'd');
     });
 
-    it('should get a property using an array:', function() {
+    it('should get a property using an array', function() {
       base.set({a: {b: {c: 'd'}}});
       assert.equal(base.get(['a', 'b', 'c']), 'd');
     });
@@ -348,26 +367,26 @@ describe('prototype methods', function() {
   });
 
   describe('.has', function() {
-    it('should work with namespaces:', function() {
-      var Ctor = require('./');
+    it('should work with namespaces', function() {
+      const Ctor = require('./');
       Base = Ctor.namespace('cache');
-      var foo = new Base();
+      const foo = new Base();
 
       foo.set({a: 'b'});
       assert.equal(foo.has('a'), true);
     });
 
-    it('should check for a property from the instance:', function() {
+    it('should check for a property from the instance', function() {
       base.set({a: 'b'});
       assert.equal(base.has('a'), true);
     });
 
-    it('should check for a nested property from the instance:', function() {
+    it('should check for a nested property from the instance', function() {
       base.set({a: {b: {c: 'd'}}});
       assert.equal(base.has('a.b.c'), true);
     });
 
-    it('should check for a property using an array:', function() {
+    it('should check for a property using an array', function() {
       base.set({a: {b: {c: 'd'}}});
       assert.equal(base.has(['a', 'b', 'c']), true);
     });
@@ -382,12 +401,12 @@ describe('prototype methods', function() {
   });
 
   describe('.visit', function() {
-    it('should visit an object with the given method:', function() {
+    it('should visit an object with the given method', function() {
       base.visit('set', {a: 'b', c: 'd'});
       assert.equal(base.get('a'), 'b');
       assert.equal(base.get('c'), 'd');
     });
-    it('should visit an array with the given method:', function() {
+    it('should visit an array with the given method', function() {
       base.visit('set', [{a: 'b', c: 'd'}]);
       assert.equal(base.get('a'), 'b');
       assert.equal(base.get('c'), 'd');
@@ -395,14 +414,14 @@ describe('prototype methods', function() {
   });
 
   describe('.del', function() {
-    it('should remove a property:', function() {
+    it('should remove a property', function() {
       base.set({a: 'b'});
       assert.equal(base.a, 'b');
       base.del('a');
       assert.equal(typeof base.a, 'undefined');
     });
 
-    it('should remove an array of properties:', function() {
+    it('should remove an array of properties', function() {
       base.set({
         a: 'a'
       });
@@ -428,27 +447,26 @@ describe('namespaces', function() {
       assert.equal(typeof Base.namespace, 'function');
     });
 
-    it('should extend the given Ctor with static methods:', function() {
-      var Foo = Base.namespace('cache');
+    it('should extend the given Ctor with static methods', function() {
+      const Foo = Base.namespace('cache');
       class Ctor extends Foo {}
       assert.equal(typeof Ctor.use, 'function');
-      assert.equal(typeof Ctor.run, 'function');
     });
   });
 
   describe('prototype methods', function() {
     beforeEach(function() {
-      var Custom = Base.namespace('cache');
+      const Custom = Base.namespace('cache');
       base = new Custom();
     });
 
     describe('set', function() {
-      it('should set a key-value pair on the instance:', function() {
+      it('should set a key-value pair on the instance', function() {
         base.set('foo', 'bar');
         assert.equal(base.cache.foo, 'bar');
       });
 
-      it('should set an object on the instance:', function() {
+      it('should set an object on the instance', function() {
         base.set({
           a: 'b'
         });
@@ -457,14 +475,14 @@ describe('namespaces', function() {
     });
 
     describe('get', function() {
-      it('should get a property from the instance:', function() {
+      it('should get a property from the instance', function() {
         base.set({
           a: 'b'
         });
         assert.equal(base.get('a'), 'b');
       });
 
-      it('should visit an object with the given method:', function() {
+      it('should visit an object with the given method', function() {
         base.visit('set', {
           a: 'b',
           c: 'd'
@@ -472,7 +490,7 @@ describe('namespaces', function() {
         assert.equal(base.get('a'), 'b');
         assert.equal(base.get('c'), 'd');
       });
-      it('should visit an array with the given method:', function() {
+      it('should visit an array with the given method', function() {
         base.visit('set', [{
           a: 'b',
           c: 'd'
@@ -483,7 +501,7 @@ describe('namespaces', function() {
     });
 
     describe('del', function() {
-      it('should remove a property:', function() {
+      it('should remove a property', function() {
         base.set({
           a: 'b'
         });
@@ -492,7 +510,7 @@ describe('namespaces', function() {
         assert.equal(typeof base.cache.a, 'undefined');
       });
 
-      it('should remove an array of properties:', function() {
+      it('should remove an array of properties', function() {
         base.set({
           a: 'a'
         });
@@ -520,13 +538,13 @@ describe('.base', function() {
   });
 
   it('should use `parent` to set app.base', function() {
-    var foo = new Base();
+    const foo = new Base();
     foo.abc = 'xyz';
 
-    var bar = new Base();
+    const bar = new Base();
     bar.parent = foo;
 
-    var baz = new Base();
+    const baz = new Base();
     baz.parent = bar;
 
     assert(baz.base);
@@ -536,12 +554,12 @@ describe('.base', function() {
 
 describe('.is', function() {
   beforeEach(function() {
-    var Ctor = require('./');
+    const Ctor = require('./');
     Base = Ctor.namespace();
     base = new Base();
   });
 
-  it('should set a name prefixed with `is` on the instance:', function() {
+  it('should set a name prefixed with `is` on the instance', function() {
     base.is('Foo');
     assert(base.isFoo);
     assert.equal(base.type, 'foo');
@@ -560,7 +578,7 @@ describe('events', function() {
     base = new Base();
   });
 
-  it('should emit and listen for events:', function(cb) {
+  it('should emit and listen for events', function(cb) {
     base.on('foo', function(val) {
       assert.equal(val, 'bar');
       cb();

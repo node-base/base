@@ -33,7 +33,7 @@
   "dependencies": {
     "cache-base": "^2.0.2",
     "define-property": "^1.0.0",
-    "isobject": "^3.0.1",
+    "kind-of": "^6.0.2",
     "mixin-deep": "^1.2.0",
     "pascalcase": "^0.1.1"
   },
