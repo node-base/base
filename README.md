@@ -20,7 +20,9 @@
 - [Install](#install-1)
 - [Usage](#usage)
 - [API](#api)
+- [cache object](#cache-object)
 - [Toolkit suite](#toolkit-suite)
+  * [What is Toolkit?](#what-is-toolkit)
 - [About](#about)
   * [Related projects](#related-projects)
   * [Tests](#tests)
@@ -172,9 +174,9 @@ app.use(function() {
 
 ## API
 
-### [Base](index.js#L42)
+### [Base](index.js#L43)
 
-Create an instance of `Base` with the given `config` and `options`.
+Create an instance of `Base` with the given `cache` and `options`. Learn about the [cache object](#cache-object).
 
 **Params**
 
@@ -184,11 +186,11 @@ Create an instance of `Base` with the given `config` and `options`.
 **Example**
 
 ```js
-// initialize with `config` and `options`
+// initialize with `cache` and `options`
 const app = new Base({isApp: true}, {abc: true});
 app.set('foo', 'bar');
 
-// values defined with the given `config` object will be on the root of the instance
+// values defined with the given `cache` object will be on the root of the instance
 console.log(app.baz); //=> undefined
 console.log(app.foo); //=> 'bar'
 // or use `.get`
@@ -199,7 +201,7 @@ console.log(app.get('foo')); //=> 'bar'
 console.log(app.options.abc); //=> true
 ```
 
-### [.is](index.js#L69)
+### [.is](index.js#L74)
 
 Set the given `name` on `app._name` and `app.is*` properties. Used for doing lookups in plugins.
 
@@ -218,7 +220,7 @@ console.log(app.isCollection);
 //=> true
 ```
 
-### [.isRegistered](index.js#L104)
+### [.isRegistered](index.js#L110)
 
 Returns true if a plugin has already been registered on an instance.
 
@@ -252,25 +254,26 @@ base.use(function(app) {
 });
 ```
 
-### [.use](index.js#L131)
+### [.use](index.js#L139)
 
-Define a plugin function to be called immediately upon init.
+Call a plugin function or array of plugin functions on the instance. Plugins are called with an instance of base, and options (if defined).
 
 **Params**
 
-* `fn` **{Function}**: plugin function to call
+* `name` **{String|Function|Array}**: (optional) plugin name
+* `plugin` **{Function|Array}**: plugin function, or array of functions, to call.
+* **{...rest}**: Any additional arguments to pass to plugins(s).
 * `returns` **{Object}**: Returns the item instance for chaining.
 
 **Example**
 
 ```js
 const app = new Base()
-  .use(foo)
-  .use(bar)
+  .use([foo, bar])
   .use(baz)
 ```
 
-### [.define](index.js#L154)
+### [.define](index.js#L177)
 
 The `.define` method is used for adding non-enumerable property on the instance. Dot-notation is **not supported** with `define`.
 
@@ -283,13 +286,11 @@ The `.define` method is used for adding non-enumerable property on the instance.
 **Example**
 
 ```js
-// arbitrary `render` function using lodash `template`
-app.define('render', function(str, locals) {
-  return _.template(str)(locals);
-});
+// example of a custom arbitrary `render` function created with lodash's `template` method
+app.define('render', (str, locals) => _.template(str)(locals));
 ```
 
-### [.base](index.js#L196)
+### [.base](index.js#L219)
 
 Getter/setter used when creating nested instances of `Base`, for storing a reference to the first ancestor instance. This works by setting an instance of `Base` on the `parent` property of a "child" instance. The `base` property defaults to the current instance if no `parent` property is defined.
 
@@ -320,7 +321,7 @@ console.log(third.base.foo);
 //=> 'bar'
 ```
 
-### [Base.use](index.js#L218)
+### [Base.use](index.js#L241)
 
 Static method for adding global plugin functions that will be added to an instance when created.
 
@@ -340,19 +341,46 @@ console.log(app.foo);
 //=> 'bar'
 ```
 
+## cache object
+
+**Cache**
+
+User-defined properties go on the `cache` object. This keeps the root of the instance clean, so that only reserved methods and properties on the root.
+
+```js
+Base { cache: {} }
+```
+
+You can pass a custom object to use as the `cache` as the first argument to the `Base` class when instantiating.
+
+```js
+const myObject = {};
+const Base = require('base');
+const base = new Base(myObject);
+```
+
 ## Toolkit suite
 
-Base is used as the foundation for all of the applications in the [toolkit suite](https://github.com/node-toolkit/getting-started) (except for [enquirer](http://enquirer.io)):
+Base is part of the [Toolkit suite](https://github.com/node-toolkit/getting-started) of applications.
 
-**Building blocks**
+### What is Toolkit?
 
-* [base](https://github.com/node-base/base): (you are here!) framework for rapidly creating high quality node.js applications, using plugins like building blocks.
-* [templates](https://github.com/jonschlinkert/templates): API for managing template collections and rendering templates with any node.js template engine. Can be used as the basis for creating a static site generator, blog framework, documentaton system, and so on.
-* [enquirer](http://enquirer.io): composable, plugin-based prompt system (Base is used in [prompt-base](https://github.com/enquirer/prompt-base), the core prompt module that powers all prompt plugins)
+Toolkit is a collection of node.js libraries, applications and frameworks for helping developers quickly create high quality node.js applications, web projects, and command-line experiences. There are many other libraries on NPM for handling specific tasks, Toolkit provides the _systems_ and _building blocks_ for creating higher level workflows and processes around those libraries.
 
-**Lifecycle**
+Toolkit can be used to create a static site generator, blog framework, documentaton system, command line, task or plugin runner, and more!
 
-Developer frameworks and command line tools that address common phases of the software development lifecycle. Each of these tools can be used entirely standalone, but they work even better together.
+**Building Blocks**
+
+The following libraries can be used as "building blocks" for creating modular applications.
+
+* [base](https://github.com/node-base/base): (you are here!) framework for rapidly creating high quality node.js applications, using plugins like building blocks. Base serves as the foundation for several other applications in the [Toolkit suite](https://github.com/node-toolkit/getting-started).
+* [templates](https://github.com/jonschlinkert/templates): Render templates with any node.js template engine, create and manage template collections. Use helpers, layouts, partials, includes...
+* [enquirer](http://enquirer.io): Plugin-based prompt system for creating highly customizable command line experiences.
+* [composer](https://github.com/doowb/composer): Plugin-based, async task runner.
+
+**Lifecycle Applications**
+
+The following applications provide workflows and automation for common phases of the software development lifecycle. Each of these tools can be used entirely standalone or bundled together.
 
 * [generate](https://github.com/generate/generate): create projects
 * [assemble](https://github.com/assemble/assemble): build projects
@@ -391,53 +419,7 @@ If Base doesn't do what you need, [please let us know](../../issues).
 
 ### Release History
 
-#### key
-
-Changelog entries are classified using the following labels from [keep-a-changelog](https://github.com/olivierlacan/keep-a-changelog):
-
-* `added`: for new features
-* `changed`: for changes in existing functionality
-* `deprecated`: for once-stable features removed in upcoming releases
-* `removed`: for deprecated features removed in this release
-* `fixed`: for any bug fixes
-
-Custom labels used in this changelog:
-
-* `dependencies`: bumps dependencies
-* `housekeeping`: code re-organization, minor edits, or other changes that don't fit in one of the other categories.
-
-**Heads up!**
-
-Please [let us know](../../issues) if any of the following heading links are broken. Thanks!
-
-#### [0.12.0](https://github.com/node-base/base/compare/0.11.0...0.12.0)
-
-**Fixed**
-
-* ensure `__callbacks` and `super_` are non-enumberable
-
-**Added**
-
-* Now sets `app.type` when `app.is('foo')` is called. This allows Base instances to be used more like AST nodes, which is especially helpful with [smart plugins](https://github.com/node-base/base-plugins)
-
-#### [0.11.0](https://github.com/node-base/base/compare/0.9.0...0.11.0)
-
-**Major breaking changes!**
-
-* Static `.use` and `.run` methods are now non-enumerable
-
-#### [0.9.0](https://github.com/node-base/base/compare/0.8.0...0.9.0)
-
-**Major breaking changes!**
-
-* `.is` no longer takes a function, a string must be passed
-* all remaining `.debug` code has been removed
-* `app._namespace` was removed (related to `debug`)
-* `.plugin`, `.use`, and `.define` no longer emit events
-* `.assertPlugin` was removed
-* `.lazy` was removed
-
-_(Changelog generated by [helper-changelog](https://github.com/helpers/helper-changelog))_
+See the [changelog](CHANGELOG.md);
 
 ### Authors
 
@@ -453,9 +435,9 @@ _(Changelog generated by [helper-changelog](https://github.com/helpers/helper-ch
 
 ### License
 
-Copyright © 2017, [Jon Schlinkert](https://github.com/jonschlinkert).
+Copyright © 2018, [Jon Schlinkert](https://github.com/jonschlinkert).
 MIT
 
 ***
 
-_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.6.0, on December 21, 2017._
+_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.6.0, on March 03, 2018._
