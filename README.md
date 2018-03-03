@@ -273,7 +273,7 @@ const app = new Base()
   .use(baz)
 ```
 
-### [.define](index.js#L177)
+### [.define](index.js#L178)
 
 The `.define` method is used for adding non-enumerable property on the instance. Dot-notation is **not supported** with `define`.
 
@@ -290,7 +290,7 @@ The `.define` method is used for adding non-enumerable property on the instance.
 app.define('render', (str, locals) => _.template(str)(locals));
 ```
 
-### [.base](index.js#L219)
+### [.base](index.js#L220)
 
 Getter/setter used when creating nested instances of `Base`, for storing a reference to the first ancestor instance. This works by setting an instance of `Base` on the `parent` property of a "child" instance. The `base` property defaults to the current instance if no `parent` property is defined.
 
@@ -321,7 +321,7 @@ console.log(third.base.foo);
 //=> 'bar'
 ```
 
-### [Base.use](index.js#L241)
+### [Base.use](index.js#L242)
 
 Static method for adding global plugin functions that will be added to an instance when created.
 
