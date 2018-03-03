@@ -229,6 +229,7 @@ describe('prototype methods', function() {
     it('should run a plugin multiple times', function() {
       base.count = 0;
       function plugin() {
+        delete this.registered.plugin;
         this.count++;
       }
       base.use(plugin);
@@ -622,5 +623,17 @@ describe('events', function() {
     });
     base.set('foo', 'bar');
     base.del('foo');
+  });
+
+  it('should emit when a named plugin is registered the first time', function() {
+    const foo = () => () => {};
+    let count = 0;
+    base = new Base();
+    base.on('plugin', () => (count++));
+    base.use('foo', foo());
+    base.use('foo', foo());
+    base.use('foo', foo());
+    base.use('foo', foo());
+    assert.equal(count, 1);
   });
 });

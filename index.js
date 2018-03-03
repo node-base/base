@@ -151,7 +151,8 @@ function namespace(name) {
       if (Array.isArray(fns)) return fns.forEach(fn => this.use(fn, ...rest));
       assert.equal(typeof fns, 'function', 'expected plugin to be a function');
 
-      if (typeof name === 'string' && this.isRegistered(name)) {
+      const key = name || fns.name;
+      if (key && typeof key === 'string' && this.isRegistered(key)) {
         return this;
       }
 
