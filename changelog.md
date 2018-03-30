@@ -19,6 +19,12 @@ Custom labels used in this changelog:
 
 Please [let us know](../../issues) if any of the following heading links are broken. Thanks!
 
+## [2.0.2]
+
+**Fixed**
+
+- Removed a check for function name in the `.use` method. This could cause plugins to not get registered.
+
 ## [2.0.0]
 
 **Changed**
@@ -62,6 +68,7 @@ First major release!
 - `.lazy` was removed
 
 
+[2.0.2]: https://github.com/node-base/base/compare/1.0.0...2.0.2
 [2.0.0]: https://github.com/node-base/base/compare/1.0.0...2.0.0
 [1.0.0]: https://github.com/node-base/base/compare/0.13.2...1.0.0
 [0.12.0]: https://github.com/node-base/base/compare/0.11.1...0.12.0
