@@ -12,9 +12,9 @@ describe('constructor', function() {
   });
 
   it('should "visit" over an object to extend the instance', function() {
-    base = new Base({foo: 'bar'});
-    assert.equal(base.foo, 'bar');
-    const app = new Base({options: {a: true, b: false}});
+    base = new Base({ foo: 'bar' });
+    assert.equal(base.cache.foo, 'bar');
+    const app = new Base(null, { a: true, b: false });
     assert(app.options);
     assert.equal(app.options.a, true);
     assert.equal(app.options.b, false);
@@ -22,8 +22,8 @@ describe('constructor', function() {
 
   it('should map "visit" over an array to extend the instance', function() {
     base = new Base([{foo: 'bar'}, {baz: 'qux'}]);
-    assert.equal(base.foo, 'bar');
-    assert.equal(base.baz, 'qux');
+    assert.equal(base.cache.foo, 'bar');
+    assert.equal(base.cache.baz, 'qux');
   });
 
   it('should set options passed as the second argument', function() {
@@ -44,16 +44,6 @@ describe('constructor', function() {
 
     assert.equal(bar.options.a, 'b');
     assert.equal(bar.options.x, 'y');
-  });
-
-  it('should add foo', function() {
-    base = new Base({foo: 'bar'});
-    assert.equal(base.foo, 'bar');
-  });
-
-  it('should set isBase on the instance', function() {
-    base = new Base();
-    assert.equal(base.isBase, true);
   });
 
   it('should set isApp on the instance', function() {
@@ -323,22 +313,22 @@ describe('prototype methods', function() {
   describe('.set', function() {
     it('should set a key-value pair on the instance', function() {
       base.set('foo', 'bar');
-      assert.equal(base.foo, 'bar');
+      assert.equal(base.cache.foo, 'bar');
     });
 
     it('should set nested property', function() {
       base.set('a.b.c', 'd');
-      assert.equal(base.a.b.c, 'd');
+      assert.equal(base.cache.a.b.c, 'd');
     });
 
     it('should set a nested property with the key as an array', function() {
       base.set(['a', 'b', 'c'], 'd');
-      assert.equal(base.a.b.c, 'd');
+      assert.equal(base.cache.a.b.c, 'd');
     });
 
     it('should set an object on the instance', function() {
       base.set({a: 'b'});
-      assert.equal(base.a, 'b');
+      assert.equal(base.cache.a, 'b');
     });
   });
 
@@ -358,12 +348,10 @@ describe('prototype methods', function() {
       assert.equal(base.get(['a', 'b', 'c']), 'd');
     });
 
-    it('should get a property using a list of arguments', function() {
+    it('should get a property using an array of path segments', function() {
       base.set({a: {b: {c: 'd'}}});
-      assert.equal(base.get('a', 'b', 'c'), 'd');
-      assert.equal(base.get(['a', 'b'], 'c'), 'd');
-      assert.equal(base.get('a', ['b', 'c']), 'd');
-      assert.equal(base.get('a', 'b.c'), 'd');
+      assert.equal(base.get(['a', 'b', 'c']), 'd');
+      assert.equal(base.get(['a.b', 'c']), 'd');
     });
   });
 
@@ -417,9 +405,9 @@ describe('prototype methods', function() {
   describe('.del', function() {
     it('should remove a property', function() {
       base.set({a: 'b'});
-      assert.equal(base.a, 'b');
+      assert.equal(base.cache.a, 'b');
       base.del('a');
-      assert.equal(typeof base.a, 'undefined');
+      assert.equal(typeof base.cache.a, 'undefined');
     });
 
     it('should remove an array of properties', function() {
@@ -429,11 +417,12 @@ describe('prototype methods', function() {
       base.set({
         b: 'b'
       });
-      assert.equal(base.a, 'a');
-      assert.equal(base.b, 'b');
-      base.del(['a', 'b']);
-      assert.equal(typeof base.a, 'undefined');
-      assert.equal(typeof base.b, 'undefined');
+      assert.equal(base.cache.a, 'a');
+      assert.equal(base.cache.b, 'b');
+      base.del('a');
+      base.del('b');
+      assert.equal(typeof base.cache.a, 'undefined');
+      assert.equal(typeof base.cache.b, 'undefined');
     });
   });
 });
@@ -503,26 +492,10 @@ describe('namespaces', function() {
 
     describe('del', function() {
       it('should remove a property', function() {
-        base.set({
-          a: 'b'
-        });
+        base.set({a: 'b'});
         assert.equal(base.cache.a, 'b');
         base.del('a');
         assert.equal(typeof base.cache.a, 'undefined');
-      });
-
-      it('should remove an array of properties', function() {
-        base.set({
-          a: 'a'
-        });
-        base.set({
-          b: 'b'
-        });
-        assert.equal(base.cache.a, 'a');
-        assert.equal(base.cache.b, 'b');
-        base.del(['a', 'b']);
-        assert.equal(typeof base.cache.a, 'undefined');
-        assert.equal(typeof base.cache.b, 'undefined');
       });
     });
   });
@@ -604,16 +577,6 @@ describe('events', function() {
     });
     base.set('foo', 'bar');
     base.get('foo');
-  });
-
-  it('should emit has', function(cb) {
-    base.on('has', function(key, has) {
-      assert.equal(key, 'foo');
-      assert.equal(has, true);
-      cb();
-    });
-    base.set('foo', 'bar');
-    base.has('foo');
   });
 
   it('should emit del', function(cb) {
