@@ -19,6 +19,12 @@ Custom labels used in this changelog:
 
 Please [let us know](../../issues) if any of the following heading links are broken. Thanks!
 
+## [3.0.0]
+
+**Breaking changes**
+
+- Methods no longer set values on the root of the instance. By default, `.get`, `.get`, `.has`, `.del` and other method use the `base.cache` object. This can be customized by doing `new Base.create('foo')` where `foo` is the property name to use for the cache. 
+
 ## [2.0.2]
 
 **Fixed**
