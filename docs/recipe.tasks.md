@@ -1,6 +1,6 @@
 ## Run gulp-like tasks
 
-Add the [base-task](https://github.com/node-base/base-task) plugin:
+Add the [base-task](https://github.com/base/base-task) plugin:
 
 ```js
 var task = require('base-task');
@@ -23,7 +23,7 @@ app.build(function(err) {
 
 **Display run times**
 
-To log out run times in the terminal, add the [base-runtimes](https://github.com/node-base/base-runtimes) plugin:
+To log out run times in the terminal, add the [base-runtimes](https://github.com/base/base-runtimes) plugin:
 
 ```js
 var runtimes = require('base-runtimes');

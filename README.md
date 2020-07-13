@@ -1,13 +1,13 @@
 <p align="center">
 
-<a href="https://github.com/node-base/base">
-<img height="250" width="250" src="https://raw.githubusercontent.com/node-base/base/master/docs/logo.png">
+<a href="https://github.com/base/base">
+<img height="250" width="250" src="https://raw.githubusercontent.com/base/base/master/docs/logo.png">
 </a>
 </p>
 
 # base
 
-[![NPM version](https://img.shields.io/npm/v/base.svg?style=flat)](https://www.npmjs.com/package/base) [![NPM monthly downloads](https://img.shields.io/npm/dm/base.svg?style=flat)](https://npmjs.org/package/base) [![Build Status](https://img.shields.io/travis/node-base/base.svg?style=flat)](https://travis-ci.org/node-base/base) [![Gitter](https://badges.gitter.im/join_chat.svg)](https://gitter.im/node-base/base)
+[![NPM version](https://img.shields.io/npm/v/base.svg?style=flat)](https://www.npmjs.com/package/base) [![NPM monthly downloads](https://img.shields.io/npm/dm/base.svg?style=flat)](https://npmjs.org/package/base) [![Build Status](https://img.shields.io/travis/base/base.svg?style=flat)](https://travis-ci.org/base/base) [![Gitter](https://badges.gitter.im/join_chat.svg)](https://gitter.im/base/base)
 
 <details>
 <summary><strong>Table of contents</strong></summary>
@@ -99,7 +99,7 @@ function plugin(base) {
 base.use(plugin);
 ```
 
-Add "smart plugin" functionality with the [base-plugins](https://github.com/node-base/base-plugins) plugin.
+Add "smart plugin" functionality with the [base-plugins](https://github.com/base/base-plugins) plugin.
 
 **Inheritance**
 
@@ -373,7 +373,7 @@ Toolkit can be used to create a static site generator, blog framework, documenta
 
 The following libraries can be used as "building blocks" for creating modular applications.
 
-* [base](https://github.com/node-base/base): (you are here!) framework for rapidly creating high quality node.js applications, using plugins like building blocks. Base serves as the foundation for several other applications in the [Toolkit suite](https://github.com/node-toolkit/getting-started).
+* [base](https://github.com/base/base): (you are here!) framework for rapidly creating high quality node.js applications, using plugins like building blocks. Base serves as the foundation for several other applications in the [Toolkit suite](https://github.com/node-toolkit/getting-started).
 * [templates](https://github.com/jonschlinkert/templates): Render templates with any node.js template engine, create and manage template collections. Use helpers, layouts, partials, includes...
 * [enquirer](http://enquirer.io): Plugin-based prompt system for creating highly customizable command line experiences.
 * [composer](https://github.com/doowb/composer): Plugin-based, async task runner.
@@ -391,16 +391,16 @@ The following applications provide workflows and automation for common phases of
 
 ### Related projects
 
-* [base-cwd](https://www.npmjs.com/package/base-cwd): Base plugin that adds a getter/setter for the current working directory. | [homepage](https://github.com/node-base/base-cwd "Base plugin that adds a getter/setter for the current working directory.")
-* [base-data](https://www.npmjs.com/package/base-data): adds a `data` method to base-methods. | [homepage](https://github.com/node-base/base-data "adds a `data` method to base-methods.")
-* [base-fs](https://www.npmjs.com/package/base-fs): base-methods plugin that adds vinyl-fs methods to your 'base' application for working with the file… [more](https://github.com/node-base/base-fs) | [homepage](https://github.com/node-base/base-fs "base-methods plugin that adds vinyl-fs methods to your 'base' application for working with the file system, like src, dest, copy and symlink.")
-* [base-generators](https://www.npmjs.com/package/base-generators): Adds project-generator support to your `base` application. | [homepage](https://github.com/node-base/base-generators "Adds project-generator support to your `base` application.")
-* [base-option](https://www.npmjs.com/package/base-option): Adds a few options methods to base, like `option`, `enable` and `disable`. See the readme… [more](https://github.com/node-base/base-option) | [homepage](https://github.com/node-base/base-option "Adds a few options methods to base, like `option`, `enable` and `disable`. See the readme for the full API.")
-* [base-pipeline](https://www.npmjs.com/package/base-pipeline): base-methods plugin that adds pipeline and plugin methods for dynamically composing streaming plugin pipelines. | [homepage](https://github.com/node-base/base-pipeline "base-methods plugin that adds pipeline and plugin methods for dynamically composing streaming plugin pipelines.")
-* [base-pkg](https://www.npmjs.com/package/base-pkg): Plugin for adding a `pkg` method that exposes pkg-store to your base application. | [homepage](https://github.com/node-base/base-pkg "Plugin for adding a `pkg` method that exposes pkg-store to your base application.")
-* [base-plugins](https://www.npmjs.com/package/base-plugins): Adds 'smart plugin' support to your base application. | [homepage](https://github.com/node-base/base-plugins "Adds 'smart plugin' support to your base application.")
-* [base-questions](https://www.npmjs.com/package/base-questions): Plugin for base-methods that adds methods for prompting the user and storing the answers on… [more](https://github.com/node-base/base-questions) | [homepage](https://github.com/node-base/base-questions "Plugin for base-methods that adds methods for prompting the user and storing the answers on a project-by-project basis.")
-* [base-store](https://www.npmjs.com/package/base-store): Plugin for getting and persisting config values with your base-methods application. Adds a 'store' object… [more](https://github.com/node-base/base-store) | [homepage](https://github.com/node-base/base-store "Plugin for getting and persisting config values with your base-methods application. Adds a 'store' object that exposes all of the methods from the data-store library. Also now supports sub-stores!")
+* [base-cwd](https://www.npmjs.com/package/base-cwd): Base plugin that adds a getter/setter for the current working directory. | [homepage](https://github.com/base/base-cwd "Base plugin that adds a getter/setter for the current working directory.")
+* [base-data](https://www.npmjs.com/package/base-data): adds a `data` method to base-methods. | [homepage](https://github.com/base/base-data "adds a `data` method to base-methods.")
+* [base-fs](https://www.npmjs.com/package/base-fs): base-methods plugin that adds vinyl-fs methods to your 'base' application for working with the file… [more](https://github.com/base/base-fs) | [homepage](https://github.com/base/base-fs "base-methods plugin that adds vinyl-fs methods to your 'base' application for working with the file system, like src, dest, copy and symlink.")
+* [base-generators](https://www.npmjs.com/package/base-generators): Adds project-generator support to your `base` application. | [homepage](https://github.com/base/base-generators "Adds project-generator support to your `base` application.")
+* [base-option](https://www.npmjs.com/package/base-option): Adds a few options methods to base, like `option`, `enable` and `disable`. See the readme… [more](https://github.com/base/base-option) | [homepage](https://github.com/base/base-option "Adds a few options methods to base, like `option`, `enable` and `disable`. See the readme for the full API.")
+* [base-pipeline](https://www.npmjs.com/package/base-pipeline): base-methods plugin that adds pipeline and plugin methods for dynamically composing streaming plugin pipelines. | [homepage](https://github.com/base/base-pipeline "base-methods plugin that adds pipeline and plugin methods for dynamically composing streaming plugin pipelines.")
+* [base-pkg](https://www.npmjs.com/package/base-pkg): Plugin for adding a `pkg` method that exposes pkg-store to your base application. | [homepage](https://github.com/base/base-pkg "Plugin for adding a `pkg` method that exposes pkg-store to your base application.")
+* [base-plugins](https://www.npmjs.com/package/base-plugins): Adds 'smart plugin' support to your base application. | [homepage](https://github.com/base/base-plugins "Adds 'smart plugin' support to your base application.")
+* [base-questions](https://www.npmjs.com/package/base-questions): Plugin for base-methods that adds methods for prompting the user and storing the answers on… [more](https://github.com/base/base-questions) | [homepage](https://github.com/base/base-questions "Plugin for base-methods that adds methods for prompting the user and storing the answers on a project-by-project basis.")
+* [base-store](https://www.npmjs.com/package/base-store): Plugin for getting and persisting config values with your base-methods application. Adds a 'store' object… [more](https://github.com/base/base-store) | [homepage](https://github.com/base/base-store "Plugin for getting and persisting config values with your base-methods application. Adds a 'store' object that exposes all of the methods from the data-store library. Also now supports sub-stores!")
 * [base-task](https://www.npmjs.com/package/base-task): Base plugin that provides a very thin wrapper around [https://github.com/doowb/composer](https://github.com/doowb/composer) for adding task methods to… [more](https://github.com/base/base-task) | [homepage](https://github.com/base/base-task "Base plugin that provides a very thin wrapper around <https://github.com/doowb/composer> for adding task methods to your Base application.")
 
 ### Tests

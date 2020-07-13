@@ -2,7 +2,7 @@
   "name": "base",
   "description": "Framework for rapidly creating high quality, server-side node.js applications, using plugins like building blocks",
   "version": "3.0.0",
-  "homepage": "https://github.com/node-base/base",
+  "homepage": "https://github.com/base/base",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
   "maintainers": [
     "Brian Woodward (https://github.com/doowb)",
@@ -15,9 +15,9 @@
     "Olsten Larck (https://i.am.charlike.online)",
     "(https://github.com/wtgtybhertgeghgtwtg)"
   ],
-  "repository": "node-base/base",
+  "repository": "base/base",
   "bugs": {
-    "url": "https://github.com/node-base/base/issues"
+    "url": "https://github.com/base/base/issues"
   },
   "license": "MIT",
   "files": [
