@@ -375,7 +375,7 @@ The following libraries can be used as "building blocks" for creating modular ap
 
 * [base](https://github.com/base/base): (you are here!) framework for rapidly creating high quality node.js applications, using plugins like building blocks. Base serves as the foundation for several other applications in the [Toolkit suite](https://github.com/node-toolkit/getting-started).
 * [templates](https://github.com/jonschlinkert/templates): Render templates with any node.js template engine, create and manage template collections. Use helpers, layouts, partials, includes...
-* [enquirer](http://enquirer.io): Plugin-based prompt system for creating highly customizable command line experiences.
+* [enquirer](https://www.npmjs.com/package/enquirer): Plugin-based prompt system for creating highly customizable command line experiences.
 * [composer](https://github.com/doowb/composer): Plugin-based, async task runner.
 
 **Lifecycle Applications**
